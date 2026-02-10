@@ -11,6 +11,9 @@ set(CMAKE_CXX_COMPILER_WORKS 1)
 # Minimum required CMake version
 cmake_minimum_required(VERSION 3.22.1)
 
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+
 # Project name and languages used
 project(group_42 LANGUAGES C CXX ASM_NASM)
 
@@ -26,7 +29,7 @@ include(FetchContent)
 # group_42: Variables
 ########################################
 set(OS_ARCH_TARGET "i386")  # x86_64 
-set(OS_NAME "UiA Operating System")
+set(OS_NAME "Group_42 Operating System")
 set(OS_KERNEL_NAME "group_42")
 set(OS_KERNEL_BINARY "kernel.bin")
 set(OS_KERNEL_IMAGE "kernel.iso")
@@ -42,14 +45,19 @@ set(CMAKE_C_STANDARD 99)
 ########################################
 set(CMAKE_ASM_NASM_SOURCE_FILE_EXTENSIONS "s;S;asm")
 if(OS_ARCH_TARGET STREQUAL "i386")
-	set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf32")
+	set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -felf32 -g -F dwarf")
+    set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf32")
 elseif(OS_ARCH_TARGET STREQUAL "x86_64")
-	set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf64")
+	set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -felf64 -g -F dwarf")
+    set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf64")
 endif()
 
+
 # Command to compile NASM files
-set(CMAKE_ASM_NASM_COMPILE_OBJECT 
+set(CMAKE_ASM_NASM_OBJECT_FORMAT "elf32")
+set(CMAKE_ASM_NASM_COMPILE_OBJECT
     "<CMAKE_ASM_NASM_COMPILER> <DEFINES> <INCLUDES> <FLAGS> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
+
 
 ########################################
 # OS Target
@@ -60,8 +68,12 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 add_executable(group_42-kernel 
 	src/multiboot2.asm
     src/kernel.c
-	src/kernel.cpp
+	src/vga_terminal.c
+	src/libc/stdio.c
+	src/libc/string.c
 )
+
+set_target_properties(group_42-kernel PROPERTIES LINKER_LANGUAGE C)
 
 # Include directories for the kernel target
 target_include_directories(group_42-kernel PUBLIC include)
