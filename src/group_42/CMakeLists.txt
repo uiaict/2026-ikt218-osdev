@@ -65,12 +65,15 @@ set(CMAKE_ASM_NASM_COMPILE_OBJECT
 set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/linker.ld")
 
 # Add executable target for the kernel
-add_executable(group_42-kernel 
-	src/multiboot2.asm
-    src/kernel.c
-	src/vga_terminal.c
-	src/libc/stdio.c
-	src/libc/string.c
+add_executable(group_42-kernel
+		src/boot/multiboot2.asm
+		src/kernel/main.c
+		src/drivers/video/vga_terminal.c
+		src/libc/stdio.c
+		src/libc/string.c
+		src/kernel/gdt.c
+#		src/kernel/idt.c
+#		src/kernel/irq.c
 )
 
 set_target_properties(group_42-kernel PROPERTIES LINKER_LANGUAGE C)
