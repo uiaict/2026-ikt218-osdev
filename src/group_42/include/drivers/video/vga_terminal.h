@@ -27,6 +27,9 @@ enum vga_color {
 /// Initializes to print to VGA terminal
 void vga_terminal_initialise(void);
 
+/// Clears vga terminal
+void vga_clear_screen(void);
+
 /// Sets the terminal colour
 /// @param color
 void vga_terminal_setcolor(uint8_t color);

@@ -19,6 +19,10 @@ uint16_t* terminal_buffer = (uint16_t*)VGA_MEMORY;
 
 
 void vga_terminal_initialise(void) {
+  vga_clear_screen();
+}
+
+void vga_clear_screen(void) {
   terminal_row = 0;
   terminal_column = 0;
   terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
@@ -32,7 +36,6 @@ void vga_terminal_initialise(void) {
   }
 }
 
-
 void vga_terminal_setcolor(uint8_t color) {
   terminal_color = color;
 }
@@ -43,17 +46,56 @@ void vga_terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
   terminal_buffer[index] = vga_entry(c, color);
 }
 
+// NOTE:
+#define HTAB_WIDTH 4
+#define VTAB_WIDTH 4
 
 void vga_terminal_putchar(char c) {
-  if (c == '\n') {
-    terminal_column = 0;
-    terminal_row++;
-
-    if (terminal_row == VGA_HEIGHT) {
-      vga_terminal_scroll();
+  switch (c) {
+    case '\n': { // newline
+      terminal_column = 0;
+      terminal_row++;
+      if (terminal_row == VGA_HEIGHT)
+        vga_terminal_scroll();
+      return;
     }
-    return;
+    case '\t': { // horizontal tab
+      // 4 - (1%4) = 4-1 = +3
+      // 4 - (2%4) = +2
+      // 4 - (3%4) = +1
+      // 4 - (4%4) = 0 -> 4
+      size_t offset = HTAB_WIDTH - (terminal_column % HTAB_WIDTH);
+      terminal_column += offset ? offset : HTAB_WIDTH;
+      return;
+    }
+    case '\r': { // carriage return
+      terminal_column = 0;
+      return;
+    }
+    case '\f': { // form feed
+      vga_clear_screen();
+      return;
+    }
+    case '\b': { // backspace
+      if (terminal_column != 0)
+        terminal_column--;
+      return;
+    }
+    case '\v': { // vertical tab
+      // NOTE: see '\t' handling
+      size_t offset = VTAB_WIDTH - (terminal_row % VTAB_WIDTH);
+      terminal_row += offset ? offset : HTAB_WIDTH;
+      return;
+    }
+    case '\a': {
+      // ignored for now
+      // TODO: add audible beep when we have sound working nicely
+      return;
+    }
+    default:
+      break;
   }
+
 
   const size_t index = terminal_row * VGA_WIDTH + terminal_column;
   terminal_buffer[index] = vga_entry(c, terminal_color);

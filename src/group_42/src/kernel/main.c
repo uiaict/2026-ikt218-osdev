@@ -51,7 +51,6 @@ void kernel_main(uint32_t magic, void* addr) {
   // Assignment 2
   printf("Hello World!\n\n\n");
 
-
   while (true) {
     __asm__ volatile("hlt");
   }
