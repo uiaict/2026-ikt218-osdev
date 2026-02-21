@@ -6,7 +6,7 @@
 
 # Skip compiler self-tests (saves time, avoids errors with some cross compilers)
 set(CMAKE_C_COMPILER_WORKS 1)
-set(CMAKE_CXX_COMPILER_WORKS 1)
+#set(CMAKE_CXX_COMPILER_WORKS 1)
 
 # Minimum required CMake version
 cmake_minimum_required(VERSION 3.22.1)
@@ -15,7 +15,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 
 # Project name and languages used
-project(group_42 LANGUAGES C CXX ASM_NASM)
+project(group_42 LANGUAGES C ASM_NASM)
 
 # Create a lock file to prevent parallel runs of CMake
 file(LOCK ${CMAKE_SOURCE_DIR} DIRECTORY GUARD FILE)
@@ -37,7 +37,6 @@ set(OS_KERNEL_IMAGE "kernel.iso")
 ########################################
 # Compiler Configuration
 ########################################
-set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 99)
 
 ########################################
@@ -104,6 +103,7 @@ target_link_options(group_42-kernel PUBLIC
 
 target_link_options(
         group_42-kernel
+        PUBLIC "-m32"
         PUBLIC "-ffreestanding"
         PUBLIC "-nostdlib"
         PUBLIC "-static"

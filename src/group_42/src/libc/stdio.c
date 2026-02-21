@@ -137,7 +137,6 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
 
     i++; // skip '%'
 
-    // TODO: Floating point
     switch (format[i]) {
       case 'c': {
         char c = (char)va_arg(arg, int);
@@ -147,7 +146,6 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
       }
       case 's': {
         const char* s = va_arg(arg, const char*);
-        // TODO: Should we print emtpy or null..
         if (!s)
           s = "(null)";
         while (*s) {
@@ -181,6 +179,10 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
         printed_chars++;
         break;
       }
+      // TODO: add floating point representation
+      // for now just fallthrough to default
+      case 'f':
+      case 'F':
       default:
         // just literally print it, if we dont know it
         fputc('%', stream);
