@@ -89,15 +89,12 @@ target_include_directories(group_42-kernel PUBLIC include)
 
 # Specify compile options for C and C++
 target_compile_options(group_42-kernel PRIVATE
-        $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-        $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
-        $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
+        $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -Werror -nostdinc -std=c11 -ffreestanding -Wno-unused-variable -Wno-unused-parameter -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
 )
-
 
 # Specify link options for C and C++
 target_link_options(group_42-kernel PUBLIC
-        $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-ffreestanding -nostdlib -fno-builtin -static -pie -O0 -T${OS_KERNEL_LINKER} -g>
+        $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>: -ffreestanding -nostdinc -nostdlib -fno-builtin -static -pie -O0 -T${OS_KERNEL_LINKER} -g>
 )
 
 

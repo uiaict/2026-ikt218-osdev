@@ -100,7 +100,7 @@ int printf(const char* restrict format, ...) {
   va_end(args);
   return ret;
 }
-static void print_dec(unsigned long value, FILE* stream, int* count) {
+static void print_dec(long value, FILE* stream, int* count) {
   if (value < 0) {
     fputc('-', stream);
     (*count)++;

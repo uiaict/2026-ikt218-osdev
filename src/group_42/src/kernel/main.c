@@ -8,6 +8,7 @@
 #include "libc/stdint.h"
 #include "libc/stdio.h"
 
+struct multiboot_info;
 
 void kernel_main(uint32_t magic, void* addr);
 
@@ -19,9 +20,9 @@ int k_init(uint32_t magic, struct multiboot_info* addr) {
   kernel_main(magic, addr);
 
   // If kernel_main fails, disable interrupts and halt
-  asm volatile("cli");
+  __asm__ volatile("cli");
   while (true) {
-    asm volatile("hlt");
+    __asm__ volatile("hlt");
   }
 }
 
