@@ -30,19 +30,23 @@ void pic_remap() {
 }
 
 // General IRQ handler called from assembly ISR
-void irq_handler(int irq_num) {
-    // Print IRQ number to the screen
-    terminal_write("IRQ triggered: ");
-    char buf[4];
-    itoa(irq_num, buf, 10); // Convert number to string
-    terminal_write(buf);
-    terminal_write("\n");
-
-    // Send End of Interrupt (EOI) signal to PICs
-    if (irq_num >= 40) { // If IRQ came from Slave PIC
-        outb(0xA0, 0x20);
+void irq_handler(int irq_num)
+{
+    if (irq_num != 0)  // Ignore timer spam
+    {
+        terminal_write("IRQ triggered: ");
+        terminal_write_char(irq_num);
+        terminal_write("\n");
     }
-    outb(0x20, 0x20); // Always send to Master PIC
+
+    // If interrupt came from Slave PIC
+    if (irq_num >= 8)
+    {
+        outb(PIC2_COMMAND, 0x20);  // Send EOI to Slave
+    }
+
+    // Always send EOI to Master
+    outb(PIC1_COMMAND, 0x20);
 }
 
 // Simple itoa function for decimal numbers

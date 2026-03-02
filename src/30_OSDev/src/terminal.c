@@ -32,3 +32,14 @@ void terminal_write(const char* str)
         terminal_write_char(str[i]);
     }
 }
+
+void terminal_backspace() {
+    if (terminal_column == 0 && terminal_row == 0) return;
+    if (terminal_column > 0) {
+        terminal_column--;
+    } else {
+        terminal_row--;
+        terminal_column = VGA_WIDTH - 1;
+    }
+    terminal_buffer[terminal_row * VGA_WIDTH + terminal_column] = ((uint16_t)terminal_color << 8) | ' ';
+}

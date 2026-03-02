@@ -18,24 +18,45 @@ global irq14
 global irq15
 
 extern irq_handler
+extern keyboard_isr
 
-; Macro to define each IRQ stub
+
+; IRQ0 (timer)
+irq0:
+    cli
+    pusha
+    push byte 0
+    call irq_handler
+    add esp,4
+    popa
+    sti
+    iret
+
+
+; IRQ1 (keyboard) 
+irq1:
+    cli
+    pusha
+    call keyboard_isr
+    popa
+    sti
+    iret
+
+
+
+; OTHER IRQs
 %macro IRQ_STUB 1
-global irq%1
 irq%1:
-     cli                 ; Disable interrupts
-    pusha               ; Save all general-purpose registers
-    push byte %1        ; Push IRQ number to stack
-    call irq_handler    ; Call C handler
-    add esp, 4          ; Clean up stack (remove IRQ number)
-    popa                ; Restore registers
-    sti                 ; Enable interrupts
-    iret                ; Return from interrupt
+    cli
+    pusha
+    push byte %1
+    call irq_handler
+    add esp,4
+    popa
+    sti
+    iret
 %endmacro
 
-; Generate IRQ stubs
-IRQ_STUB 0
-IRQ_STUB 1
 IRQ_STUB 2
 IRQ_STUB 3
 IRQ_STUB 4
