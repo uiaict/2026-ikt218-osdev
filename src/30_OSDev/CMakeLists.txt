@@ -67,6 +67,9 @@ add_executable(uiaos-kernel
     src/interrupts/isr.asm
     src/interrupts/idt.c
     src/interrupts/isr.c
+	src/interrupts/irq.asm
+	src/interrupts/irq.c
+	
 
 )
 
