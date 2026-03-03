@@ -66,6 +66,9 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 # Add executable target for the kernel
 add_executable(group_42-kernel
         src/kernel/main.c
+        src/kernel/util.c
+        src/kernel/syscall.c
+        src/kernel/util/ring_buffer8.c
 
         src/boot/multiboot2.asm
 
@@ -74,17 +77,28 @@ add_executable(group_42-kernel
         src/libc/stdio.c
         src/libc/string.c
 
-        src/kernel/gdt.c
-        src/kernel/gdt_routines.asm
 
-        #		src/kernel/idt.c
-        #		src/kernel/irq.c
+        src/shell/shell.c
+        src/shell/shell_command.c
+
+
+        src/drivers/input/keyboard.c
+        src/drivers/input/keymap_us.c
+
+        src/arch/i386/cpu/gdt.c
+        src/arch/i386/cpu/gdt_routines.asm
+        src/arch/i386/cpu/idt.c
+        src/arch/i386/cpu/interrupts.asm
+        src/arch/i386/cpu/isr.c
+        src/arch/i386/cpu/ports.c
+
+
 )
 
 set_target_properties(group_42-kernel PROPERTIES LINKER_LANGUAGE C)
 
 # Include directories for the kernel target
-target_include_directories(group_42-kernel PUBLIC include)
+target_include_directories(group_42-kernel PUBLIC include include/libc)
 
 
 # Specify compile options for C and C++

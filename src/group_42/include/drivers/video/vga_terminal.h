@@ -57,4 +57,14 @@ void vga_terminal_writestring(const char* data);
 /// Scrolls the terminal
 void vga_terminal_scroll(void);
 
+/// Get entry at position (for reading character)
+uint16_t vga_terminal_get_entry_at(size_t x, size_t y);
+
+/// Get current terminal color
+uint8_t vga_terminal_get_color(void);
+
+/// Get current cursor position (internal tracking)
+void vga_get_cursor_position(size_t* x, size_t* y);
+void vga_disable_cursor();
+
 #define vga_entry_color(fg, bg) (fg | bg << 3)

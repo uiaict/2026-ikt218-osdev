@@ -1,5 +1,6 @@
 #include "drivers/video/vga_terminal.h"
 
+#include "arch/i386/cpu/ports.h"
 #include "libc/stdint.h"
 #include "libc/string.h"
 
@@ -53,6 +54,11 @@ void vga_terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 void vga_terminal_putchar(char c) {
   switch (c) {
     case '\n': { // newline
+
+      // clear cell, for marker
+      const size_t index = terminal_row * VGA_WIDTH + terminal_column;
+      terminal_buffer[index] = vga_entry(' ', terminal_color);
+
       terminal_column = 0;
       terminal_row++;
       if (terminal_row == VGA_HEIGHT)
@@ -133,4 +139,27 @@ void vga_terminal_scroll(void) {
     terminal_buffer[last_row_start + x] = vga_entry(' ', terminal_color);
   }
   terminal_row = VGA_HEIGHT - 1;
+}
+
+uint16_t vga_terminal_get_entry_at(size_t x, size_t y) {
+  return terminal_buffer[y * VGA_WIDTH + x];
+}
+
+uint8_t vga_terminal_get_color(void) {
+  return terminal_color;
+}
+
+void vga_get_cursor_position(size_t* x, size_t* y) {
+  *x = terminal_column;
+  *y = terminal_row;
+}
+
+#define VGA_CRTC_ADDRESS_PORT_COLOR 0x3D4
+#define VGA_CRTC_DATA_PORT_COLOR 0x3D5
+#define VGA_CRTC_CURSOR_START_INDEX 0x0A
+#define VGA_CRTC_CURSOR_DISABLE_MASK 0x20
+
+void vga_disable_cursor() {
+  port_byte_out(VGA_CRTC_ADDRESS_PORT_COLOR, VGA_CRTC_CURSOR_START_INDEX);
+  port_byte_out(VGA_CRTC_DATA_PORT_COLOR, VGA_CRTC_CURSOR_DISABLE_MASK);
 }

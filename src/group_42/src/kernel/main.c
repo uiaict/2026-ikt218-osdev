@@ -1,12 +1,15 @@
 #include <boot/multiboot2.h>
-#include <kernel/gdt.h>
-#include <kernel/idt.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
+#include "arch/i386/cpu/gdt.h"
+#include "arch/i386/cpu/idt.h"
+#include "drivers/input/keyboard.h"
 #include "drivers/video/vga_terminal.h"
-#include "libc/stdbool.h"
-#include "libc/stddef.h"
-#include "libc/stdint.h"
-#include "libc/stdio.h"
+#include "kernel/syscall.h"
+#include "shell/shell.h"
+
 
 struct multiboot_info;
 
@@ -20,6 +23,7 @@ int k_init(uint32_t magic, struct multiboot_info* addr) {
   kernel_main(magic, addr);
 
   // If kernel_main fails, disable interrupts and halt
+
   __asm__ volatile("cli");
   while (true) {
     __asm__ volatile("hlt");
@@ -30,6 +34,8 @@ int k_init(uint32_t magic, struct multiboot_info* addr) {
 void kernel_main(uint32_t magic, void* addr) {
   vga_terminal_initialise();
 
+  // TODO: Add boot timestamp
+
   // NOTE: Verify multiboot magic number, if it fails, then addr pointer is likely corrupted, so we
   // halt.
   if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) {
@@ -37,22 +43,28 @@ void kernel_main(uint32_t magic, void* addr) {
     printf("Halting system.\n");
     return;
   }
-  // parse multiboot info, to get memory map and kernel modules, or other drivers.
 
   printf("Initializing Group_42 Kernel...\n");
+
+
   if (!init_gdt()) {
     printf("Failed to initialize GDT. Halting...\n");
     return;
   }
-  // init_idt();
 
-  printf("Kernel initialised successfully.\n");
-  printf("Welcome to Group_42 Kernel!\n\n\n");
 
-  // Assignment 2
-  printf("Hello World!\n\n\n");
+  printf("Initializing IDT...\n");
 
-  while (true) {
-    __asm__ volatile("hlt");
-  }
+  init_idt();
+  init_syscalls();
+  init_keyboard();
+  keyboard_set_scancode_set2();
+
+  printf("Successfully initialized IDT.\n");
+
+
+  printf("Keyboard scancode set 2 enabled.\n");
+
+  shell_init();
+  shell_run();
 }
