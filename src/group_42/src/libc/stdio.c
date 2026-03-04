@@ -1,5 +1,7 @@
 #include "libc/stdio.h"
 
+#include <kernel/util.h>
+
 #include "drivers/video/vga_terminal.h"
 #include "libc/stdarg.h"
 #include "libc/stddef.h"
@@ -101,17 +103,65 @@ int printf(const char* restrict format, ...) {
   return ret;
 }
 static void print_dec(long value, FILE* stream, int* count) {
+  if (value == 0) {
+    fputc('0', stream);
+    (*count)++;
+    return;
+  }
   if (value < 0) {
     fputc('-', stream);
     (*count)++;
+    value = -value;
   }
-
-  if (value / 10) {
-    print_dec(value / 10, stream, count);
-  }
-
+  print_dec(value / 10, stream, count);
   fputc(value % 10 + '0', stream);
   (*count)++;
+}
+
+static void print_udec(uint32_t value, FILE* stream, int* count) {
+  if (value / 10) {
+    print_udec(value / 10, stream, count);
+  }
+  fputc(value % 10 + '0', stream);
+  (*count)++;
+}
+
+static void print_udec64(uint64_t n, FILE* stream, int* printed_chars) {
+  if (n == 0) {
+    fputc('0', stream);
+    (*printed_chars)++;
+    return;
+  }
+  char buf[20];
+  int idx = 0;
+  while (n > 0) {
+    uint32_t remainder = div_u64_by_10(&n); // Updates n, returns digit
+    buf[idx++] = '0' + remainder;
+  }
+  while (idx--) {
+    fputc(buf[idx], stream);
+    (*printed_chars)++;
+  }
+}
+
+
+static void print_hex64(uint64_t n, FILE* stream, int* printed_chars, int uppercase) {
+  if (n == 0) {
+    fputc('0', stream);
+    (*printed_chars)++;
+    return;
+  }
+  char buf[16];
+  int idx = 0;
+  while (n > 0) {
+    uint32_t digit = n & 0xF;
+    buf[idx++] = (digit < 10 ? '0' + digit : (uppercase ? 'A' : 'a') + digit - 10);
+    n >>= 4;
+  }
+  while (idx--) {
+    fputc(buf[idx], stream);
+    (*printed_chars)++;
+  }
 }
 
 static void print_hex(unsigned long value, FILE* stream, int* count) {
@@ -125,6 +175,16 @@ static void print_hex(unsigned long value, FILE* stream, int* count) {
   (*count)++;
 }
 
+
+void print_dec64(int64_t n, FILE* stream, int* printed_chars) {
+  if (n < 0) {
+    fputc('-', stream);
+    (*printed_chars)++;
+    n = -n;
+  }
+  print_udec64((uint64_t)n, stream, printed_chars);
+}
+
 int vfprintf(FILE* stream, const char* format, va_list arg) {
   int printed_chars = 0;
 
@@ -136,6 +196,17 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
     }
 
     i++; // skip '%'
+
+    // Length modifier
+    int length = 0; // 0: default, 1: l, 2: ll
+    if (format[i] == 'l') {
+      length = 1;
+      i++;
+      if (format[i] == 'l') {
+        length = 2;
+        i++;
+      }
+    }
 
     switch (format[i]) {
       case 'c': {
@@ -156,22 +227,46 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
       }
       case 'd':
       case 'i': {
-        int d = va_arg(arg, int);
-        print_dec(d, stream, &printed_chars);
+        if (length == 2) {
+          int64_t d = va_arg(arg, int64_t);
+          print_dec64(d, stream, &printed_chars); // See helpers below
+        } else if (length == 1) {
+          long d = va_arg(arg, long);
+          print_dec((int32_t)d, stream, &printed_chars); // Reuse 32-bit
+        } else {
+          int d = va_arg(arg, int);
+          print_dec(d, stream, &printed_chars);
+        }
+        break;
+      }
+      case 'u': {
+        if (length == 2) {
+          uint64_t u = va_arg(arg, uint64_t);
+          print_udec64(u, stream, &printed_chars);
+        } else {
+          unsigned u = va_arg(arg, unsigned);
+          print_udec((uint32_t)u, stream, &printed_chars);
+        }
         break;
       }
       case 'x':
-      case 'p': {
-        unsigned long x;
-        if (format[i] == 'p') {
-          x = (uintptr_t)va_arg(arg, void*);
-          fputc('0', stream);
-          fputc('x', stream);
-          printed_chars += 2;
+      case 'X': {
+        int uppercase = (format[i] == 'X');
+        if (length == 2) {
+          uint64_t x = va_arg(arg, uint64_t);
+          print_hex64(x, stream, &printed_chars, uppercase);
         } else {
-          x = va_arg(arg, unsigned int);
+          unsigned long x = va_arg(arg, unsigned long);
+          print_hex((uint32_t)x, stream, &printed_chars);
         }
-        print_hex(x, stream, &printed_chars);
+        break;
+      }
+      case 'p': {
+        uintptr_t p = (uintptr_t)va_arg(arg, void*);
+        fputc('0', stream);
+        fputc('x', stream);
+        printed_chars += 2;
+        print_hex((uint32_t)p, stream, &printed_chars); // 32-bit limit OK for pointers?
         break;
       }
       case '%': {
@@ -179,12 +274,7 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
         printed_chars++;
         break;
       }
-      // TODO: add floating point representation
-      // for now just fallthrough to default
-      case 'f':
-      case 'F':
       default:
-        // just literally print it, if we dont know it
         fputc('%', stream);
         fputc(format[i], stream);
         printed_chars += 2;

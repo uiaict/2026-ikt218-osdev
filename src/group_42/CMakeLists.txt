@@ -91,6 +91,8 @@ add_executable(group_42-kernel
         src/arch/i386/cpu/interrupts.asm
         src/arch/i386/cpu/isr.c
         src/arch/i386/cpu/ports.c
+        src/kernel/log.c
+        src/kernel/panic.c
 
 
 )
@@ -109,6 +111,10 @@ target_compile_options(group_42-kernel PRIVATE
 # Specify link options for C and C++
 target_link_options(group_42-kernel PUBLIC
         $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>: -ffreestanding -nostdinc -nostdlib -fno-builtin -static -pie -O0 -T${OS_KERNEL_LINKER} -g>
+)
+
+target_compile_definitions(group_42-kernel PRIVATE
+        LOG_LEVEL_MAX=5
 )
 
 

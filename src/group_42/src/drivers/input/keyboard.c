@@ -1,6 +1,7 @@
 #include "drivers/input/keyboard.h"
 
 #include <drivers/input/keymap.h>
+#include <kernel/log.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -199,6 +200,7 @@ void keyboard_handler(registers_t* regs) {
 // PUBLIC
 
 void init_keyboard() {
+  log_info("Initialising PS/2 Keyboard...\n");
   rb_init(&scan_buffer);
   rb_init(&ascii_buffer);
   rb_init(&special_buffer);
@@ -207,6 +209,7 @@ void init_keyboard() {
 }
 
 void keyboard_set_scancode_set2() {
+  log_debug("Setting scancode set 2\n");
   wait_for_ready();
   port_byte_out(PS2_COMMAND_PORT, PS2_CMD_READ_CONFIG);
   uint8_t config = port_byte_in(PS2_DATA_PORT);

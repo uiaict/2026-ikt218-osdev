@@ -1,5 +1,6 @@
 #include "kernel/syscall.h"
 
+#include <kernel/log.h>
 #include <stddef.h>
 
 #include "arch/i386/cpu/isr.h"
@@ -45,6 +46,7 @@ void register_syscall(uint32_t num, uint32_t (*handler)()) {
 }
 
 void init_syscalls() {
+  log_info("Initialising syscalls...\n");
   for (int i = 0; i < MAX_SYSCALLS; i++) {
     syscall_table[i] = NULL;
   }
