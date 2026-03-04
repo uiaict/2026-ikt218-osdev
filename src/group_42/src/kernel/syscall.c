@@ -11,7 +11,7 @@ static uint32_t (*syscall_table[MAX_SYSCALLS])();
 static uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t count) {
   const char* str = (const char*)buf;
   for (uint32_t i = 0; i < count && str[i]; i++) {
-    port_byte_out(0xE9, str[i]); // Write to QEMU debug port
+    port_byte_out(0xE9, str[i]); // Write to QEMU debug // TODO: not good, change this
   }
   return count;
 }

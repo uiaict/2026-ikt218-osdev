@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 
-// TODO: Move these definitions to gdt.h header file
 // from https://pdos.csail.mit.edu/6.828/2004/readings/i386/s05_01.htm
 typedef struct __attribute__((packed)) {
   uint16_t limit_low;

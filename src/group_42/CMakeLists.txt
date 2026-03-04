@@ -93,6 +93,9 @@ add_executable(group_42-kernel
         src/arch/i386/cpu/ports.c
         src/kernel/log.c
         src/kernel/panic.c
+        src/libc/stdlib.c
+        src/kernel/memory.c
+        src/kernel/pit.c
 
 
 )

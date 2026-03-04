@@ -67,4 +67,7 @@ uint8_t vga_terminal_get_color(void);
 void vga_get_cursor_position(size_t* x, size_t* y);
 void vga_disable_cursor();
 
+void vga_terminal_scroll_up(int lines);void vga_terminal_scroll_down(int lines);
+void vga_terminal_scroll_bottom();
+
 #define vga_entry_color(fg, bg) (fg | bg << 3)

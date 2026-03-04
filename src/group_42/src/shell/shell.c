@@ -229,6 +229,14 @@ void shell_run(void) {
           history_up();
           break;
         }
+        case KEY_PAGE_UP: {
+          vga_terminal_scroll_up(VGA_HEIGHT / 2);
+          break;
+        }
+        case KEY_PAGE_DOWN: {
+          vga_terminal_scroll_down(VGA_HEIGHT / 2); // Scroll down half screen
+          break;
+        }
         case KEY_DOWN: {
           history_down();
           break;
@@ -259,6 +267,7 @@ void shell_run(void) {
       clear_cursor();
 
       if (c == '\n') {
+        vga_terminal_scroll_bottom();
         putchar('\n');
         if (buf_len > 0) {
           history_add(cmd_buffer);

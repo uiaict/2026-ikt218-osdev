@@ -113,9 +113,16 @@ static void print_dec(long value, FILE* stream, int* count) {
     (*count)++;
     value = -value;
   }
-  print_dec(value / 10, stream, count);
-  fputc(value % 10 + '0', stream);
-  (*count)++;
+  char buf[20];
+  int idx = 0;
+  while (value > 0) {
+    buf[idx++] = '0' + (value % 10);
+    value /= 10;
+  }
+  while (idx--) {
+    fputc(buf[idx], stream);
+    (*count)++;
+  }
 }
 
 static void print_udec(uint32_t value, FILE* stream, int* count) {

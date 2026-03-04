@@ -1,5 +1,6 @@
 #include "arch/i386/cpu/isr.h"
 
+#include <kernel/pit.h>
 #include <stdio.h>
 
 #include "arch/i386/cpu/idt.h"
@@ -8,7 +9,7 @@
 #include "kernel/util.h"
 
 
-isr_t interrupt_handlers[256];
+static isr_t interrupt_handlers[256];
 
 static const char* const exception_names[] = {"Divide Error",
                                               "Debug",
@@ -76,13 +77,10 @@ void irq_handler(registers_t* regs) {
   }
 }
 
-void timer_handler(registers_t* regs) {
-  // probably want this in the future
-}
 
 void init_irqs() {
   __asm__ volatile("sti");
-  register_interrupt_handler(IRQ0, timer_handler);
+  init_pit();
   init_keyboard();
 }
 
