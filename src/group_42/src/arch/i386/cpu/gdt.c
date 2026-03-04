@@ -1,5 +1,6 @@
 #include "arch/i386/cpu/gdt.h"
 
+#include <kernel/log.h>
 #include <stdio.h>
 
 
@@ -41,7 +42,7 @@ static gdt_ptr_t gdt_ptr;
 
 bool init_gdt() {
   // set gdt limit
-  printf("Initialising Global Descriptor Table with %d entries...\n", GDT_ENTRIES);
+  log_info("Initialising GDT with %d entries...\n", GDT_ENTRIES);
   gdt_ptr.limit = sizeof(gdt_entry_t) * GDT_ENTRIES - 1;
   gdt_ptr.base = (uint32_t)gdt;
 
@@ -66,7 +67,6 @@ bool init_gdt() {
   gdt_reload_segments();
 
 
-  printf("Successfully Initialised Global Descriptor Table.\n");
   return true; // TODO: how do we check this..
 }
 

@@ -1,4 +1,6 @@
 #include <boot/multiboot2.h>
+#include <kernel/panic.h>
+#include <kernel/util.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -7,11 +9,14 @@
 #include "arch/i386/cpu/idt.h"
 #include "drivers/input/keyboard.h"
 #include "drivers/video/vga_terminal.h"
+#include "kernel/log.h"
 #include "kernel/syscall.h"
+#include "kernel/util.h"
 #include "shell/shell.h"
 
 
 struct multiboot_info;
+extern uint32_t end; // defined in arch/i386/linker.ld
 
 void kernel_main(uint32_t magic, void* addr);
 
@@ -30,40 +35,33 @@ int k_init(uint32_t magic, struct multiboot_info* addr) {
   }
 }
 
-
 void kernel_main(uint32_t magic, void* addr) {
   vga_terminal_initialise();
+  log_init();
 
-  // TODO: Add boot timestamp
 
-  // NOTE: Verify multiboot magic number, if it fails, then addr pointer is likely corrupted, so we
-  // halt.
+  log_info("Initializing Group_42 Kernel...\n");
+
+  // log_info("TSC: 0x%llx (%llu cycles)\n", rdtsc(), rdtsc());
+
   if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) {
-    printf("Error: Invalid magic number 0x%x. Expected 0x%x\n", magic, MULTIBOOT2_BOOTLOADER_MAGIC);
-    printf("Halting system.\n");
-    return;
+    kernel_panic("Invalid magic number 0x%x. Expected 0x%x\n", magic, MULTIBOOT2_BOOTLOADER_MAGIC);
   }
-
-  printf("Initializing Group_42 Kernel...\n");
-
-
-  if (!init_gdt()) {
-    printf("Failed to initialize GDT. Halting...\n");
-    return;
-  }
-
-
-  printf("Initializing IDT...\n");
-
+  init_gdt();
   init_idt();
-  init_syscalls();
-  init_keyboard();
   keyboard_set_scancode_set2();
 
-  printf("Successfully initialized IDT.\n");
+  // init_mm(&end);
+  // init_paging();
+  // print_memory_layout();
+  // init_pit();
 
+  // test memory
+  // TODO: make this work with new MM
+  init_syscalls();
 
-  printf("Keyboard scancode set 2 enabled.\n");
+  log_info("Starting shell...\n");
+
 
   shell_init();
   shell_run();

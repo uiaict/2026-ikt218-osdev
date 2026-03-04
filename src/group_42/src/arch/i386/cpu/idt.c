@@ -1,5 +1,6 @@
 #include "arch/i386/cpu/idt.h"
 
+#include <kernel/log.h>
 #include <stdio.h>
 
 #include "arch/i386/cpu/isr.h"
@@ -13,7 +14,9 @@ void set_idt_gate(int n, uint32_t handler) {
   idt[n].high_offset = (handler >> 16) & 0xFFFF;
 }
 
+
 void init_idt() {
+  log_info("Initialising IDT...\n");
   // set idt limit
   idt_reg.base = (uintptr_t)&idt[0];
   idt_reg.limit = IDT_ENTRIES * sizeof(idt_gate_t) - 1;
@@ -22,5 +25,4 @@ void init_idt() {
   init_irqs();
 
   __asm__ volatile("lidtl (%0)" : : "r"(&idt_reg)); // load new IDT
-  printf("Initialized IDT.\n");
 }
