@@ -1,4 +1,5 @@
 #include <boot/multiboot2.h>
+#include <drivers/audio/PCSPK.h>
 #include <kernel/memory.h>
 #include <kernel/panic.h>
 #include <kernel/pit.h>
@@ -83,6 +84,9 @@ void kernel_main(uint32_t magic, void* addr) {
   // test memory
   // TODO: make this work with new MM
   init_syscalls();
+
+  // initialize speaker
+  PCSPK_init();
 
   log_info("Starting shell...\n");
 

@@ -2,12 +2,21 @@
 
 #include <arch/i386/cpu/ports.h>
 #include <kernel/input.h>
+#include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "drivers/input/keyboard.h"
 #include "drivers/video/vga_terminal.h"
 #include "kernel/util.h"
 #include "shell/shell_command.h"
+#include "shell/commands/clear.h"
+#include "shell/commands/echo.h"
+#include "shell/commands/help.h"
+#include "shell/commands/keyboard_logger.h"
+#include "shell/commands/music_player.h"
+#include "shell/commands/print_memory.h"
+#include "shell/commands/timer_test.h"
 
 #define SHELL_BUFFER_SIZE 256
 #define HISTORY_SIZE 10
@@ -27,6 +36,17 @@ static size_t cursor_x = 0;
 static size_t cursor_y = 0;
 
 static uint8_t terminal_color = 0;
+
+const shell_command_t command_table[] = {
+    {           "help",      "Show this help message",            cmd_help},
+    {          "clear",          "Clear the terminal",           cmd_clear},
+    {           "echo",             "Print arguments",            cmd_echo},
+    {"keyboard_logger",     "Run the keyboard logger", cmd_keyboard_logger},
+    {   "print_memory", "Print current memory layout",    cmd_print_memory},
+    {     "timer_test",         "Run timer test IRQ0",      cmd_timer_test},
+    {   "music_player",   "Play a song (music_player <song>)",   cmd_music_player}
+};
+const size_t NUM_COMMANDS = sizeof(command_table) / sizeof(command_table[0]);
 
 static void buffer_clear(void) {
   for (size_t i = 0; i < SHELL_BUFFER_SIZE; i++) {

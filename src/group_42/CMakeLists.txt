@@ -80,6 +80,13 @@ add_executable(group_42-kernel
 
         src/shell/shell.c
         src/shell/shell_command.c
+        src/shell/commands/help.c
+        src/shell/commands/clear.c
+        src/shell/commands/echo.c
+        src/shell/commands/keyboard_logger.c
+        src/shell/commands/timer_test.c
+        src/shell/commands/print_memory.c
+        src/shell/commands/music_player.c
 
 
         src/drivers/input/keyboard.c
@@ -96,6 +103,7 @@ add_executable(group_42-kernel
         src/libc/stdlib.c
         src/kernel/memory.c
         src/kernel/pit.c
+        src/drivers/audio/PCSPK.c
 
 
 )
