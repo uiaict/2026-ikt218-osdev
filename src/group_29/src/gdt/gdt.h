@@ -15,3 +15,5 @@ struct gdt_pointer {
 } __attribute__((packed));
 
 struct gdt_entry create_gdt_entry(uint32_t base, uint32_t limit, uint8_t access_byte, uint8_t flags);
+struct gdt_pointer create_gdt_pointer(struct gdt_entry* start, uint32_t entries);
+void gdt_init();
