@@ -30,7 +30,7 @@ struct gdt_pointer create_gdt_pointer(struct gdt_entry *start, uint32_t entries)
 {
     struct gdt_pointer r;
     r.address = (uint32_t)start;
-    r.limit = entries * 63;
+    r.limit = (entries * 8)-1;
     return r;
 }
 
@@ -55,7 +55,7 @@ void gdt_init() {
         "ret               ; Returns back to the C code!\n\t"
         ".att_syntax             \n\t" // Switch back to keep the compiler happy
         :
-        : "r" (pp)                // Pass the pointer in a register
+        : "r" (p)                // Pass the pointer in a register
     );
 
 
