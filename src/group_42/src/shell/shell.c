@@ -193,6 +193,9 @@ void shell_init(void) {
   vga_disable_cursor();
 }
 
+static void wait_for_input() {
+  __asm__ volatile("hlt"); // Keyboard input triggers interrupt, releasing this wait
+}
 
 void shell_run(void) {
   shell_init();
@@ -208,6 +211,7 @@ void shell_run(void) {
   fflush(stdout);
 
   while (true) {
+    wait_for_input();
     decode_keyboard();
 
     while (has_special_key()) {

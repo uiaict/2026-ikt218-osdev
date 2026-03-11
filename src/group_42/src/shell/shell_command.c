@@ -10,6 +10,7 @@
 #include "drivers/input/keyboard.h"
 
 
+// TODO: use dynmamic mem
 #define MAX_ARGS 16
 #define MAX_ARG_LEN 64
 
