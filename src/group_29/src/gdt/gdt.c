@@ -40,6 +40,8 @@ struct gdt_pointer create_gdt_pointer(struct gdt_entry *start, uint32_t entries)
 void gdt_init() {
     struct gdt_entry e[3];
     e[0] = create_gdt_entry(0,0,0,0);
+    e[1] = create_gdt_entry(0, 0xFFFFFFFF, 0x9A, 0xCF);
+    e[2] = create_gdt_entry(0, 0xFFFFFFFF, 0x92, 0xCF);
     struct gdt_pointer p = create_gdt_pointer(e,3);
     struct gdt_pointer* pp = &p;
 
