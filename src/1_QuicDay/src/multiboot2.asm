@@ -26,6 +26,23 @@ align 8
     dw 8	; size
 header_end:
 
+; Start - Lagt til fra forelesning - Example to make assembly to C
+section .data
+
+struc mystruct
+    .a resb 1
+    .b resb 1
+    .c resb 1
+    .d resb 1
+    .e resb 6 
+endstruc
+
+%define MYSTRUCT_SIZE 10
+
+mystruct_instance: 
+resb MYSTRUCT_SIZE
+; Stopp - Lagt til fra forelesning
+
 section .text
 bits 32
 
@@ -33,9 +50,22 @@ _start:
     cli
 
     mov esp, stack_top
+    mov ecx, mystruct_instance ; Lagt til fra forelesning
+    mov byte [ecx], 33 ; Lagt til fra forelesning
+    mov byte [ecx + 1], 44 ; Lagt til fra forelesning
+    mov byte [ecx + 2], 55 ; Lagt til fra forelesning
+    mov byte [ecx + 3], 66 ; Lagt til fra forelesning
+    mov byte [ecx + 4], 1 ; Lagt til fra forelesning
+    mov byte [ecx + 5], 2 ; Lagt til fra forelesning
+    mov byte [ecx + 6], 3 ; Lagt til fra forelesning
+    mov byte [ecx + 7], 4 ; Lagt til fra foreles
+    mov byte [ecx + 8], 5 ; Lagt til fra forelesning
+    mov byte [ecx + 9], 6 ; Lagt til fra foreles
 
+    
 	push ebx
 	push eax
+    push ecx ; Lagt til fra forelesning
 
     call main ; Jump main function
 
