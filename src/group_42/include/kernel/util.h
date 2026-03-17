@@ -8,15 +8,29 @@
 
 // K&R
 // TODO: implement ITO libc instead
+/**
+ * Convert a number to its ascii representation
+ * @param n integer number
+ * @param str variable to store string in
+ */
 void int_to_ascii(int n, char str[]);
 
 
+/**
+ * Read the timestamp counter
+ * @return the number of CPU cycles since its reset
+ */
 static inline uint64_t rdtsc(void) {
   uint32_t lo, hi;
   __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi) : :);
   return ((uint64_t)hi << 32) | lo;
 }
 
+/**
+ * Helper for dividing a 64 bit number by 10
+ * @param n number to divide
+ * @returns result
+ */
 static inline uint32_t div_u64_by_10(uint64_t* n) {
   uint32_t high = (*n >> 32);
   uint32_t low = (*n & 0xFFFFFFFF);

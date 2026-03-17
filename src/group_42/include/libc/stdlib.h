@@ -2,7 +2,15 @@
 #include <stdint.h>
 
 
-// not standard different header
+/**
+ * Allocates at least the number of bytes requested
+ * @param size byte count requested
+ * @return memory address of allocated memory
+ */
+void* malloc(size_t size);
 
-void *malloc( size_t size );
-void free( void *ptr );
+/**
+ * Frees already allocated memory
+ * @param ptr memory address of memory to free
+ */
+void free(void* ptr);

@@ -34,11 +34,25 @@ typedef enum {
 #define CURRENT_LOG_SUBSYS LOG_SUBSYS_KERNEL
 #endif
 
+/**
+ * Initializes the logger to only emit logs up to the set LOG_LEVEL_MAX
+ */
 void log_init(void);
+/**
+ * Set the level of logging
+ * @param level log_level_t
+ */
 void log_set_min_level(log_level_t level);
 
+/**
+ * Enable logging for a subsystem
+ * @param subsys subsystem
+ */
 #define _LOG_SUBSYS_EN(subsys) ENABLE_LOG_SUBSYS
 
+/**
+ * Log something
+ */
 #define log_printf_safe(level, subsys, fmt, ...)              \
   do {                                                        \
     if ((level) <= LOG_LEVEL_MAX && _LOG_SUBSYS_EN(subsys)) { \

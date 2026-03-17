@@ -4,5 +4,8 @@
 
 #include <libc/stdbool.h>
 
-// initializes global descriptor tables
+/**
+ * Initialises global descriptor table
+ * @return false if failed.
+ */
 bool init_gdt();

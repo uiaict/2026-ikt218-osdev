@@ -3,6 +3,7 @@
 
 
 // ISRs reserved for CPU exceptions
+
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -37,6 +38,7 @@ extern void isr30();
 extern void isr31();
 
 // IRQ definitions
+
 extern void irq0();
 extern void irq1();
 extern void irq2();
@@ -72,6 +74,9 @@ extern void irq15();
 #define IRQ15 47
 
 
+/**
+ * Struct representing the CPU registers. Useful for system calls, and interrupt service routines
+ */
 typedef struct {
   uint32_t ds;                                         /* Data segment selector */
   uint32_t edi, esi, ebp, useless, ebx, edx, ecx, eax; /* Pushed by pusha. */
@@ -79,11 +84,33 @@ typedef struct {
   uint32_t eip, cs, eflags, esp, ss; /* Pushed by the processor automatically */
 } registers_t;
 
+/**
+ * Initializes the interrupt service
+ */
 void init_isrs();
+
+/**
+ * Default interrupt service routine handler.
+ * Just prints exception names
+ * @param regs
+ */
 void isr_handler(registers_t* regs);
+
+/**
+ * Initializes and registers interrupt requests, such as the PIT, and the PS/2 Keyboard
+ */
 void init_irqs();
 
+/**
+ * Make interrupt service routines take a pointer to the registers as a parameter
+ */
 typedef void (*isr_t)(registers_t*);
+
+/**
+ * Register an interrupt handler at an specified index
+ * @param n index into the interrupt handler table
+ * @param handler
+ */
 void register_interrupt_handler(uint8_t n, isr_t handler);
 
 extern void* syscall_stub;

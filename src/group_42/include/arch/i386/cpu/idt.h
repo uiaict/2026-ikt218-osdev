@@ -7,6 +7,9 @@
 #include <libc/stdint.h>
 
 
+/**
+ * One element of the idt, called a gate
+ */
 typedef struct __attribute__((packed)) {
   uint16_t low_offset; // Lower 16 bits of ISR address
   uint16_t kernel_cs;  // GDT segment selector
@@ -15,20 +18,28 @@ typedef struct __attribute__((packed)) {
   uint16_t high_offset; // Upper 16 bits of ISR address
 } idt_gate_t;
 
+/**
+ * The interrupt descriptor table register
+ */
 typedef struct __attribute__((packed)) {
   uint16_t limit;
   uint32_t base;
 } idtr_t;
 
-typedef struct __attribute__((packed)) {
-  uint16_t num;
-  void* handler;
-  void* data;
-} int_handler_t;
 
 static idt_gate_t idt[IDT_ENTRIES];
+
 static idtr_t idt_reg;
 
 
+/**
+ * Initializes interrupt descriptor table, interrupt service routines and interrupt requests
+ */
 void init_idt();
+
+/**
+ * Sets a gate in the interrupt descriptor table
+ * @param n index of the gate
+ * @param handler handler to set
+ */
 void set_idt_gate(int n, uint32_t handler);

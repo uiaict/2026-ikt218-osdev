@@ -16,6 +16,8 @@ void kernel_panic_impl(const char* file, int line, const char* fmt, ...) {
   vga_terminal_writestring("\nSystem halted.");
   vga_disable_cursor();
 
-  while (1)
+  while (true) {
+    __asm__ volatile("cli");
     __asm__ volatile("hlt");
+  }
 }
