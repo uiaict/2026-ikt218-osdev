@@ -1,6 +1,6 @@
 extern main
-
 global _start
+global gdt_flush; global makes it visible to C code
 
 section .multiboot_header
 header_start:
@@ -38,6 +38,25 @@ _start:
 	push eax
 
     call main ; Jump main function
+
+.hang:
+    hlt
+    jmp .hang
+
+gdt_flush:
+	mov eax, [esp+4]
+	lgdt [eax]
+
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	jmp 0x08:.flush
+.flush:
+	ret
+
 
 section .bss
 stack_bottom:
