@@ -1,7 +1,7 @@
 #pragma once
 #include "libc/stdint.h"
 
-enum vga_color {
+enum vga_text_color {
   VGA_COLOR_BLACK = 0,
   VGA_COLOR_BLUE = 1,
   VGA_COLOR_GREEN = 2,
@@ -21,27 +21,27 @@ enum vga_color {
 };
 
 
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-#define VGA_MEMORY 0xB8000
+#define VGA_TEXT_WIDTH 80
+#define VGA_TEXT_HEIGHT 25
+#define VGA_TEXT_MEMORY 0xB8000
 
 // VGA: Video Graphics Array
 
 /**
  * Initialize the vga_terminal
  */
-void vga_terminal_initialise(void);
+void vga_text_initialise(void);
 
 /**
  * Clear the VGA
  */
-void vga_clear_screen(void);
+void vga_text_clear_screen(void);
 
 /**
  * Set the color of future printed characters
  * @param color color to set
  */
-void vga_terminal_setcolor(uint8_t color);
+void vga_text_setcolor(uint8_t color);
 
 // NOTE: We can make nice TUI with this prolly
 
@@ -51,64 +51,64 @@ void vga_terminal_setcolor(uint8_t color);
  * @param x x-coordinate
  * @param y y-coordinate
  */
-void vga_terminal_putentryat(char c, uint8_t color, size_t x, size_t y);
+void vga_text_putentryat(char c, uint8_t color, size_t x, size_t y);
 
 /** Put a char to the terminal
  * @param c char to put
  */
-void vga_terminal_putchar(char c);
+void vga_text_putchar(char c);
 
 /** Writes text to the VGA
  * @param data
  * @param size
  */
-void vga_terminal_write(const char* data, size_t size);
+void vga_text_write(const char* data, size_t size);
 
 /** Writes text to terminal
  * @param data
  */
-void vga_terminal_writestring(const char* data);
+void vga_text_writestring(const char* data);
 
 /**
  * Scrolls the VGA terminal down one line
  */
-void vga_terminal_scroll(void);
+void vga_text_scroll(void);
 
 /**
  * Reads a character and its color from a coordinate
  */
-uint16_t vga_terminal_get_entry_at(size_t x, size_t y);
+uint16_t vga_text_get_entry_at(size_t x, size_t y);
 
 /**
  * Read the current terminal color
  */
-uint8_t vga_terminal_get_color(void);
+uint8_t vga_text_get_color(void);
 
 /**
  * Get current cursor position
  */
-void vga_get_cursor_position(size_t* x, size_t* y);
+void vga_text_get_cursor_position(size_t* x, size_t* y);
 
 /**
  * Disable the hardware cursor
  */
-void vga_disable_cursor();
+void vga_text_disable_cursor();
 
 /**
  * Scroll the vga terminal up
  * @param lines number of lines to scroll up
  */
-void vga_terminal_scroll_up(int lines);
+void vga_text_scroll_up(int lines);
 
 /**
  * Scroll the vga terminal down
  * @param lines number of lines to scroll down
  */
-void vga_terminal_scroll_down(int lines);
+void vga_text_scroll_down(int lines);
 
 /**
  * Scroll the vga terminal all the way to the bottom
  */
-void vga_terminal_scroll_bottom();
+void vga_text_scroll_bottom();
 
-#define vga_entry_color(fg, bg) (fg | bg << 3)
+#define vga_text_entry_color(fg, bg) (fg | bg << 3)

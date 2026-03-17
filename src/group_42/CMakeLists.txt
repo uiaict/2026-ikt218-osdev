@@ -104,6 +104,7 @@ add_executable(group_42-kernel
         src/kernel/memory.c
         src/kernel/pit.c
         src/drivers/audio/PCSPK.c
+        include/drivers/video/vga_text.h
 
 
 )

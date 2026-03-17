@@ -1,6 +1,6 @@
 #include "kernel/log.h"
 
-#include "drivers/video/vga_terminal.h"
+#include "drivers/video/vga_text.h"
 
 static log_level_t g_min_level = LOG_LEVEL_INFO;
 
@@ -17,19 +17,19 @@ static const char* g_subsys_names[LOG_SUBSYS_COUNT] = {[LOG_SUBSYS_KERNEL] = "",
 static uint8_t level_to_color(log_level_t level) {
   switch (level) {
     case LOG_LEVEL_FATAL:
-      return vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_RED);
+      return vga_text_entry_color(VGA_COLOR_WHITE, VGA_COLOR_RED);
     case LOG_LEVEL_ERROR:
-      return vga_entry_color(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
     case LOG_LEVEL_WARN:
-      return vga_entry_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_BLACK);
     case LOG_LEVEL_INFO:
-      return vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
     case LOG_LEVEL_DEBUG:
-      return vga_entry_color(VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
     case LOG_LEVEL_TRACE:
-      return vga_entry_color(VGA_COLOR_DARK_GREY, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_DARK_GREY, VGA_COLOR_BLACK);
     default:
-      return vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+      return vga_text_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
   }
 }
 
@@ -46,15 +46,15 @@ static int log_vprintf_internal(log_level_t level, log_subsys_t subsys, const ch
   if (level > g_min_level)
     return 0;
 
-  uint8_t old_color = vga_terminal_get_color();
-  vga_terminal_setcolor(level_to_color(level));
+  uint8_t old_color = vga_text_get_color();
+  vga_text_setcolor(level_to_color(level));
 
   fprintf(stdout, "[%s] %s: ", g_level_tags[level] ? g_level_tags[level] : "UNKNOWN SUBSYSTEM  ",
           g_subsys_names[subsys] ? g_subsys_names[subsys] : "UNKNOWN SUBSYSTEM  ");
 
   int chars = vfprintf(stdout, fmt, ap);
 
-  vga_terminal_setcolor(old_color);
+  vga_text_setcolor(old_color);
   fflush(stdout);
   return chars;
 }

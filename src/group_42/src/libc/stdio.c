@@ -2,7 +2,7 @@
 
 #include <kernel/util.h>
 
-#include "drivers/video/vga_terminal.h"
+#include "drivers/video/vga_text.h"
 #include "libc/stdarg.h"
 #include "libc/stddef.h"
 #include "libc/stdint.h"
@@ -51,7 +51,7 @@ int fflush(FILE* stream) {
   if (!stream->buf || stream->wpos == stream->buf)
     return EOF;
 
-  vga_terminal_write(stream->buf, stream->wpos - stream->buf);
+  vga_text_write(stream->buf, stream->wpos - stream->buf);
 
   stream->wpos = stream->buf;
   return 0;
@@ -65,12 +65,12 @@ int fputc(int c, FILE* stream) {
   // If stream is unbuffered, just directly print it, for each char.
   if (!stream->buf || (stream->flags & _IO_UNBUFFERED)) {
     if (stream == stderr) {
-      vga_terminal_setcolor(vga_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
-      vga_terminal_putchar((char)c);
-      vga_terminal_setcolor(vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK));
+      vga_text_setcolor(vga_text_entry_color(VGA_COLOR_RED, VGA_COLOR_BLACK));
+      vga_text_putchar((char)c);
+      vga_text_setcolor(vga_text_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK));
       return c;
     }
-    vga_terminal_putchar((char)c);
+    vga_text_putchar((char)c);
     return c;
   }
   // if write pos is NULL, set it to the start

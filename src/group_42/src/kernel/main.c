@@ -12,7 +12,7 @@
 #include "arch/i386/cpu/gdt.h"
 #include "arch/i386/cpu/idt.h"
 #include "drivers/input/keyboard.h"
-#include "drivers/video/vga_terminal.h"
+#include "drivers/video/vga_text.h"
 #include "kernel/log.h"
 #include "kernel/syscall.h"
 #include "kernel/util.h"
@@ -40,7 +40,7 @@ int k_init(uint32_t magic, struct multiboot_info* addr) {
 }
 
 void kernel_main(uint32_t magic, void* addr) {
-  vga_terminal_initialise();
+  vga_text_initialise();
   log_init();
 
 

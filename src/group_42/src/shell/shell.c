@@ -7,9 +7,8 @@
 #include <string.h>
 
 #include "drivers/input/keyboard.h"
-#include "drivers/video/vga_terminal.h"
+#include "drivers/video/vga_text.h"
 #include "kernel/util.h"
-#include "shell/shell_command.h"
 #include "shell/commands/clear.h"
 #include "shell/commands/echo.h"
 #include "shell/commands/help.h"
@@ -17,6 +16,7 @@
 #include "shell/commands/music_player.h"
 #include "shell/commands/print_memory.h"
 #include "shell/commands/timer_test.h"
+#include "shell/shell_command.h"
 
 #define SHELL_BUFFER_SIZE 256
 #define HISTORY_SIZE 10
@@ -38,13 +38,13 @@ static size_t cursor_y = 0;
 static uint8_t terminal_color = 0;
 
 const shell_command_t command_table[] = {
-    {           "help",      "Show this help message",            cmd_help},
-    {          "clear",          "Clear the terminal",           cmd_clear},
-    {           "echo",             "Print arguments",            cmd_echo},
-    {"keyboard_logger",     "Run the keyboard logger", cmd_keyboard_logger},
-    {   "print_memory", "Print current memory layout",    cmd_print_memory},
-    {     "timer_test",         "Run timer test IRQ0",      cmd_timer_test},
-    {   "music_player",   "Play a song (music_player <song>)",   cmd_music_player}
+    {           "help",            "Show this help message",            cmd_help},
+    {          "clear",                "Clear the terminal",           cmd_clear},
+    {           "echo",                   "Print arguments",            cmd_echo},
+    {"keyboard_logger",           "Run the keyboard logger", cmd_keyboard_logger},
+    {   "print_memory",       "Print current memory layout",    cmd_print_memory},
+    {     "timer_test",               "Run timer test IRQ0",      cmd_timer_test},
+    {   "music_player", "Play a song (music_player <song>)",    cmd_music_player}
 };
 const size_t NUM_COMMANDS = sizeof(command_table) / sizeof(command_table[0]);
 
@@ -166,22 +166,22 @@ static void history_down(void) {
 
 static void clear_line(size_t start_y) {
   for (size_t x = 0; x < 80; x++) {
-    vga_terminal_putentryat(' ', terminal_color, x, start_y);
+    vga_text_putentryat(' ', terminal_color, x, start_y);
   }
 }
 
 static void render_line(void) {
-  vga_get_cursor_position(&cursor_x, &cursor_y);
+  vga_text_get_cursor_position(&cursor_x, &cursor_y);
   size_t line_start_y = cursor_y;
 
   clear_line(line_start_y);
 
   for (size_t i = 0; PROMPT_STR[i] != '\0'; i++) {
-    vga_terminal_putentryat(PROMPT_STR[i], terminal_color, i, line_start_y);
+    vga_text_putentryat(PROMPT_STR[i], terminal_color, i, line_start_y);
   }
 
   for (size_t i = 0; i < buf_len; i++) {
-    vga_terminal_putentryat(cmd_buffer[i], terminal_color, prompt_len + i, line_start_y);
+    vga_text_putentryat(cmd_buffer[i], terminal_color, prompt_len + i, line_start_y);
   }
 
   size_t new_cursor_x = prompt_len + buf_cursor;
@@ -191,26 +191,26 @@ static void render_line(void) {
 
 static uint8_t cursor_saved_color = 0;
 static void draw_cursor(void) {
-  uint16_t entry = vga_terminal_get_entry_at(cursor_x, cursor_y);
+  uint16_t entry = vga_text_get_entry_at(cursor_x, cursor_y);
   uint8_t orig_color = (entry >> 8) & 0xFF;
 
   cursor_saved_color = orig_color;
 
   uint8_t inverted = ((orig_color & 0xF0) >> 4) | ((orig_color & 0x0F) << 4);
 
-  vga_terminal_putentryat((char)(entry & 0xFF), inverted, cursor_x, cursor_y);
+  vga_text_putentryat((char)(entry & 0xFF), inverted, cursor_x, cursor_y);
 }
 
 static void clear_cursor(void) {
-  uint16_t entry = vga_terminal_get_entry_at(cursor_x, cursor_y);
+  uint16_t entry = vga_text_get_entry_at(cursor_x, cursor_y);
 
-  vga_terminal_putentryat((char)(entry & 0xFF), cursor_saved_color, cursor_x, cursor_y);
+  vga_text_putentryat((char)(entry & 0xFF), cursor_saved_color, cursor_x, cursor_y);
 }
 
 // public:
 void shell_init(void) {
   buffer_clear();
-  vga_disable_cursor();
+  vga_text_disable_cursor();
 }
 
 static void wait_for_input() {
@@ -222,10 +222,10 @@ void shell_run(void) {
   printf("Type help, to show commands.\n");
 
   size_t x, y;
-  vga_get_cursor_position(&x, &y);
+  vga_text_get_cursor_position(&x, &y);
   cursor_x = 0;
   cursor_y = y;
-  terminal_color = vga_terminal_get_color();
+  terminal_color = vga_text_get_color();
   render_line();
   draw_cursor();
   fflush(stdout);
@@ -254,11 +254,11 @@ void shell_run(void) {
           break;
         }
         case KEY_PAGE_UP: {
-          vga_terminal_scroll_up(VGA_HEIGHT / 2);
+          vga_text_scroll_up(VGA_TEXT_HEIGHT / 2);
           break;
         }
         case KEY_PAGE_DOWN: {
-          vga_terminal_scroll_down(VGA_HEIGHT / 2); // Scroll down half screen
+          vga_text_scroll_down(VGA_TEXT_HEIGHT / 2); // Scroll down half screen
           break;
         }
         case KEY_DOWN: {
@@ -291,7 +291,7 @@ void shell_run(void) {
       clear_cursor();
 
       if (c == '\n') {
-        vga_terminal_scroll_bottom();
+        vga_text_scroll_bottom();
         putchar('\n');
         if (buf_len > 0) {
           history_add(cmd_buffer);
