@@ -76,12 +76,24 @@ struct multiboot_info {
 };
 
 int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
+    gdt_init();
     // char a[]= "Hello World!!";
     // char* vga_text = (char *) 0xb8000;
     // copyZeroTerminatedCharArrayToEvenPositionsInCharArray((char*)&a, vga_text);
 
     struct VgaTextModeInterface screen = NewVgaTextModeInterface();
-    screen.Print(&screen, "GDT is here", VgaColor(vga_cyan, vga_black));
+    screen.Print(&screen, "GDT loaded successfully!", VgaColor(vga_cyan, vga_black));
+
+    uint16_t cs, ds, ss;
+    __asm__ __volatile__("mov %%cs, %0" : "=r"(cs));
+    __asm__ __volatile__("mov %%ds, %0" : "=r"(ds));
+    __asm__ __volatile__("mov %%ss, %0" : "=r"(ss));
+
+    if (cs == 0x08 && ds == 0x10 && ss == 0x10) {
+        screen.Print(&screen, "GDT OK", VgaColor(vga_light_green, vga_black));
+    } else {
+        screen.Print(&screen, "GDT BAD", VgaColor(vga_light_red, vga_black));
+    }
 
     // Test how the os handels overflow:
     // while(1){screen.Print(&screen, "aaaaaaaaaaaaaaaaaaaaaa", VgaColor(vga_white, vga_black));}

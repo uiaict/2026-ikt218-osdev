@@ -1,66 +1,72 @@
 #include "gdt.h"
 
+//Static GDT with three entries: null, code, and data.
+static struct gdt_entry gdt[3];
+
+//Pointer structure passed to the lgdt instruction.
+static struct gdt_pointer gdtp;
+
 struct gdt_entry create_gdt_entry(
-    uint32_t base, 
-    uint32_t limit, 
-    uint8_t access_byte, 
-    uint8_t flags) {
+    uint32_t base,
+    uint32_t limit,
+    uint8_t access_byte,
+    uint8_t flags
+) {
     struct gdt_entry r;
-    
-    // Store lowest 16 bits of base address
-    r.base_low = base & 0xFFFF;
 
-    // Store middle 8 bits of base address
-    r.base_middle = (base >> 16) & 0xFF;
-
-    // Store highest 8 bits of base address
-    r.base_high = (base >> 24) & 0xFF;
-
-
-    // Store lowest 16 bits of segment limit
-    r.limit_low = limit & 0xFFFF;
-
-
-    // Store the high 4 bits of the segment limit
-    // (limit bits 16–19)
-    r.granularity = (limit >> 16) & 0x0F;
-    r.granularity |= (flags & 0xF0);
+    //Split the 32-bit limit and base into the fields used by the x86 descriptor format.
+    r.limit_low   = (uint16_t)(limit & 0xFFFFU);
+    r.base_low    = (uint16_t)(base & 0xFFFFU);
+    r.base_middle = (uint8_t)((base >> 16) & 0xFFU);
+    r.access      = access_byte;
+    r.granularity = (uint8_t)(((limit >> 16) & 0x0FU) | (flags & 0xF0U));
+    r.base_high   = (uint8_t)((base >> 24) & 0xFFU);
 
     return r;
 }
 
-struct gdt_pointer create_gdt_pointer(struct gdt_entry *start, uint32_t entries)
-{
+struct gdt_pointer create_gdt_pointer(struct gdt_entry *start, uint32_t entries) {
     struct gdt_pointer r;
+
+    //lgdt expects the size of the table in bytes minus one.
+    r.limit = (uint16_t)(entries * sizeof(struct gdt_entry) - 1U);
+
+    //Address of the first descriptor in the table.
     r.address = (uint32_t)start;
-    r.limit = (entries * 8)-1;
+
     return r;
 }
 
-void gdt_init() {
-    struct gdt_entry e[3];
-    e[0] = create_gdt_entry(0,0,0,0);
-    e[1] = create_gdt_entry(0, 0xFFFFFFFF, 0x9A, 0xCF);
-    e[2] = create_gdt_entry(0, 0xFFFFFFFF, 0x92, 0xCF);
-    struct gdt_pointer p = create_gdt_pointer(e,3);
-    struct gdt_pointer* pp = &p;
+void gdt_init(void) {
+    //Entry 0 must be the null descriptor.
+    gdt[0] = create_gdt_entry(0x00000000U, 0x00000000U, 0x00U, 0x00U);
 
-    asm volatile (
-        ".intel_syntax noprefix\n\t"
-        "lgdt [%0]\n\t"
-        "mov ax, 0x10\n\t"
-        "mov ds, ax\n\t"
-        "mov es, ax\n\t"
-        "mov fs, ax\n\t"
-        "mov gs, ax\n\t"
-        "mov ss, ax\n\t"
-        "push 0x08\n\t"       // Push code selector
-        "push offset 1f\n\t"  // Push address of label 1
-        "retf\n\t"            // Far return to reload CS
+    //Entry 1: kernel code segment. Selector = 0x08.
+    gdt[1] = create_gdt_entry(0x00000000U, 0x000FFFFFU, 0x9AU, 0xC0U); // kernel code
+
+    //Entry 2: kernel data segment. Selector = 0x10.
+    gdt[2] = create_gdt_entry(0x00000000U, 0x000FFFFFU, 0x92U, 0xC0U); // kernel data
+
+    //Build the pointer structure used by lgdt.
+    gdtp = create_gdt_pointer(gdt, 3U);
+
+    
+    //Load the new GDT, then reload segment registers.
+    // CS cannot be written directly, so a far return is used to reload it.
+    __asm__ __volatile__(
+        "lgdt %0\n\t"
+        "movw $0x10, %%ax\n\t"
+        "movw %%ax, %%ds\n\t"
+        "movw %%ax, %%es\n\t"
+        "movw %%ax, %%fs\n\t"
+        "movw %%ax, %%gs\n\t"
+        "movw %%ax, %%ss\n\t"
+        "pushl $0x08\n\t"
+        "pushl $1f\n\t"
+        "lret\n\t"
         "1:\n\t"
-        ".att_syntax\n\t"
-        : : "r" (&p) : "ax"
+        :
+        : "m"(gdtp)
+        : "ax", "memory"
     );
-
-
 }
