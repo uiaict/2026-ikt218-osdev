@@ -15,8 +15,9 @@ build.ninja
 
 00_per_arne
 src/group_name/src/kernel.c
-build/cmake_install.cmake
-build/compile_commands.json
-build/disk.iso
-build/kernel.bin
-build/kernel.iso
+
+build/group_29/CMakeCache.txt
+build/group_29/CMakeFiles/
+build/group_29/cmake_install.cmake
+build/group_29/compile_commands.json
+build/group_29/Makefile
