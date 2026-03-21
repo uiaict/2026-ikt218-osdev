@@ -21,6 +21,20 @@ int putchar(int ic) // Writes a character to the terminal
         return ic;
     }
 
+    if (c == '\b')
+    {
+        if (terminal_column > 0)
+        {
+            terminal_column--;
+        }
+        else if (terminal_row > 0)
+        {
+            terminal_row--;
+            terminal_column = 79;
+        }
+        return ic;
+    }
+
     const size_t index = terminal_row * 80 + terminal_column; // Calculate the index in the VGA memory for the current position
     VGA_MEMORY[index] = vga_entry(c, terminal_color);         // Write the character with the current color to the VGA memory
 

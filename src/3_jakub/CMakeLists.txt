@@ -64,6 +64,12 @@ add_executable(uiaos-kernel
 	src/gdt.c
 	src/descriptor_tables.asm
 
+	src/common.c
+	src/interrupts/idt.c
+	src/interrupts/isr.c
+	src/interrupts/interrupts.asm
+	src/interrupts/keyboard.c
+
 	src/libc/string.c
 	src/libc/stdio.c
 )
