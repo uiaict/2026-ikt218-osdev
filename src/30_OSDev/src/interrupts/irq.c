@@ -9,6 +9,7 @@
 #define PIC2_COMMAND PIC2
 #define PIC2_DATA    (PIC2 + 1)
 
+extern volatile uint32_t tick;
 
 // Function to remap the PIC so IRQs don't conflict with CPU exceptions
 void pic_remap() {
@@ -32,20 +33,25 @@ void pic_remap() {
 // General IRQ handler called from assembly ISR
 void irq_handler(int irq_num)
 {
-    if (irq_num != 0)  // Ignore timer spam
+    if (irq_num != 0 && irq_num != 1)
     {
         terminal_write("IRQ triggered: ");
         terminal_write_char(irq_num);
         terminal_write("\n");
     }
 
-    // If interrupt came from Slave PIC
-    if (irq_num >= 8)
+    if (irq_num == 0)
     {
-        outb(PIC2_COMMAND, 0x20);  // Send EOI to Slave
+        tick++;   // ONLY timer
     }
 
-    // Always send EOI to Master
+    // Slave PIC EOI
+    if (irq_num >= 8)
+    {
+        outb(PIC2_COMMAND, 0x20);
+    }
+
+    // Always EOI master
     outb(PIC1_COMMAND, 0x20);
 }
 
