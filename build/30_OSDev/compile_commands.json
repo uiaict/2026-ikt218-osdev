@@ -58,5 +58,40 @@
   "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
   "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/interrupts/keyboard.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/interrupts/keyboard.c",
   "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/interrupts/keyboard.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/kernel_memory.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/kernel_memory.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/kernel_memory.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/paging.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/paging.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/paging.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-g++ -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g -Wno-unused-variable -Wno-unused-parameter -std=gnu++20 -o CMakeFiles/uiaos-kernel.dir/src/memory/kernel_new.cpp.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/kernel_new.cpp",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/kernel_new.cpp"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-g++ -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g -Wno-unused-variable -Wno-unused-parameter -std=gnu++20 -o CMakeFiles/uiaos-kernel.dir/src/memory/test.cpp.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/test.cpp",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/memory/test.cpp"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/pit/pit.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/pit/pit.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/pit/pit.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/song_player/song_player.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/song_player/song_player.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/song_player/song_player.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/30_OSDev",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/30_OSDev/include -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/song_player/song_data.c.o -c /workspaces/2026-ikt218-osdev/src/30_OSDev/src/song_player/song_data.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/30_OSDev/src/song_player/song_data.c"
 }
 ]
