@@ -70,7 +70,13 @@ add_executable(uiaos-kernel
 	src/interrupts/irq.asm
 	src/interrupts/irq.c
 	src/interrupts/keyboard.c
-	
+	src/memory/kernel_memory.c
+	src/memory/paging.c
+	src/memory/kernel_new.cpp
+	src/memory/test.cpp
+	src/pit/pit.c
+	src/song_player/song_player.c
+	src/song_player/song_data.c
 
 )
 
