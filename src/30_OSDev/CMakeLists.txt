@@ -77,6 +77,7 @@ add_executable(uiaos-kernel
 	src/pit/pit.c
 	src/song_player/song_player.c
 	src/song_player/song_data.c
+	src/game/snake.c
 
 )
 

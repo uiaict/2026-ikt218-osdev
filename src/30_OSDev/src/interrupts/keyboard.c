@@ -5,6 +5,14 @@
 // Shift state
 static int shift_pressed = 0;
 
+
+volatile int key_w = 0;
+volatile int key_a = 0;
+volatile int key_s = 0;
+volatile int key_d = 0;
+volatile int key_space = 0;
+
+
 // Keyboard buffer
 #define KEYBOARD_BUFFER_SIZE 256
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
@@ -26,39 +34,28 @@ static char scancode_shift[128] = {
     'Z','X','C','V','B','N','M','<','>','?',0,'*',0,' '
 };
 
-// ISR called by irq1 stub
 void keyboard_isr() {
-    uint8_t scancode = inb(0x60);  // Read from keyboard data port
+    uint8_t scancode = inb(0x60);
 
-    // Handle Shift press/release
-    if (scancode == 0x2A || scancode == 0x36) {
-        shift_pressed = 1; // Shift pressed
-    } else if (scancode == 0xAA || scancode == 0xB6) {
-        shift_pressed = 0; // Shift released
-    }
+    if (scancode == 0x2A || scancode == 0x36)
+        shift_pressed = 1;
+    else if (scancode == 0xAA || scancode == 0xB6)
+        shift_pressed = 0;
 
-    // Only handle key press (ignore key release)
+    // KEY PRESSED (ignore release)
     if (scancode < 128) {
-        char ascii = shift_pressed ? scancode_shift[scancode] : scancode_no_shift[scancode];
-
-        if (ascii) {
-            if (ascii == '\b') {  // Backspace
-                if (buffer_index > 0) {
-                    buffer_index--;
-                    terminal_backspace();  // Remove last char on screen
-                }
-            } else {
-                if (buffer_index < KEYBOARD_BUFFER_SIZE - 1) {
-                    keyboard_buffer[buffer_index++] = ascii;  // Store in buffer
-                }
-                terminal_write_char(ascii); // Print to screen
-            }
+        switch (scancode) {
+            case 0x11: key_w = 1; break; // W
+            case 0x1F: key_s = 1; break; // S
+            case 0x1E: key_a = 1; break; // A
+            case 0x20: key_d = 1; break; // D
+            case 0x39: key_space = 1; break; // Space
         }
     }
 
-    // Send End Of Interrupt (EOI) to PIC
-    outb(0x20, 0x20);
+    outb(0x20, 0x20); // EOI
 }
+
 
 
 int keyboard_read_buffer(char* out_buf, int max_len) {

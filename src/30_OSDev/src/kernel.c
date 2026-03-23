@@ -8,78 +8,66 @@
 #include <stdint.h>               // for uint32_t
 #include "song_player/song_player.h"
 #include "song_player/song.h"
+#include "game/snake.h"
 
-extern uint32_t end; //to find out where the free memory begins
+extern uint32_t end; // Used to determine where free memory begins
 extern volatile uint32_t tick;
-struct MyClass { int a; int b; };   //dummy class for testing new
+
+struct MyClass { int a; int b; };   // Dummy class for testing new operator
 extern void test_new(void);
+
+uint32_t last_tick = 0;
+
+// GLOBAL SPEED VARIABLE
+int speed = 200;
+
+void update()
+{
+    player_x++;
+
+    // Keep within screen bounds
+    if (player_x >= 79)
+        player_x = 1;
+}
+
+void draw()
+{
+    terminal_clear();
+    draw_border();
+    terminal_put_at('O', 0x0A, player_x, player_y);
+}
 
 void main(void)
 {
-    gdt_init();                // Set up Global Descriptor Table
-    idt_init();                // Set up Interrupt Descriptor Table
-    pic_remap();  
-    init_pit();            // Remap PIC before setting IRQs
-    asm volatile("sti");     // ENABLE INTERRUPTS
-    
-    terminal_write("Hello World! \n"); // Write to the screen
+    gdt_init();
+    idt_init();
+    pic_remap();
+    init_pit();
 
-    
-    init_kernel_memory(&end); // Initialize kernel memory manager
-    init_paging(); // Setup paging
-    print_memory_layout(); // See updated heap_end
+    asm volatile("sti"); // Enable interrupts
 
-    
-    // Test malloc
-    void* mem1 = malloc(1024);
-    void* mem2 = malloc(2048);
+    init_kernel_memory(&end);
+    init_paging();
 
-    terminal_write("mem1: 0x");
-    terminal_write_hex((uint32_t)mem1);
-    terminal_write("\n");
+    terminal_clear();
+    draw_border();
 
-    terminal_write("mem2: 0x");
-    terminal_write_hex((uint32_t)mem2);
-    terminal_write("\n");
+    game_init();  
 
-    test_new(); // Test C++ new operator
-
-    // Test song player
-    terminal_write("\nStarting music...\n");
-    play_music();
-    terminal_write("Music finished.\n");
-
-
-    // MAIN LOOP
-    int counter = 0;
+    uint32_t counter = 0;
 
     while (1)
     {
-        terminal_write("tick: ");
-        terminal_write_dec(tick);
-        terminal_write("\n");
+        if (tick != last_tick)
+        {
+            last_tick = tick;
+            counter++;
 
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Sleeping with busy-waiting (HIGH CPU)\n");
-
-        sleep_busy(1000);
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Slept using busy-waiting\n");
-        counter++;
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Sleeping with interrupts (LOW CPU)\n");
-
-        sleep_interrupt(1000);
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Slept using interrupts\n");
-        counter++;
+            if (counter % speed == 0)
+            {
+                game_update(); 
+                game_draw();    
+            }
+        }
     }
-
 }
