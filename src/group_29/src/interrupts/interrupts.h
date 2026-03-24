@@ -31,3 +31,6 @@ enum {
 void load_idt(struct idt_pointer idt_pointer);
 struct idt_gate create_idt_gate(uint32_t offset, uint16_t selector, uint8_t attributes);
 uint8_t create_idt_attributes(bool present, int8_t ring, uint8_t type);
+void outb(uint16_t port, uint8_t val);
+static void io_wait();
+void pic_remap(int offset1, int offset2);
