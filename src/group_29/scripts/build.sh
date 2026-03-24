@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-WORKSPACE="/workspaces/ikt218-osdev"
+WORKSPACE="/workspaces/2026-ikt218-osdev"
 SRC_DIR="$WORKSPACE/src/group_29"
 BUILD_DIR="$WORKSPACE/build/group_29"
 
