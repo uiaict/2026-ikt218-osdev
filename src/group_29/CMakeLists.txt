@@ -65,7 +65,7 @@ add_executable(uiaos-kernel
 )
 
 # Include directories for the kernel target
-target_include_directories(uiaos-kernel PUBLIC include)
+target_include_directories(uiaos-kernel PUBLIC include include/libc)
 
 
 # Specify compile options for C and C++

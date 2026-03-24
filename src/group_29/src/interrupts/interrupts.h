@@ -1,5 +1,6 @@
 #pragma once
 #include "stdint.h"
+#include "stdbool.h"
 
 /** A pointer to the IDT that will be passed to the LIDT instruction. */
 struct idt_pointer {
