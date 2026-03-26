@@ -22,7 +22,7 @@ static void isr_demo_handler(registers_t *regs)
 {
     terminal_writecolor("  [ISR] Caught interrupt ", VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
     printf("%d", regs->int_no);
-    terminal_writecolor(" — returned safely.\n", VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
+    terminal_writecolor(" - returned safely.\n", VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
 }
 
 /*
@@ -47,7 +47,7 @@ void main(uint32_t magic, uint32_t mbi)
     gdt_init();
     terminal_init();
 
-    terminal_writecolor("=== UiA OS — Assignment 3 ===\n\n", VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
+    terminal_writecolor("=== UiA OS - Assignment 3 ===\n\n", VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
 
     printf("GDT loaded.\n");
 
