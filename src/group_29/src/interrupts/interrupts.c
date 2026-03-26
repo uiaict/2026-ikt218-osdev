@@ -32,7 +32,7 @@ uint8_t create_idt_attributes(bool present, int8_t ring, uint8_t type) {
 
 // Helper to write to I/O ports
 static void outb(uint16_t port, uint8_t val) {
-    __asm__ volatile ( "outb %0, %1" : : "a"(val), "Nd"(port) );
+    __asm__ __volatile__ ( "out %1, %0\r\n" : : "a"(val), "dN"(port) );
 }
 
 /** Helper to add a tiny delay for older hardware compatibility 
@@ -43,11 +43,6 @@ static void io_wait() {
 }
 
 void pic_remap(int offset1, int offset2) {
-    uint8_t a1, a2;
-
-    // 1. Save masks
-    a1 = __builtin_ia32_inb(0x21);
-    a2 = __builtin_ia32_inb(0xA1);
 
     // 2. Start initialization sequence (ICW1)
     outb(0x20, 0x11); 
@@ -75,6 +70,6 @@ void pic_remap(int offset1, int offset2) {
     io_wait();
 
     // 7. Restore masks (or leave at 0 to enable all)
-    outb(0x21, a1);
-    outb(0xA1, a2);
+    outb(0x21, 0);
+    outb(0xA1, 0);
 }
