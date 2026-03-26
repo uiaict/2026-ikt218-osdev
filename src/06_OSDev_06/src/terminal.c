@@ -116,6 +116,18 @@ void terminal_write(const char* str)
     }
 }
 
+void terminal_backspace(void)
+{
+    if (terminal_col > 0) {
+        terminal_col--;
+    } else if (terminal_row > 0) {
+        terminal_row--;
+        terminal_col = VGA_WIDTH - 1;
+    }
+    terminal_buffer[terminal_row * VGA_WIDTH + terminal_col] =
+        make_vga_entry(' ', terminal_color);
+}
+
 void terminal_writecolor(const char* str, vga_color_t fg, vga_color_t bg)
 {
     uint8_t saved = terminal_color;

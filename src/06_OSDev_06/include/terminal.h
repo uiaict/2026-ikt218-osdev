@@ -40,3 +40,6 @@ void terminal_writecolor(const char* str, vga_color_t fg, vga_color_t bg);
 
 /* Set the active foreground and background colour for subsequent output. */
 void terminal_setcolor(vga_color_t fg, vga_color_t bg);
+
+/* Erase the character immediately before the current cursor position. */
+void terminal_backspace(void);
