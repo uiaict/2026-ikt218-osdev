@@ -4,10 +4,10 @@
 
 /** A pointer to the IDT that will be passed to the LIDT instruction. */
 struct idt_pointer {
-    //! Location in memory
-    uint32_t offset;
     //! Size of the IDT-1
     uint16_t size;
+    //! Location in memory
+    uint32_t offset;
 } __attribute__((packed));
 
 /** An entry in the idt table.
@@ -45,3 +45,4 @@ void pic_remap(int offset1, int offset2);
 void init_idt();
 void keyboard_interrupt_handler(struct interrupt_frame* frame);
 void keyboard_callback();
+static uint8_t inb(uint16_t port);

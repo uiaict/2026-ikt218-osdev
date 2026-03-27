@@ -37,6 +37,12 @@ static void outb(uint16_t port, uint8_t val) {
     __asm__ __volatile__ ( "outb %0, %1\r\n" : : "a"(val), "dN"(port) );
 }
 
+static uint8_t inb(uint16_t port) {
+    uint8_t ret;
+    __asm__ __volatile__ ( "inb %1, %0" : "=a"(ret) : "Nd"(port) );
+    return ret;
+}
+
 /** Helper to add a tiny delay for older hardware compatibility 
  * \todo Is this needed?
 */
@@ -94,12 +100,13 @@ void init_idt() {
 __attribute__((interrupt))
 __attribute__((target("general-regs-only")))
 void keyboard_interrupt_handler(struct interrupt_frame* frame) {
+    uint8_t scan = inb(0x60);
     keyboard_callback();
+    outb(0x20, 0x20); // Send EOI
 }
 
 // This code is too HEAVY to be inside the keyboard_interupt_handler()
 void keyboard_callback(){
     struct VgaTextModeInterface screen = NewVgaTextModeInterface();
     screen.Print(&screen, "Keyboard interrupt run", VgaColor(vga_white, vga_black));
-    outb(0x20, 0x20); // Send EOI
 }
