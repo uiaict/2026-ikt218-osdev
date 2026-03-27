@@ -100,13 +100,14 @@ void init_idt() {
 __attribute__((interrupt))
 __attribute__((target("general-regs-only")))
 void keyboard_interrupt_handler(struct interrupt_frame* frame) {
-    uint8_t scan = inb(0x60);
     keyboard_callback();
-    outb(0x20, 0x20); // Send EOI
 }
 
 // This code is too HEAVY to be inside the keyboard_interupt_handler()
 void keyboard_callback(){
+    uint8_t scan = inb(0x60);
     struct VgaTextModeInterface screen = NewVgaTextModeInterface();
-    screen.Print(&screen, "Keyboard interrupt run", VgaColor(vga_white, vga_black));
+    char s[2] = {scan, 0};
+    screen.Print(&screen, s, VgaColor(vga_white, vga_black));
+    outb(0x20, 0x20); // Send EOI
 }
