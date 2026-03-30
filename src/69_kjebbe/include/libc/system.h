@@ -6,6 +6,6 @@
 static inline void panic(const char *msg) {
   printf("KERNEL PANIC: ");
   printf(msg);
-  for (;;) {
-  }
+  asm volatile("cli");
+  asm volatile("hlt");
 }
