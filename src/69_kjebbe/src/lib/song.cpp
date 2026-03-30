@@ -33,6 +33,7 @@ void disable_speaker() {
 
 void play_sound(uint32_t frequency) {
   if (frequency == 0) {
+    // If the note is no sound we disable the speaker
     disable_speaker();
     return;
   }
@@ -47,6 +48,7 @@ void play_sound(uint32_t frequency) {
 
 void play_song_impl(Song *song) {
   for (uint32_t i = 0; i < song->length; i++) {
+    // enable the speaker for each note in case previous note was no sound.
     enable_speaker();
     Note *note = &song->notes[i];
     // printf("Note: %d, Freq=%d, Sleep=%d\n", i, note->frequency,
