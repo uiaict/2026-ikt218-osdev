@@ -1,6 +1,6 @@
-extern irq_handler // C function that handles IRQ
+extern irq_handler ; C function that handles IRQ
 
-global irq0 // Defines entrypoints to the different IRQs
+global irq0 ; Defines entrypoints to the different IRQs
 global irq1
 global irq2
 global irq3
@@ -99,7 +99,7 @@ irq15: cli
     push dword 47
     jmp irq_common_stub
 
-// See isr_common_stub in isr.asm for comments as this stub follows the exact same principles the only difference being calling irq_handler instead of isr_handler
+; See isr_common_stub in isr.asm for comments as this stub follows the exact same principles the only difference being calling irq_handler instead of isr_handler
 irq_common_stub:
     pusha
 
