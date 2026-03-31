@@ -19,6 +19,10 @@ static uint32_t align4(uint32_t addr) {
     return (addr + 3) & ~((uint32_t)3);
 }
 
+static size_t align_size(size_t size) {
+    return (size + 3u) & ~((size_t)3u);
+}
+
 void init_kernel_memory(uint32_t* kernel_end) {
     heap_start_addr = align4((uint32_t)kernel_end);
     heap_end_addr = heap_start_addr + KERNEL_HEAP_SIZE;
@@ -50,6 +54,8 @@ void* malloc(size_t size) {
     if (size == 0) {
         return NULL;
     }
+
+    size = align_size(size);
 
     block_header_t* current = free_list;
 

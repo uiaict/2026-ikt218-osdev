@@ -72,6 +72,9 @@ add_executable(uiaos-kernel
 	src/keyboard.c
 	src/kernel_memory.c
 	src/operators.cpp
+	src/paging.c
+	src/pit.c
+	src/cpp_memory_demo.cpp
 )
 
 # Include directories for the kernel target

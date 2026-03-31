@@ -4,6 +4,7 @@
 #include "io.h"
 #include "terminal.h"
 #include "keyboard.h"
+#include "pit.h"
 
 extern void irq0(void); // Timer interrupt handler
 extern void irq1(void); // Keyboard interrupt handler
@@ -90,7 +91,10 @@ void irq_init(void) {
 void irq_handler(isr_frame_t* frame) {
     uint8_t irq = (uint8_t)(frame->int_no - 0x20); // Calculate IRQ number from interrupt number
 
-    if (irq == 1) { // Keyboard IRQ
+    if (irq == 0) { // Timer IRQ
+        pit_on_irq0(); // Increment tick count
+    }
+    else if (irq == 1) { // Keyboard IRQ
         keyboard_on_irq1(); // read scancode, buffer, print ASCII
     }
 
