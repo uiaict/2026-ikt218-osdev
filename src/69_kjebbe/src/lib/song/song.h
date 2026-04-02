@@ -26,7 +26,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C"
 #endif
-SongPlayer *create_song_player();
+    SongPlayer *create_song_player();
+
+#ifdef __cplusplus
+extern "C"
+#endif
+    void piano_play_sound(uint32_t frequency, uint32_t sleep_time);
 
 static Note music_1[] = {
     {E5, 250}, {R, 125},  {E5, 125}, {R, 125},        {E5, 125}, {R, 125},

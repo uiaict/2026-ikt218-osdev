@@ -1,6 +1,8 @@
 #include "../../include/keyboard.h"
 #include "../../include/io.h"
 #include "../../include/irq.h"
+#include "../../include/program.h"
+#include "../../include/piano.h"
 #include "../../include/libc/stdint.h"
 #include "../../include/libc/stdio.h"
 
@@ -18,6 +20,13 @@ static const char scancode_ascii[128] = {
     0,   0,    0,    0,   0,    0,   0,   0,   0,   0,   0,
 };
 
+static void shell_keyboard_handler(uint8_t scancode) {
+  char c = scancode_ascii[scancode];
+  if (c) {
+    printf("%c", c);
+  }
+}
+
 // handler for IRQ1 (keyboard)
 static void keyboard_handler(registers_t *regs) {
   (void)regs;
@@ -30,9 +39,10 @@ static void keyboard_handler(registers_t *regs) {
   if (scancode & 0x80)
     return;
 
-  char c = scancode_ascii[scancode];
-  if (c) {
-    printf("%c", c);
+  switch (active_program) {
+    case PROGRAM_PIANO: piano_keyboard_handler(scancode); break;
+    case PROGRAM_SHELL:
+    default:            shell_keyboard_handler(scancode); break;
   }
 }
 

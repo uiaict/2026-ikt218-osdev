@@ -59,13 +59,13 @@ int main(uint32_t magic, struct multiboot_info *mb_info_addr) {
   //   printf("[%d]: Slept using interrupts.\n", counter++);
   // }
 
-  SongPlayer *songPlayer = create_song_player();
-
-  printf("attempting to play song");
-  Song song_1 = {.notes = music_4,
-                 .length = sizeof(music_1) / sizeof(music_1[0])};
-  songPlayer->play_song(&song_1);
-  printf("Finished playing song");
+  // SongPlayer *songPlayer = create_song_player();
+  //
+  // printf("attempting to play song");
+  // Song song_1 = {.notes = music_4,
+  //                .length = sizeof(music_1) / sizeof(music_1[0])};
+  // songPlayer->play_song(&song_1);
+  // printf("Finished playing song");
 
   // Call cpp kernel_main (defined in kernel.cpp)
   return kernel_main();

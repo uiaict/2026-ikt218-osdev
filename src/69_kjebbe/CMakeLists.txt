@@ -68,6 +68,8 @@ add_executable(uiaos-kernel
     src/lib/irq.asm
     src/lib/irq.c
     src/lib/keyboard.c
+    src/lib/program.c
+    src/lib/piano.c
     src/libc/stdio.c
     src/lib/memory/malloc.c
     src/lib/memory/memory.c

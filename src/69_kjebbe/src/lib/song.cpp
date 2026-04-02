@@ -66,3 +66,10 @@ extern "C" SongPlayer *create_song_player() {
   player->play_song = play_song_impl;
   return player;
 }
+
+extern "C" void piano_play_sound(uint32_t freq, uint32_t sleep_time) {
+  enable_speaker();
+  play_sound(freq);
+  sleep_interrupt(sleep_time);
+  disable_speaker();
+}
