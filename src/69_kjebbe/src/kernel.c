@@ -43,6 +43,10 @@ int main(uint32_t magic, struct multiboot_info *mb_info_addr) {
   // Enable interrupts the CPU starts with interrupts disabled (cli in
   // _start). Only safe to do after GDT, IDT, ISRs, IRQs and PIT are all set up.
   asm volatile("sti");
+  // use the same trick as channel 2 to make matrix update happen less
+  // frequently
+  int reload = 250;
+  int counter = reload;
 
   while (true) {
     int entry = kb_dequeue(&kb);
@@ -50,6 +54,12 @@ int main(uint32_t magic, struct multiboot_info *mb_info_addr) {
       keyboard_handler(entry);
     }
     sleep_interrupt(1);
+    if (active_program == PROGRAM_PIANO) {
+      if (--counter == 0) {
+        counter = reload;
+        matrix_rain_frame();
+      }
+    }
   }
 
   return kernel_main();
