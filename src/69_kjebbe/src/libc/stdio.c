@@ -153,3 +153,9 @@ int printf(const char *format, ...) {
   va_end(args);
   return 0;
 }
+
+void clearTerminal() {
+  for (int i = 0; i < VGA_HEIGHT; i++) {
+    terminal_write("\n");
+  }
+}

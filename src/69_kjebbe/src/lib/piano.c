@@ -1,35 +1,43 @@
 #include "../../include/piano.h"
 #include "../../include/kernel/pit.h"
+#include "../../include/keyboard.h"
 #include "../../include/libc/stdio.h"
 #include "song/frequencies.h"
 #include "song/song.h"
 
 static const uint32_t scancode_note_offsets[128] = {
-    [0x1E] = 1,  // a
-    [0x11] = 2,  // w
-    [0x1F] = 3,  // s
-    [0x12] = 4,  // e
-    [0x20] = 5,  // d
-    [0x21] = 6,  // f
-    [0x22] = 7,  // g
-    [0x15] = 8,  // y
-    [0x23] = 9,  // h
-    [0x24] = 10, // j
-    [0x17] = 11, // i
-    [0x25] = 12, // k
-    [0x18] = 13, // o
-    [0x26] = 14, // l
+    [0x1E] = 1,  // a (c)
+    [0x11] = 2,  // w (Db)
+    [0x1F] = 3,  // s (d)
+    [0x12] = 4,  // e (Eb)
+    [0x20] = 5,  // d (e)
+    [0x21] = 6,  // f (f)
+    [0x14] = 7,  // t (f#)
+    [0x22] = 8,  // g (g)
+    [0x15] = 9,  // y (Ab)
+    [0x23] = 10, // h (A)
+    [0x16] = 11, // u (Bb)
+    [0x24] = 12, // j (H)
+    [0x25] = 13, // k (C)
+    [0x18] = 14, // o (Db)
+    [0x26] = 15, // l (d)
 };
 
 void piano_keyboard_handler(uint8_t scancode) {
+  keyboard_handler_common(scancode);
+
+  // if key release bit is set we disable speaker and return
+  if (scancode & 0x80) {
+    disable_speaker();
+    return;
+  }
   int init_offset = scancode_note_offsets[scancode];
   if (init_offset) {
     int note_offset = init_offset - 1;
-
     int octave = 5;
     int freq_to_play = (octave * 12) + note_offset;
     int freq = freqs[freq_to_play];
-    printf("trying to play freq, %d ", freq);
-    piano_play_sound(freq, 1000);
+    printf("trying to play freq, %d\n", freq);
+    piano_play_sound(freq);
   }
 }

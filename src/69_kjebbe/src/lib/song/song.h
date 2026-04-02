@@ -31,7 +31,12 @@ extern "C"
 #ifdef __cplusplus
 extern "C"
 #endif
-    void piano_play_sound(uint32_t frequency, uint32_t sleep_time);
+    void piano_play_sound(uint32_t frequency);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+    void disable_speaker();
 
 static Note music_1[] = {
     {E5, 250}, {R, 125},  {E5, 125}, {R, 125},        {E5, 125}, {R, 125},

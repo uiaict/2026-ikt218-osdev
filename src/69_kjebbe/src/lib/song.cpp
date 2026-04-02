@@ -1,5 +1,6 @@
 #include "song/song.h"
 #include "../../include/libc/stdint.h"
+#include "../../include/program.h"
 
 extern "C" {
 #include "../../include/io.h"
@@ -25,7 +26,7 @@ void enable_speaker() {
   }
 }
 
-void disable_speaker() {
+extern "C" void disable_speaker() {
   // Turn off the PC speaker
   uint8_t speaker_state = inb(PC_SPEAKER_PORT);
   outb(PC_SPEAKER_PORT, speaker_state & 0xFC);
@@ -48,6 +49,9 @@ void play_sound(uint32_t frequency) {
 
 void play_song_impl(Song *song) {
   for (uint32_t i = 0; i < song->length; i++) {
+    if (active_program != PROGRAM_RADIO) {
+      return;
+    }
     // enable the speaker for each note in case previous note was no sound.
     enable_speaker();
     Note *note = &song->notes[i];
@@ -67,9 +71,7 @@ extern "C" SongPlayer *create_song_player() {
   return player;
 }
 
-extern "C" void piano_play_sound(uint32_t freq, uint32_t sleep_time) {
+extern "C" void piano_play_sound(uint32_t freq) {
   enable_speaker();
   play_sound(freq);
-  sleep_interrupt(sleep_time);
-  disable_speaker();
 }

@@ -5,3 +5,4 @@
 #include "stdint.h"
 
 int printf(const char *__restrict__ format, ...);
+void clearTerminal();

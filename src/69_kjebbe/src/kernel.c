@@ -9,7 +9,10 @@
 #include "../include/libc/stddef.h"
 #include "../include/libc/stdint.h"
 #include "../include/libc/stdio.h"
+#include "../include/menu.h"
 #include "../include/multiboot2.h"
+#include "../include/piano.h"
+#include "../include/program.h"
 #include "lib/song/song.h"
 
 extern uint32_t
@@ -36,37 +39,18 @@ int main(uint32_t magic, struct multiboot_info *mb_info_addr) {
   // Initialise the PIT at 1000 Hz (1 tick per ms).
   init_pit();
 
-  // Enable interrupts — the CPU starts with interrupts disabled (cli in
+  // Enable interrupts the CPU starts with interrupts disabled (cli in
   // _start). Only safe to do after GDT, IDT, ISRs, IRQs and PIT are all set up.
   asm volatile("sti");
 
-  printf("hello world\n");
+  print_menu();
+  while (true) {
+    int entry = kb_dequeue(&kb);
+    if (entry != -1) {
+      keyboard_handler(entry);
+    }
+    sleep_interrupt(1);
+  }
 
-  // Quick malloc smoke-test
-  void *some_memory = malloc(12345);
-  void *memory2 = malloc(54321);
-  void *memory3 = malloc(13331);
-
-  // PIT sleep test
-  // int counter = 0;
-  // while (1) {
-  //   printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
-  //   sleep_busy(1000);
-  //   printf("[%d]: Slept using busy-waiting.\n", counter++);
-  //
-  //   printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
-  //   sleep_interrupt(1000);
-  //   printf("[%d]: Slept using interrupts.\n", counter++);
-  // }
-
-  // SongPlayer *songPlayer = create_song_player();
-  //
-  // printf("attempting to play song");
-  // Song song_1 = {.notes = music_4,
-  //                .length = sizeof(music_1) / sizeof(music_1[0])};
-  // songPlayer->play_song(&song_1);
-  // printf("Finished playing song");
-
-  // Call cpp kernel_main (defined in kernel.cpp)
   return kernel_main();
 }
