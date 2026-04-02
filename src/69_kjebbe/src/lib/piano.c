@@ -2,6 +2,7 @@
 #include "../../include/kernel/pit.h"
 #include "../../include/keyboard.h"
 #include "../../include/libc/stdio.h"
+#include "../../include/matrix.h"
 #include "song/frequencies.h"
 #include "song/song.h"
 
@@ -37,7 +38,9 @@ void piano_keyboard_handler(uint8_t scancode) {
     int octave = 5;
     int freq_to_play = (octave * 12) + note_offset;
     int freq = freqs[freq_to_play];
-    printf("trying to play freq, %d\n", freq);
+    // printf("trying to play freq, %d\n", freq);
+    update_matrix_current(note_offset);
+
     piano_play_sound(freq);
   }
 }

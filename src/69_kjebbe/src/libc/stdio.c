@@ -165,6 +165,13 @@ int printf(const char *format, ...) {
   return 0;
 }
 
+// set specific index to some specific character and colour
+void terminal_set_char(int x, int y, char c, uint8_t terminal_color) {
+  if (x < 0 || x >= VGA_WIDTH || y < 0 || y >= VGA_HEIGHT)
+    return;
+  terminal_buffer[y * VGA_WIDTH + x] = (terminal_color << 8) | c;
+}
+
 void clearTerminal() {
   for (int i = 0; i < VGA_HEIGHT; i++) {
     terminal_write("\n");
