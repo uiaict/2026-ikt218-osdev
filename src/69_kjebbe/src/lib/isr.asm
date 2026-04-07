@@ -1,9 +1,13 @@
 extern isr_handler  ; the C function we call from the common stub
 
+global dummy_isr
 global isr0
 global isr1
 global isr2
 
+; ISR that immediatly returns; used to initialise all IDT entries.
+dummy_isr: 
+	iretd
 ; ISR 0, Division By Zero, the CPU does not automatically push an error code.
 isr0:
     cli
