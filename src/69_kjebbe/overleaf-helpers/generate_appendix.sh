@@ -19,6 +19,20 @@ if [ ! -f "$FILE_LIST" ]; then
     exit 1
 fi
 
+# Set ROOT to git root + /src/69_kjebbe
+GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -z "$GIT_ROOT" ]; then
+    echo "Error: Not in a git repository" >&2
+    exit 1
+fi
+ROOT="$GIT_ROOT/src/69_kjebbe"
+
+# Verify ROOT exists
+if [ ! -d "$ROOT" ]; then
+    echo "Error: Project directory '$ROOT' not found" >&2
+    exit 1
+fi
+
 # Function to detect language from filename
 detect_language() {
     local filename="$1"
@@ -119,9 +133,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Regular line - treat as file path
         filepath=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
         
+        # Construct full path from ROOT
+        fullpath="$ROOT/$filepath"
+        
         # Check if file exists
-        if [ ! -f "$filepath" ]; then
-            echo "% WARNING: File not found: $filepath" >&2
+        if [ ! -f "$fullpath" ]; then
+            echo "% WARNING: File not found: $fullpath" >&2
             echo "% Skipping: $filepath"
             continue
         fi
@@ -153,7 +170,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 EOF
         
         # Read and output file content (escape backslashes for LaTeX)
-        sed 's/\\/\\\\/g' "$filepath"
+        sed 's/\\/\\\\/g' "$fullpath"
         
         cat << EOF
     \end{minted}
