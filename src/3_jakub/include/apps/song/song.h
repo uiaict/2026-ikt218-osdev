@@ -76,9 +76,6 @@ static Note battlefield_1942_theme[] = {
     {E5, 200}, {G5, 200}, {E5, 300}, {D5, 200}, 
     {B4, 300}, {G4, 500}, 
 
-    // Repeat or modify as needed
-    // ...
-
     // End note
     {R, 500}
 };
