@@ -1,9 +1,7 @@
-// Standart kütüphane yasak olduğu için temel tipler
 typedef unsigned int   uint32_t;
 typedef unsigned short uint16_t;
 typedef unsigned char  uint8_t;
 
-/* --- 1. GDT MEKANİZMASI --- */
 struct gdt_entry {
     uint16_t limit_low;
     uint16_t base_low;
@@ -44,29 +42,17 @@ void gdt_install() {
     gdt_flush((uint32_t)&gp);
 }
 
-/* --- 2. YAZDIRMA FONKSİYONLARI --- */
 
-// Ekrana (VGA) yazdır
 void terminal_write(const char* str) {
     volatile uint16_t* video = (volatile uint16_t*)0xB8000;
     while(*str) *video++ = (uint16_t)*str++ | 0x0F00;
 }
 
-// VS Code Terminaline (Seri Port) yazdır
-void serial_write(const char* str) {
-    while(*str) {
-        __asm__ volatile ( "outb %0, %1" : : "a"((uint8_t)*str++), "Nd"((uint16_t)0x3F8) );
-    }
-}
-
-/* --- 3. ANA FONKSİYON (ENTRY POINT) --- */
 void main(void) {
     gdt_install();
     
     terminal_write("Hello World");
-    serial_write("Hello World\n");
 
-    // Sistemi güvene al ve dondur
     __asm__ volatile ("cli");
     while (1) {
         __asm__ volatile ("hlt");
