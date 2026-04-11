@@ -1,3 +1,5 @@
+#pragma once
+
 #include "libc/stdint.h"
 #include "libc/stddef.h"
 
@@ -10,5 +12,5 @@ static int int_to_str(int32_t value, char* buf);
 /// @param value The value you want to include in the string. Use '%d' to specify where it should be.
 ///
 /// @returns Pointer to a malloc'd char array with the formatted string.
-/// @warning Remember to free() the char array pointer after use!
+/// @warning Remember to free() the char array pointer after use.
 char* format_string(char input_string[], int32_t value);
