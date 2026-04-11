@@ -94,21 +94,4 @@ void vga_text_get_cursor_position(size_t* x, size_t* y);
  */
 void vga_text_disable_cursor();
 
-/**
- * Scroll the vga terminal up
- * @param lines number of lines to scroll up
- */
-void vga_text_scroll_up(int lines);
-
-/**
- * Scroll the vga terminal down
- * @param lines number of lines to scroll down
- */
-void vga_text_scroll_down(int lines);
-
-/**
- * Scroll the vga terminal all the way to the bottom
- */
-void vga_text_scroll_bottom();
-
 #define vga_text_entry_color(fg, bg) (fg | bg << 3)

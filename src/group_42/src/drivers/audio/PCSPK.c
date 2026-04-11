@@ -17,8 +17,7 @@
 #define MIN_PLAY_FREQ_HZ 1UL
 
 void PCSPK_init() {
-  uint8_t current_state = port_byte_in(PIT_SPEAKER_GATE_PORT);
-  port_byte_out(PIT_SPEAKER_GATE_PORT, current_state & SPEAKER_DISABLE_MASK);
+  PCSPK_STOP();
 }
 
 // From https://wiki.osdev.org/PC_Speaker
