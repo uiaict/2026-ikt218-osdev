@@ -1,11 +1,6 @@
 #include "heap.h"
 
-#include "../vga_text_mode_interface/vga_text_mode_interface.h"
 
-#define HEAP_ALIGNMENT 8U
-#define HEAP_SIZE_BYTES 0x100000U
-#define VGA_WIDTH 80U
-#define VGA_MEMORY ((uint16_t*)0xB8000)
 
 static struct heap_block* heap_head = NULL;
 static uint32_t kernel_end_address = 0U;
@@ -82,7 +77,7 @@ static void append_hex32(char* buffer, size_t* offset, uint32_t value) {
     }
 }
 
-void init_kernel_memory(void* kernel_end) {
+void init_kernel_memory(uint32_t* kernel_end) {
     /* Keep the first block aligned so returned allocations stay aligned too. */
     kernel_end_address = (uint32_t)kernel_end;
     heap_start_address = (uint32_t)align_up((size_t)kernel_end);
@@ -92,6 +87,31 @@ void init_kernel_memory(void* kernel_end) {
     heap_head->size = HEAP_SIZE_BYTES - sizeof(struct heap_block);
     heap_head->is_free = true;
     heap_head->next = NULL;
+}
+
+char* pmalloc(size_t size) {
+    uint32_t raw_address;
+    uint32_t aligned_address;
+    void* raw_block;
+
+    if (size == 0U) {
+        return NULL;
+    }
+
+    raw_block = malloc(size + PAGE_SIZE_BYTES + sizeof(uint32_t));
+    if (raw_block == NULL) {
+        return NULL;
+    }
+
+    raw_address = (uint32_t)raw_block + sizeof(uint32_t);
+    aligned_address = (uint32_t)align_up((size_t)raw_address);
+
+    if ((aligned_address & (PAGE_SIZE_BYTES - 1U)) != 0U) {
+        aligned_address = (aligned_address + PAGE_SIZE_BYTES - 1U) & ~(PAGE_SIZE_BYTES - 1U);
+    }
+
+    ((uint32_t*)aligned_address)[-1] = (uint32_t)raw_block;
+    return (char*)aligned_address;
 }
 
 void* malloc(size_t size) {
@@ -146,4 +166,26 @@ void print_memory_layout(void) {
     write_text_at(3U, 0U, "                                                                                ", VgaColor(vga_black, vga_black));
     write_text_at(2U, 0U, "Memory layout", VgaColor(vga_black, vga_light_green));
     write_text_at(3U, 0U, buffer, VgaColor(vga_black, vga_white));
+}
+
+MemoryDebugData get_memory_layout(void) {
+    MemoryDebugData data;
+    size_t offset = 0U;
+
+    data.kernel_end = kernel_end_address;
+    data.heap_start = heap_start_address;
+    data.heap_end = heap_end_address;
+
+    append_string(data.formatted, &offset, "KEND: ");
+    append_hex32(data.formatted, &offset, data.kernel_end);
+    append_string(data.formatted, &offset, "\nHST:  ");
+    append_hex32(data.formatted, &offset, data.heap_start);
+    append_string(data.formatted, &offset, "\nHEND: ");
+    append_hex32(data.formatted, &offset, data.heap_end);
+    
+    data.formatted[offset] = '\n';
+    data.formatted[offset+1] = '\n';
+    data.formatted[offset+2] = '\0';
+
+    return data;
 }

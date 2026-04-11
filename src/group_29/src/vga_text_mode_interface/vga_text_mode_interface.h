@@ -1,5 +1,9 @@
 #pragma once
+
 #include "stdint.h"
+
+#define VGA_TERMINAL_WIDTH 80
+#define VGA_TERMINAL_HEIGHT 25
 
 /**
  * \enum Gives acces to standard VGA text mode colors.

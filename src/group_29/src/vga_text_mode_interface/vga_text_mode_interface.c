@@ -1,9 +1,18 @@
 #include "./vga_text_mode_interface.h"
 
-void VgaTextModeInterfacePrint(struct VgaTextModeInterface* a, char* input, uint8_t attribute){
-    while ( *input != 0 && (a->cursor.memory_position < a->cursor.memory_end)){
-        *(a->cursor.memory_position) = (uint16_t)(attribute<<8|*(input));   
-        a->cursor.memory_position++;
+void VgaTextModeInterfacePrint(struct VgaTextModeInterface* a, char* input, uint8_t attribute) {
+    while (*input != 0 && (a->cursor.memory_position < a->cursor.memory_end)) {
+        if (*input == '\n') {
+            // uint16_t* pos = a->cursor.memory_position;
+            int offset = a->cursor.memory_position - a->cursor.memory_start;
+            int col = offset % VGA_TERMINAL_WIDTH;
+
+            a->cursor.memory_position += (VGA_TERMINAL_WIDTH - col);
+        } else {
+            *(a->cursor.memory_position) = (uint16_t)(attribute<<8|*(input));   
+            a->cursor.memory_position++;
+        }
+
         input++;
     }
     a->cursor.CalculateRowColFromMemoryPosition(&(a->cursor));
@@ -11,8 +20,8 @@ void VgaTextModeInterfacePrint(struct VgaTextModeInterface* a, char* input, uint
 
 void VgaTextModeCursorCalculateRowColFromMemoryPosition(struct VgaTextModeCursor* c){
     uint32_t z = (uint32_t)c->memory_position - (uint32_t)c->memory_start;
-    c->row = z / 80;
-    c->col = z % 80;
+    c->row = z / VGA_TERMINAL_WIDTH;
+    c->col = z % VGA_TERMINAL_WIDTH;
 }
 
 struct VgaTextModeInterface NewVgaTextModeInterface(){
@@ -22,7 +31,7 @@ struct VgaTextModeInterface NewVgaTextModeInterface(){
     i.cursor.col = 0;
     i.cursor.memory_position = (uint16_t*)0xb8000;
     i.cursor.memory_start = (uint16_t*)0xb8000;
-    i.cursor.memory_end = (uint16_t*)((25 * 80 * 2) + 0xb8000);
+    i.cursor.memory_end = (uint16_t*)((VGA_TERMINAL_WIDTH * VGA_TERMINAL_HEIGHT * 2) + 0xb8000);
     i.cursor.CalculateRowColFromMemoryPosition = VgaTextModeCursorCalculateRowColFromMemoryPosition;
     return i;
 }
