@@ -93,9 +93,9 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
         print("free() reuse failed\n\n", VgaColor(vga_black, vga_light_red));
     }
 
-    char input[] = "Testing formatting: string: -192 | formatted number: %d\n";
+    // char input[] = "Testing formatting: string: -192 | formatted number: %d\n";
 
-    char* output = format_string("We have %d problems.\n", 1600);
+    char* output = format_string("Testing formatting: The terminal has %d rows\n", VGA_TERMINAL_HEIGHT);
     // screen.Print(&screen, output, VgaColor(vga_black, vga_white));
     print(output, VgaColor(vga_black, vga_white));
     free((void *)output);
