@@ -33,8 +33,9 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     // char* vga_text = (char *) 0xb8000;
     // copyZeroTerminatedCharArrayToEvenPositionsInCharArray((char*)&a, vga_text);
 
-    struct VgaTextModeInterface screen = NewVgaTextModeInterface();
-    screen.Print(&screen, "GDT loaded successfully!\n\n", VgaColor(vga_cyan, vga_black));
+    // struct VgaTextModeInterface screen = NewVgaTextModeInterface();
+    // screen.Print(&screen, "GDT loaded successfully!\n\n", VgaColor(vga_cyan, vga_black));
+    print("GDT loaded successfully!\n\n", VgaColor(vga_cyan, vga_black));
 
     // GDT Test:
     uint16_t cs, ds, ss;
@@ -43,13 +44,16 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     __asm__ __volatile__("mov %%ss, %0" : "=r"(ss));
 
     if (cs == 0x08 && ds == 0x10 && ss == 0x10) {
-        screen.Print(&screen, "GDT OK\n\n", VgaColor(vga_light_green, vga_black));
+        // screen.Print(&screen, "GDT OK\n\n", VgaColor(vga_light_green, vga_black));
+        print("GDT OK\n\n", VgaColor(vga_light_green, vga_black));
     } else {
-        screen.Print(&screen, "GDT BAD\n\n", VgaColor(vga_light_red, vga_black));
+        // screen.Print(&screen, "GDT BAD\n\n", VgaColor(vga_light_red, vga_black));
+        print("GDT BAD\n\n", VgaColor(vga_light_green, vga_black));
     }
 
     init_idt();
-    screen.Print(&screen, "IDT is initilalized\n\n", VgaColor(vga_black, vga_white));
+    // screen.Print(&screen, "IDT is initilalized\n\n", VgaColor(vga_black, vga_white));
+    print("IDT is initilalized\n\n", VgaColor(vga_black, vga_white));
 
     init_kernel_memory(&end);
     init_paging();
@@ -58,62 +62,72 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
 
     // Memory test:
     MemoryDebugData debug_data = get_memory_layout();
-    screen.Print(&screen, debug_data.formatted, VgaColor(vga_black, vga_light_magenta));
+    // screen.Print(&screen, debug_data.formatted, VgaColor(vga_black, vga_light_magenta));
+    print(debug_data.formatted, VgaColor(vga_black, vga_light_magenta));
 
     void* first_block = malloc(128U);
     void* second_block = malloc(256U);
 
     if (first_block != NULL && second_block != NULL) {
-        screen.Print(&screen, "Heap allocations OK\n\n", VgaColor(vga_black, vga_light_green));
+        // screen.Print(&screen, "Heap allocations OK\n\n", VgaColor(vga_black, vga_light_green));
+        print("Heap allocations OK\n\n", VgaColor(vga_black, vga_light_green));
     } else {
-        screen.Print(&screen, "Heap allocations failed\n\n", VgaColor(vga_black, vga_light_red));
+        // screen.Print(&screen, "Heap allocations failed\n\n", VgaColor(vga_black, vga_light_red));
+        print("Heap allocations failed\n\n", VgaColor(vga_black, vga_light_red));
     }
 
     free(first_block);
 
     void* reused_block = malloc(64U);
     if (reused_block != NULL) {
-        screen.Print(&screen, "free() reuse OK\n\n", VgaColor(vga_black, vga_light_green));
+        // screen.Print(&screen, "free() reuse OK\n\n", VgaColor(vga_black, vga_light_green));
+        print("free() reuse OK\n\n", VgaColor(vga_black, vga_light_green));
     } else {
-        screen.Print(&screen, "free() reuse failed\n\n", VgaColor(vga_black, vga_light_red));
+        // screen.Print(&screen, "free() reuse failed\n\n", VgaColor(vga_black, vga_light_red));
+        print("free() reuse failed\n\n", VgaColor(vga_black, vga_light_red));
     }
 
     char input[] = "Testing formatting: string: -192 | formatted number: %d\n";
 
     char* output = format_string("We have %d problems.\n", 1600);
-    screen.Print(&screen, output, VgaColor(vga_black, vga_white));
-    free((void*)output);
+    // screen.Print(&screen, output, VgaColor(vga_black, vga_white));
+    print(output, VgaColor(vga_black, vga_white));
+    free((void *)output);
 
     while (true) {
         print("HELLO WORLD\n", VgaColor(vga_dark_gray, vga_light_red));
 
         char* busy_start = format_string("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", (int32_t)counter);
         if (busy_start != NULL) {
-            screen.Print(&screen, busy_start, VgaColor(vga_white, vga_black));
-            free((void*)busy_start);
+            // screen.Print(&screen, busy_start, VgaColor(vga_white, vga_black));
+            print(busy_start, VgaColor(vga_white, vga_black));
+            free((void *)busy_start);
         }
 
         sleep_busy(1000U);
 
         char* busy_done = format_string("[%d]: Slept using busy-waiting.\n", (int32_t)counter);
         if (busy_done != NULL) {
-            screen.Print(&screen, busy_done, VgaColor(vga_light_green, vga_black));
-            free((void*)busy_done);
+            // screen.Print(&screen, busy_done, VgaColor(vga_light_green, vga_black));
+            print(busy_done, VgaColor(vga_light_green, vga_black));
+            free((void *)busy_done);
         }
         ++counter;
 
         char* interrupt_start = format_string("[%d]: Sleeping with interrupts (LOW CPU).\n", (int32_t)counter);
         if (interrupt_start != NULL) {
-            screen.Print(&screen, interrupt_start, VgaColor(vga_light_cyan, vga_black));
-            free((void*)interrupt_start);
+            // screen.Print(&screen, interrupt_start, VgaColor(vga_light_cyan, vga_black));
+            print(interrupt_start, VgaColor(vga_light_cyan, vga_black));
+            free((void *)interrupt_start);
         }
 
         sleep_interrupt(1000U);
 
         char* interrupt_done = format_string("[%d]: Slept using interrupts.\n", (int32_t)counter);
         if (interrupt_done != NULL) {
-            screen.Print(&screen, interrupt_done, VgaColor(vga_light_green, vga_black));
-            free((void*)interrupt_done);
+            // screen.Print(&screen, interrupt_done, VgaColor(vga_light_green, vga_black));
+            print(interrupt_done, VgaColor(vga_light_green, vga_black));
+            free((void *)interrupt_done);
         }
         ++counter;
     }

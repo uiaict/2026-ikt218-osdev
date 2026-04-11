@@ -1,5 +1,7 @@
 #include "printing.h"
 
+struct VgaTextModeInterface main_interface;
+
 void init_vga_interface_for_printing() {
     main_interface = NewVgaTextModeInterface();
 }
