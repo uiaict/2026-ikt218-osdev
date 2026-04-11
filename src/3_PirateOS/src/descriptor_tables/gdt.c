@@ -1,4 +1,4 @@
-#include "gdt.h"
+#include "descriptor_tables/gdt.h"
 
 // Create a GDT with 5 entries: null, code, data, user code, user data
 struct gdt_entry gdt[GDT_ENTRIES];

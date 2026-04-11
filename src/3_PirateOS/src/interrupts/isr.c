@@ -1,7 +1,7 @@
 #include "interrupts/isr.h"
-#include "interrupts/idt.h"
+#include "descriptor_tables/idt.h"
 #include "libc/stdio.h"
-#include "common.h"
+#include "arch/i386/io.h"
 
 
 

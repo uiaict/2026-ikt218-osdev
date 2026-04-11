@@ -1,7 +1,7 @@
 #include "apps/raycaster/raycaster_internal.h"
 #include "apps/song/song.h"
 #include "apps/song/song_data.h"
-#include "common.h"
+#include "arch/i386/io.h"
 #include "kernel/pit.h"
 
 static void raycaster_play_note_internal(const Note *note)

@@ -1,5 +1,5 @@
 #include "libc/libs.h"
-#include "common.h"
+#include "arch/i386/io.h"
 
 static uint16_t *const VGA_MEMORY = (uint16_t *)0xB8000; // VGA text mode buffer address
 static size_t terminal_row = 0;                          // Current row in the terminal

@@ -6,6 +6,7 @@ venv
 *.lock
 *.egg-info*
 .cmake
+cmake.lock
 CMakeCache*
 CMakeFiles
 iso

@@ -1,5 +1,5 @@
 #include "kernel/pit.h"
-#include "common.h"
+#include "arch/i386/io.h"
 #include "interrupts/isr.h"
 
 /*

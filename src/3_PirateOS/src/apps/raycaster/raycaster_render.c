@@ -1,5 +1,5 @@
 #include "apps/raycaster/raycaster_internal.h"
-#include "common.h"
+#include "arch/i386/io.h"
 
 #define VGA13_WIDTH 320
 #define VGA13_HEIGHT 200

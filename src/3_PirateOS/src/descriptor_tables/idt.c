@@ -1,4 +1,4 @@
-#include "interrupts/idt.h"
+#include "descriptor_tables/idt.h"
 
 // Define the IDT with 256 entries.
 idt_entry_t idt_entries[256];

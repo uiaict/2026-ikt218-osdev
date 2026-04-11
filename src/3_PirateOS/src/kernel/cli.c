@@ -2,7 +2,7 @@
 
 #include "apps/raycaster/raycaster.h"
 #include "apps/song/song.h"
-#include "common.h"
+#include "arch/i386/io.h"
 #include "memory/heap.h"
 #include "kernel/pit.h"
 #include "interrupts/isr.h"

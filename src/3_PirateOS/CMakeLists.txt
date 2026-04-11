@@ -58,28 +58,41 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 
 # Add executable target for the kernel
 add_executable(uiaos-kernel 
-	src/multiboot2.asm # TODO: Add multiboot2 support
+	src/boot/multiboot2.asm # TODO: Add multiboot2 support
     src/kernel.c
 	src/kernel.cpp
-	src/gdt.c
-	src/descriptor_tables.asm
 
-	src/common.c
-	src/kernel/cli.c
-	src/kernel/pit.c
-	src/interrupts/idt.c
+	# Descriptor tables 
+	src/descriptor_tables/gdt.c
+	src/descriptor_tables/idt.c
+	src/descriptor_tables/descriptor_tables.asm
+
+	# Interrupt handlers
 	src/interrupts/isr.c
 	src/interrupts/interrupts.asm
 	src/interrupts/keyboard.c
+
+	# IO
+	src/arch/i386/io.c
+
+	# Kernel
+	src/kernel/cli.c
+	src/kernel/pit.c
+
+	# Memory management
 	src/libc/memory.c
 	src/memory/heap.c
 	src/memory/paging.c
 
+	# Lib
 	src/libc/string.c
 	src/libc/stdio.c
 
+	# Music player
 	src/apps/song/song.c
 	src/apps/song/song_data.c
+
+	# Raycaster game
 	src/apps/raycaster/raycaster_core.c
 	src/apps/raycaster/raycaster_movement.c
 	src/apps/raycaster/raycaster_input.c

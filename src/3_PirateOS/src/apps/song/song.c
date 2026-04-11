@@ -3,7 +3,7 @@
 
 #include "kernel/pit.h"
 #include "memory/heap.h"
-#include "common.h"
+#include "arch/i386/io.h"
 #include "libc/stdio.h"
 
 // Flag to stop music

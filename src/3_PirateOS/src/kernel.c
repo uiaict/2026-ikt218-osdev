@@ -1,10 +1,10 @@
 #include "libc/libs.h"
-#include <multiboot2.h>
-#include "gdt.h"
+#include <boot/multiboot2.h>
+#include "descriptor_tables/gdt.h"
 #include "memory/heap.h"
 #include "memory/paging.h"
 #include "kernel/pit.h"
-#include "interrupts/idt.h"
+#include "descriptor_tables/idt.h"
 #include "interrupts/isr.h"
 #include "interrupts/keyboard.h"
 
