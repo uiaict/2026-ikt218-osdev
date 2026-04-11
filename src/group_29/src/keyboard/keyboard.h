@@ -25,5 +25,10 @@ void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode);
 keycode_t pop_keycode_buffer(keycode_buffer_t* buffer);
 keycode_buffer_t create_keycode_buffer();
 
+/** Reads through a scancode input buffer until it generates one keycode.
+ * Multiple runs of this is needed until the input is empty.
+ * \param input Scancode buffer that will be popped from
+ * \param output Keycode buffer for output
+ */
 void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output);
 keycode_t new_keycode(uint16_t keycode, bool release);
