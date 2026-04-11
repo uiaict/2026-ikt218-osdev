@@ -30,6 +30,13 @@ struct heap_block {
     struct heap_block* next;
 };
 
+typedef struct {
+    uint32_t kernel_end;
+    uint32_t heap_start;
+    uint32_t heap_end;
+    char formatted[80];
+} MemoryDebugData;
+
 /* Initializes the kernel heap at the first aligned address after kernel_end. */
 void init_kernel_memory(void* kernel_end);
 
@@ -41,3 +48,5 @@ void free(void* ptr);
 
 /* Prints the kernel end, heap start, and heap end addresses to VGA. */
 void print_memory_layout(void);
+
+MemoryDebugData get_memory_layout(void);

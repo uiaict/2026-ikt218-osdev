@@ -27,7 +27,7 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     // copyZeroTerminatedCharArrayToEvenPositionsInCharArray((char*)&a, vga_text);
 
     struct VgaTextModeInterface screen = NewVgaTextModeInterface();
-    screen.Print(&screen, "GDT loaded successfully!", VgaColor(vga_cyan, vga_black));
+    screen.Print(&screen, "GDT loaded successfully!\n\n", VgaColor(vga_cyan, vga_black));
 
     // GDT Test:
     uint16_t cs, ds, ss;
@@ -36,33 +36,35 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     __asm__ __volatile__("mov %%ss, %0" : "=r"(ss));
 
     if (cs == 0x08 && ds == 0x10 && ss == 0x10) {
-        screen.Print(&screen, "GDT OK", VgaColor(vga_light_green, vga_black));
+        screen.Print(&screen, "GDT OK\n\n", VgaColor(vga_light_green, vga_black));
     } else {
-        screen.Print(&screen, "GDT BAD", VgaColor(vga_light_red, vga_black));
+        screen.Print(&screen, "GDT BAD\n\n", VgaColor(vga_light_red, vga_black));
     }
 
     init_idt();
-    screen.Print(&screen, "IDT is initilalized", VgaColor(vga_black, vga_white));
+    screen.Print(&screen, "IDT is initilalized\n\n", VgaColor(vga_black, vga_white));
 
     init_kernel_memory(&end);
+
+    // Memory test:
     print_memory_layout();
 
     void* first_block = malloc(128U);
     void* second_block = malloc(256U);
 
     if (first_block != NULL && second_block != NULL) {
-        screen.Print(&screen, "Heap allocations OK", VgaColor(vga_black, vga_light_green));
+        screen.Print(&screen, "Heap allocations OK\n\n", VgaColor(vga_black, vga_light_green));
     } else {
-        screen.Print(&screen, "Heap allocations failed", VgaColor(vga_black, vga_light_red));
+        screen.Print(&screen, "Heap allocations failed\n\n", VgaColor(vga_black, vga_light_red));
     }
 
     free(first_block);
 
     void* reused_block = malloc(64U);
     if (reused_block != NULL) {
-        screen.Print(&screen, "free() reuse OK", VgaColor(vga_black, vga_light_green));
+        screen.Print(&screen, "free() reuse OK\n\n", VgaColor(vga_black, vga_light_green));
     } else {
-        screen.Print(&screen, "free() reuse failed", VgaColor(vga_black, vga_light_red));
+        screen.Print(&screen, "free() reuse failed\n\n", VgaColor(vga_black, vga_light_red));
     }
 
     // Test how the os handels overflow:

@@ -142,3 +142,22 @@ void print_memory_layout(void) {
     write_text_at(2U, 0U, "Memory layout", VgaColor(vga_black, vga_light_green));
     write_text_at(3U, 0U, buffer, VgaColor(vga_black, vga_white));
 }
+
+MemoryDebugData get_memory_layout(void) {
+    MemoryDebugData data;
+    size_t offset = 0U;
+
+    data.kernel_end = kernel_end_address;
+    data.heap_start = heap_start_address;
+    data.heap_end = heap_end_address;
+
+    append_string(data.formatted, &offset, "KEND ");
+    append_hex32(data.formatted, &offset, data.kernel_end);
+    append_string(data.formatted, &offset, " HST ");
+    append_hex32(data.formatted, &offset, data.heap_start);
+    append_string(data.formatted, &offset, " HEND ");
+    append_hex32(data.formatted, &offset, data.heap_end);
+    data.formatted[offset] = '\0';
+
+    return data;
+}
