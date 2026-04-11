@@ -1,4 +1,5 @@
 #pragma once
 
-#define INT_MAX 2147483647
+// Basic integer limits used by the freestanding libc code
 
+#define INT_MAX 2147483647

@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+// Returns the length of a null-terminated string
 size_t strlen(const char* str);
 
 #ifdef __cplusplus

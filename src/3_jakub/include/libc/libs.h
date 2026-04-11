@@ -1,5 +1,7 @@
 #pragma once
 
+// Convenience header that pulls in the small libc-style helpers used by the kernel
+
 #include "libc/limits.h"
 #include "libc/stdarg.h"
 #include "libc/stdbool.h"

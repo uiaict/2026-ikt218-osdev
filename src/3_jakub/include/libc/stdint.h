@@ -1,5 +1,6 @@
 #pragma once
 
+// Fixed-width integer types used across the kernel
 
 typedef long unsigned int size_t;
 typedef long unsigned int uint32_t;

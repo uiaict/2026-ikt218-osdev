@@ -2,6 +2,11 @@
 #include "libc/memory.h"
 #include "libc/stdio.h"
 
+/*
+ * This file handles dynamic memory for the kernel
+ * It has one normal heap for malloc/free and one small page-aligned area for pmalloc/pfree
+ */
+
 #define MAX_PAGE_ALIGNED_ALLOCS 32
 #define PAGE_SIZE 4096
 #define PAGE_REGION_END 0x400000
@@ -18,11 +23,13 @@ static uint32_t memory_used = 0;
 
 static uint8_t *block_payload(alloc_t *block)
 {
+    // The usable memory comes right after the block header
     return ((uint8_t *)block) + sizeof(alloc_t);
 }
 
 static void merge_free_blocks(void)
 {
+    // Walk through the heap and join neighboring free blocks into larger free blocks
     uint8_t *cursor = (uint8_t *)heap_begin;
 
     while ((uint32_t)cursor < last_alloc) {
@@ -53,6 +60,7 @@ void init_kernel_memory(uint32_t *kernel_end)
 {
     uint32_t kernel_addr = (uint32_t)kernel_end;
 
+    // Start the heap on the next page after the kernel image
     kernel_addr = (kernel_addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
     last_alloc = kernel_addr + PAGE_SIZE;
     heap_begin = last_alloc;
@@ -60,8 +68,10 @@ void init_kernel_memory(uint32_t *kernel_end)
     pheap_begin = pheap_end - (MAX_PAGE_ALIGNED_ALLOCS * PAGE_SIZE);
     heap_end = pheap_begin;
 
+    // Clear the heap area so unused headers start as zero
     memset((void *)heap_begin, 0, heap_end - heap_begin);
 
+    // The page allocator keeps one small descriptor byte per page slot
     pheap_desc = (uint8_t *)malloc(MAX_PAGE_ALIGNED_ALLOCS);
     if (pheap_desc != 0) {
         memset(pheap_desc, 0, MAX_PAGE_ALIGNED_ALLOCS);
@@ -125,6 +135,7 @@ void pfree(void *mem)
         return;
     }
 
+    // Clear all descriptor bytes that belong to this page allocation
     for (i = 0; i < pages; i++) {
         pheap_desc[page_index + i] = 0;
     }
@@ -146,6 +157,7 @@ char *pmalloc(size_t size)
         return 0;
     }
 
+    // Look for enough free page slots in a row
     for (i = 0; i < MAX_PAGE_ALIGNED_ALLOCS; i++) {
         if (pheap_desc[i] == 0) {
             if (run_length == 0) {
@@ -156,6 +168,7 @@ char *pmalloc(size_t size)
             if (run_length == pages) {
                 uint32_t j;
 
+                // Store the allocation length in the first slot
                 pheap_desc[run_start] = (uint8_t)pages;
                 for (j = 1; j < pages; j++) {
                     pheap_desc[run_start + j] = PAGE_CONTINUATION;
@@ -183,6 +196,7 @@ void *malloc(size_t size)
     aligned_size = ALIGN4((uint32_t)size);
     cursor = (uint8_t *)heap_begin;
 
+    // Search from the start of the heap and use the first free block that fits
     while ((uint32_t)cursor < last_alloc) {
         alloc_t *block = (alloc_t *)cursor;
 
@@ -193,6 +207,7 @@ void *malloc(size_t size)
         if (!block->status && block->size >= aligned_size) {
             uint32_t remaining = block->size - aligned_size;
 
+            // If the free block is larger than needed, split it into two blocks
             if (remaining > sizeof(alloc_t) + 4) {
                 alloc_t *split_block = (alloc_t *)(cursor + sizeof(alloc_t) + aligned_size);
 
@@ -214,6 +229,7 @@ void *malloc(size_t size)
         return 0;
     }
 
+    // If no old free block fits, place the new block at the end of the heap
     cursor = (uint8_t *)last_alloc;
     ((alloc_t *)cursor)->status = 1;
     ((alloc_t *)cursor)->size = aligned_size;

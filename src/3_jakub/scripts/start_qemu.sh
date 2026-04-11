@@ -1,15 +1,10 @@
 #!/bin/bash
 KERNEL_PATH=$1
 DISK_PATH=$2
-FULLSCREEN_FLAG=""
-
-if [ "${QEMU_FULLSCREEN}" = "1" ] || [ "${3}" = "--fullscreen" ]; then
-    FULLSCREEN_FLAG="-full-screen"
-fi
 
 # Start QEMU in the background
 echo "Starting QEMU"
-qemu-system-i386 -S -gdb tcp::1234 -boot d -hda $KERNEL_PATH -hdb $DISK_PATH -m 64 -audiodev sdl,id=sdl1,out.buffer-length=40000 -machine pcspk-audiodev=sdl1 -serial pty ${FULLSCREEN_FLAG} &
+qemu-system-i386 -S -gdb tcp::1234 -boot d -hda $KERNEL_PATH -hdb $DISK_PATH -m 64 -audiodev sdl,id=sdl1,out.buffer-length=40000 -machine pcspk-audiodev=sdl1 -serial pty &
 QEMU_PID=$!
 
 # Function to check if gdb is running
