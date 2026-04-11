@@ -66,6 +66,7 @@ add_executable(uiaos-kernel
 	src/interrupts/interrupts.c
 	src/vga_text_mode_interface/vga_text_mode_interface.c
 	src/pit/pit.c
+	src/sound/song_player.c
 	src/format/format.c
 	src/printing/printing.c
 )
