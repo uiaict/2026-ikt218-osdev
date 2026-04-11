@@ -23,8 +23,10 @@ typedef struct {
 
 // Function prototype for creating a new SongPlayer instance
 // Returns a pointer to a newly created SongPlayer object
-SongPlayer* create_song_player();
-void play_song_impl(Song *song) ;
+SongPlayer* create_song_player(void);
+void play_song_impl(Song *song);
+void play_song(Song *song);
+void stop_sound(void);
 
 static Note music_1[] = {
     {E5, 250}, {R, 125}, {E5, 125}, {R, 125}, {E5, 125}, {R, 125},
@@ -120,6 +122,17 @@ static Note music_6[] = {
     {F4, 250}, {F4, 250}, {F4, 250}, {C5, 250}, {A_SHARP4, 250}, {G_SHARP4, 250}, {F4, 500},
     {A_SHARP4, 250}, {A_SHARP4, 250}, {A_SHARP4, 250}, {F5, 250}, {D5, 250}, {C5, 250}, {A_SHARP4, 500},
     {A_SHARP4, 250}, {A_SHARP4, 250}, {A_SHARP4, 250}, {F5, 250}, {D5, 250}, {C5, 250}, {A_SHARP4, 500},
+};
+
+static Song built_in_songs[] = {
+    {music_1, sizeof(music_1) / sizeof(Note)},
+    {starwars_theme, sizeof(starwars_theme) / sizeof(Note)},
+    {battlefield_1942_theme, sizeof(battlefield_1942_theme) / sizeof(Note)},
+    {music_2, sizeof(music_2) / sizeof(Note)},
+    {music_3, sizeof(music_3) / sizeof(Note)},
+    {music_4, sizeof(music_4) / sizeof(Note)},
+    {music_5, sizeof(music_5) / sizeof(Note)},
+    {music_6, sizeof(music_6) / sizeof(Note)},
 };
 
 #endif
