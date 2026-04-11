@@ -207,14 +207,13 @@ static void clear_cursor(void) {
   vga_text_putentryat((char)(entry & 0xFF), cursor_saved_color, cursor_x, cursor_y);
 }
 
-// public:
 void shell_init(void) {
   buffer_clear();
   vga_text_disable_cursor();
 }
 
 static void wait_for_input() {
-  __asm__ volatile("hlt"); // Keyboard input triggers interrupt, releasing this wait
+  __asm__ volatile("hlt");
 }
 
 void shell_run(void) {
@@ -253,14 +252,6 @@ void shell_run(void) {
           history_up();
           break;
         }
-        case KEY_PAGE_UP: {
-          vga_text_scroll_up(VGA_TEXT_HEIGHT / 2);
-          break;
-        }
-        case KEY_PAGE_DOWN: {
-          vga_text_scroll_down(VGA_TEXT_HEIGHT / 2); // Scroll down half screen
-          break;
-        }
         case KEY_DOWN: {
           history_down();
           break;
@@ -291,7 +282,6 @@ void shell_run(void) {
       clear_cursor();
 
       if (c == '\n') {
-        vga_text_scroll_bottom();
         putchar('\n');
         if (buf_len > 0) {
           history_add(cmd_buffer);

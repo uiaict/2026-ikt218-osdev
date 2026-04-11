@@ -19,17 +19,13 @@
 #define PIC_EOI 0x20 /* End-of-interrupt command code */
 
 
-#define PIT_BASE_FREQUENCY 1193180
+#define PIT_BASE_FREQUENCY 1193182
 #define TARGET_FREQUENCY 1000 // 1000 Hz
 #define DIVIDER (PIT_BASE_FREQUENCY / TARGET_FREQUENCY)
-#define TICKS_PER_MS (TARGET_FREQUENCY / TARGET_FREQUENCY)
+#define TICKS_PER_MS (TARGET_FREQUENCY / 1000)
 
 
 #define CLAMP(low, high, value) (value < low ? low : (value > high ? high : value))
-
-static inline uint32_t round_uint16(uint16_t a) {
-  return a;
-}
 
 volatile uint32_t ticks = 0;
 
@@ -41,9 +37,9 @@ void timer_handler(registers_t* regs) {
 }
 
 void init_pit() {
-  uint32_t divisor = CLAMP(1, 65536, round_uint16(DIVIDER));
+  uint32_t divisor = CLAMP(1, 65536, DIVIDER);
 
-  // ATOMIC
+  // Must be atomic
   __asm__ volatile("cli");
   port_byte_out(PIT_CMD_PORT, PIT_MODE_2);
   port_byte_out(PIT_CHANNEL0_PORT, divisor & 0xFF);
@@ -61,19 +57,18 @@ uint32_t get_current_tick() {
 
 void sleep_interrupt(uint32_t milliseconds) {
   uint32_t start_tick = get_current_tick();
-  uint32_t ticks_to_wait = milliseconds * 1; // 1 tick per ms
-  uint32_t end_tick = start_tick + ticks_to_wait;
-  while (get_current_tick() < end_tick) {
-    __asm__ volatile("sti");
-    __asm__ volatile("hlt");
-  }
-}
-void sleep_busy(uint32_t milliseconds) {
-  uint32_t start_tick = get_current_tick();
-  uint32_t ticks_to_wait = milliseconds * 1;
-  uint32_t end_tick = start_tick + ticks_to_wait;
+  uint32_t ticks_to_wait = milliseconds * TICKS_PER_MS;
 
   __asm__ volatile("sti");
-  while (get_current_tick() < end_tick)
+  while (get_current_tick() - start_tick < ticks_to_wait)
+    __asm__ volatile("hlt");
+}
+
+void sleep_busy(uint32_t milliseconds) {
+  uint32_t start_tick = get_current_tick();
+  uint32_t ticks_to_wait = milliseconds * TICKS_PER_MS;
+
+  __asm__ volatile("sti");
+  while (get_current_tick() - start_tick < ticks_to_wait)
     ;
 }
