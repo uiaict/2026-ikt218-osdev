@@ -76,13 +76,13 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
 
     char input[] = "Testing formatting! -192: %d!\n";
 
-    char* output = format_string(input, 31, -192);
-    // screen.Print(&screen, output, VgaColor(vga_black, vga_white));
+    char* output = format_string(input, -192);
+    screen.Print(&screen, output, VgaColor(vga_black, vga_white));
 
     free((void*)output);
 
     while (true) {
-        char* busy_start = format_string("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", 45, (int32_t)counter);
+        char* busy_start = format_string("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", (int32_t)counter);
         if (busy_start != NULL) {
             screen.Print(&screen, busy_start, VgaColor(vga_white, vga_black));
             free((void*)busy_start);
@@ -90,14 +90,14 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
 
         sleep_busy(1000U);
 
-        char* busy_done = format_string("[%d]: Slept using busy-waiting.\n", 33, (int32_t)counter);
+        char* busy_done = format_string("[%d]: Slept using busy-waiting.\n", (int32_t)counter);
         if (busy_done != NULL) {
             screen.Print(&screen, busy_done, VgaColor(vga_light_green, vga_black));
             free((void*)busy_done);
         }
         ++counter;
 
-        char* interrupt_start = format_string("[%d]: Sleeping with interrupts (LOW CPU).\n", 44, (int32_t)counter);
+        char* interrupt_start = format_string("[%d]: Sleeping with interrupts (LOW CPU).\n", (int32_t)counter);
         if (interrupt_start != NULL) {
             screen.Print(&screen, interrupt_start, VgaColor(vga_light_cyan, vga_black));
             free((void*)interrupt_start);
@@ -105,7 +105,7 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
 
         sleep_interrupt(1000U);
 
-        char* interrupt_done = format_string("[%d]: Slept using interrupts.\n", 31, (int32_t)counter);
+        char* interrupt_done = format_string("[%d]: Slept using interrupts.\n", (int32_t)counter);
         if (interrupt_done != NULL) {
             screen.Print(&screen, interrupt_done, VgaColor(vga_light_green, vga_black));
             free((void*)interrupt_done);

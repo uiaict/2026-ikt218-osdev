@@ -1,7 +1,17 @@
 #include "format.h"
 #include "../memory/heap.h"
 
-static int int_to_str(int32_t value, char* buf) {
+int32_t strlen(const char string[]) {
+    int32_t length = 0;
+
+    while (string[length] != '\0') {
+        length++;
+    }
+
+    return length;
+}
+
+static int int_to_str(int32_t value, char *buf) {
     // handle zero explicitly
     if (value == 0) {
         buf[0] = '0';
@@ -54,10 +64,12 @@ static int int_to_str(int32_t value, char* buf) {
     }
 }
 
-char* format_string(char input_string[], uint16_t input_size, int32_t value) {
+char* format_string(char input_string[], int32_t value) {
     if (!input_string) {
         return NULL;
     }
+
+    uint16_t input_size = strlen(input_string);
 
     // worst case: input + int32 max + null
     char *out = (char*)malloc(input_size + 12);
