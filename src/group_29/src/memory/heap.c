@@ -1,11 +1,6 @@
 #include "heap.h"
 
-#include "../vga_text_mode_interface/vga_text_mode_interface.h"
 
-#define HEAP_ALIGNMENT 8U
-#define HEAP_SIZE_BYTES 0x100000U
-#define VGA_WIDTH 80U
-#define VGA_MEMORY ((uint16_t*)0xB8000)
 
 static struct heap_block* heap_head = NULL;
 static uint32_t kernel_end_address = 0U;

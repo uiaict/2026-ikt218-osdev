@@ -4,6 +4,13 @@
 #include "libc/stddef.h"
 #include "libc/stdbool.h"
 
+#include "../vga_text_mode_interface/vga_text_mode_interface.h"
+
+#define HEAP_ALIGNMENT 8U
+#define HEAP_SIZE_BYTES 0x100000U
+#define VGA_WIDTH 80U
+#define VGA_MEMORY ((uint16_t*)0xB8000)
+
 /*
  * Fixed-size early kernel heap placed directly after the linker-provided end
  * symbol. The allocator uses a first-fit free list, splits large free blocks
