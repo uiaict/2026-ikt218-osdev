@@ -8,6 +8,7 @@
 #include "pit/pit.h"
 #include "vga_text_mode_interface/vga_text_mode_interface.h"
 #include "format/format.h"
+#include "printing/printing.h"
 
 extern uint32_t end;
 
@@ -23,6 +24,9 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     (void)magic;
     (void)mb_info_addr;
     uint32_t counter = 0U;
+
+    // init vga interface for printing
+    init_vga_interface_for_printing();
 
     gdt_init();
     // char a[]= "Hello World!!";
@@ -81,6 +85,8 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     free((void*)output);
 
     while (true) {
+        print("HELLO WORLD\n", VgaColor(vga_dark_gray, vga_light_red));
+
         char* busy_start = format_string("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", (int32_t)counter);
         if (busy_start != NULL) {
             screen.Print(&screen, busy_start, VgaColor(vga_white, vga_black));
