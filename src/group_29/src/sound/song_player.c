@@ -4,6 +4,7 @@
 #include "libc/stddef.h"
 #include "../pit/pit.h"
 
+// Small local helpers for port I/O used by the PC speaker.
 static uint8_t speaker_inb(uint16_t port) {
     uint8_t value;
     __asm__ __volatile__("inb %1, %0" : "=a"(value) : "Nd"(port));
@@ -14,6 +15,7 @@ static void speaker_outb(uint16_t port, uint8_t value) {
     __asm__ __volatile__("outb %0, %1" : : "a"(value), "Nd"(port));
 }
 
+// Bits 0 and 1 on port 0x61 must be enabled for audible output.
 static void enable_speaker(void) {
     uint8_t state = speaker_inb(PC_SPEAKER_PORT);
     speaker_outb(PC_SPEAKER_PORT, (uint8_t)(state | 0x03U));
@@ -24,6 +26,7 @@ static void disable_speaker(void) {
     speaker_outb(PC_SPEAKER_PORT, (uint8_t)(state & (uint8_t)(~0x03U)));
 }
 
+// PIT channel 2 drives the PC speaker tone frequency.
 static void play_sound(uint32_t frequency) {
     uint16_t divisor;
 
@@ -45,6 +48,7 @@ void stop_sound(void) {
     speaker_outb(PC_SPEAKER_PORT, (uint8_t)(state & (uint8_t)(~0x03U)));
 }
 
+// Plays each note in sequence and uses the PIT sleep routine for timing.
 void play_song_impl(Song *song) {
     uint32_t i;
 
@@ -78,6 +82,7 @@ uint32_t get_song_count(void) {
     return (uint32_t)(sizeof(built_in_songs) / sizeof(built_in_songs[0]));
 }
 
+// This wrapper makes it easy to trigger songs later from keyboard input.
 void play_song_by_index(uint32_t index) {
     SongPlayer* player;
 
