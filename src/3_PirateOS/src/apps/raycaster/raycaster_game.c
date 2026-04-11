@@ -4,40 +4,44 @@
 #include "common.h"
 #include "kernel/pit.h"
 
-
-
-// MÅ FIKSES
-// Advance one note in the background song when it is time
-// This is non-blocking, so the game can keep rendering every frame
-static void raycaster_play_background_theme(uint32_t current_ticks, uint32_t *next_note_tick, uint32_t *music_index)
+static void raycaster_play_note_internal(const Note *note)
 {
-    const uint32_t bg_theme_len = raycaster_bg_theme_length;
-    // Nothing to play yet, or song is empty
-    if (bg_theme_len == 0 || (int32_t)(current_ticks - *next_note_tick) < 0) {
+    if (note->frequency == R) {
+        stop_sound();
         return;
     }
 
-    // If rendering lags, fast-forward song time so audio timing stays correct.
-    // Only the currently relevant note is played (no burst of old notes).
-    Note note = raycaster_bg_theme[*music_index];
-    uint32_t steps = 0;
-    const uint32_t max_steps = 64;
+    play_sound(note->frequency);
+}
 
-    while ((int32_t)(current_ticks - *next_note_tick) >= 0 && steps < max_steps) {
-        note = raycaster_bg_theme[*music_index];
-        *next_note_tick += note.duration;
-        (*music_index)++;
-        if (*music_index >= bg_theme_len) {
-            *music_index = 0;
-        }
-        steps++;
+// Initialize and play the first note in the loop.
+static void raycaster_start_background_theme(uint32_t current_ticks, uint32_t *current_note_index, uint32_t *note_end_tick)
+{
+    const uint32_t bg_theme_len = raycaster_bg_theme_length;
+    if (bg_theme_len == 0) {
+        return;
     }
 
-    // Play the note that should be active now
-    if (note.frequency == R) {
-        stop_sound();
-    } else {
-        play_sound(note.frequency);
+    *current_note_index = 0;
+    const Note *note = &raycaster_bg_theme[*current_note_index];
+    raycaster_play_note_internal(note);
+    *note_end_tick = current_ticks + note->duration;
+}
+
+// Advance song timing without blocking render/update. Always wraps to start.
+static void raycaster_update_background_theme(uint32_t current_ticks, uint32_t *current_note_index, uint32_t *note_end_tick)
+{
+    const uint32_t bg_theme_len = raycaster_bg_theme_length;
+    if (bg_theme_len == 0) {
+        return;
+    }
+
+    // If we lagged behind, advance through as many notes as needed.
+    while ((int32_t)(current_ticks - *note_end_tick) >= 0) {
+        *current_note_index = (*current_note_index + 1U) % bg_theme_len;
+        const Note *note = &raycaster_bg_theme[*current_note_index];
+        raycaster_play_note_internal(note);
+        *note_end_tick += note->duration;
     }
 }
 
@@ -47,7 +51,7 @@ void raycaster_game_loop(void)
     // ~60 FPS target frame time
     const uint32_t target_frame_ms = 16;
     uint32_t music_index = 0;
-    uint32_t next_note_tick;
+    uint32_t next_note_tick = 0;
 
     // Enter game mode: capture input + switch to VGA graphics mode
     raycaster_input_set_active(1);
@@ -58,7 +62,7 @@ void raycaster_game_loop(void)
     Raycaster raycaster;
     raycaster_init(&raycaster);
 
-    next_note_tick = pit_get_ticks();
+    raycaster_start_background_theme(pit_get_ticks(), &music_index, &next_note_tick);
 
     // Current key state used by movement/rotation code
     uint8_t key_down[RC_KEY_COUNT] = {0};
@@ -71,6 +75,8 @@ void raycaster_game_loop(void)
     uint8_t minimap_m_down = 0;
 
     while (raycaster.game_running) {
+        int exit_now = 0;
+
         // Used to limit frame duration at end of loop.
         uint32_t frame_start_ticks = pit_get_ticks();
 
@@ -79,6 +85,8 @@ void raycaster_game_loop(void)
         // Exit requested by keyboard handler
         if (raycaster_input_consume_exit_request_internal()) {
             raycaster.game_running = false;
+            exit_now = 1;
+            stop_sound();
         }
         uint32_t current_ticks = pit_get_ticks();
         uint8_t scancode = 0;
@@ -91,6 +99,8 @@ void raycaster_game_loop(void)
             // ESC exits the game immediately
             if (code == 0x01) {
                 raycaster.game_running = false;
+                exit_now = 1;
+                stop_sound();
                 break;
             }
 
@@ -105,6 +115,10 @@ void raycaster_game_loop(void)
                     minimap_m_down = 0;
                 }
             }
+        }
+
+        if (exit_now) {
+            break;
         }
 
         // Add elapsed real time to fixed-step physics accumulator
@@ -148,7 +162,7 @@ void raycaster_game_loop(void)
 
         // Update music after rendering
         current_ticks = pit_get_ticks();
-        raycaster_play_background_theme(current_ticks, &next_note_tick, &music_index);
+        raycaster_update_background_theme(current_ticks, &music_index, &next_note_tick);
 
         // Sleep the remaining frame time to keep FPS stable
         {
