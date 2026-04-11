@@ -5,6 +5,9 @@
 #define VGA_TERMINAL_WIDTH 80
 #define VGA_TERMINAL_HEIGHT 25
 
+#define VGA_MARGIN_TOP_ROWS 2
+#define VGA_MARGIN_BOTTOM_ROWS 2
+
 /**
  * \enum Gives acces to standard VGA text mode colors.
  * 
@@ -68,7 +71,8 @@ struct VgaTextModeCursor{
     uint8_t col;
     uint16_t* memory_position;
     uint16_t* memory_start;
-    uint16_t* memory_end;
+    uint16_t *terminal_write_bottom;
+    uint16_t *memory_end;
     void (*CalculateRowColFromMemoryPosition)(struct VgaTextModeCursor*);
 };
 

@@ -31,6 +31,7 @@ struct VgaTextModeInterface NewVgaTextModeInterface(){
     i.cursor.col = 0;
     i.cursor.memory_position = (uint16_t*)0xb8000;
     i.cursor.memory_start = (uint16_t*)0xb8000;
+    i.cursor.terminal_write_bottom = (uint16_t*)((VGA_TERMINAL_WIDTH * (VGA_TERMINAL_HEIGHT - VGA_MARGIN_BOTTOM_ROWS) * 2) + 0xb8000);
     i.cursor.memory_end = (uint16_t*)((VGA_TERMINAL_WIDTH * VGA_TERMINAL_HEIGHT * 2) + 0xb8000);
     i.cursor.CalculateRowColFromMemoryPosition = VgaTextModeCursorCalculateRowColFromMemoryPosition;
     return i;
