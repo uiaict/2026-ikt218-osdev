@@ -120,6 +120,7 @@ static void print_help(void)
     printf("about        Show kernel feature summary\n");
     printf("Keyboard:\n");
     printf("ESC          Stop playing music or exit game\n");
+    printf("M            Show or hide minimap in game\n");
     printf("PgUp/PgDn    Scroll terminal history by pages\n");
     printf("Up/Down      Scroll terminal history line by line\n");
     printf("Home/End     Jump to top or bottom of scrollback\n");
