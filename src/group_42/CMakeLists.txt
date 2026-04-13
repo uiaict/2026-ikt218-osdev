@@ -87,6 +87,7 @@ add_executable(group_42-kernel
         src/shell/commands/timer_test.c
         src/shell/commands/print_memory.c
         src/shell/commands/music_player.c
+        src/shell/commands/test_syscalls.c
 
 
         src/drivers/input/keyboard.c

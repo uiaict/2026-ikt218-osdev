@@ -18,6 +18,8 @@
 #include "shell/commands/timer_test.h"
 #include "shell/shell_command.h"
 
+int cmd_test_syscalls(int argc, char** argv);
+
 #define SHELL_BUFFER_SIZE 256
 #define HISTORY_SIZE 10
 #define PROMPT_STR "> "
@@ -44,7 +46,8 @@ const shell_command_t command_table[] = {
     {"keyboard_logger",           "Run the keyboard logger", cmd_keyboard_logger},
     {   "print_memory",       "Print current memory layout",    cmd_print_memory},
     {     "timer_test",               "Run timer test IRQ0",      cmd_timer_test},
-    {   "music_player", "Play a song (music_player <song>)",    cmd_music_player}
+    {   "music_player", "Play a song (music_player <song>)",    cmd_music_player},
+    {  "test_syscalls",           "Test syscall handlers directly",    cmd_test_syscalls}
 };
 const size_t NUM_COMMANDS = sizeof(command_table) / sizeof(command_table[0]);
 

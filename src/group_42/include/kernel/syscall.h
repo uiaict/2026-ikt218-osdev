@@ -2,30 +2,95 @@
 #include <arch/i386/cpu/isr.h>
 #include <stdint.h>
 
+/*
+ * SYSCALL NUMBERS
+ * Numbers match Linux/i386 where applicable.
+ */
+
+#define SYS_exit 1
+#define SYS_fork 2
 #define SYS_read 3
 #define SYS_write 4
 #define SYS_open 5
 #define SYS_close 6
-#define SYS_exit 1
-#define SYS_fork 2
-#define SYS_getpid 20
+#define SYS_wait 12
+#define SYS_execve 11
+#define SYS_chdir 15
+#define SYS_getcwd 17
+#define SYS_dup 19
+#define SYS_dup2 21
+#define SYS_pipe 42
 #define SYS_brk 45
+#define SYS_lseek 60
+#define SYS_getpid 20
+#define SYS_getuid 61
+#define SYS_getgid 62
 
 #define MAX_SYSCALLS 64
 
 /**
- * Initialize the syscall table and register the interrupt handler
+ *Syscall arguments
  */
-void init_syscalls();
+typedef struct {
+  uint32_t number;
+  uint32_t a; /* ebx: arg1 */
+  uint32_t b; /* ecx: arg2 */
+  uint32_t c; /* edx: arg3 */
+  uint32_t d; /* esi: arg4 */
+  uint32_t e; /* edi: arg5 */
+  uint32_t f; /* ebp: arg6 */
+} syscall_args_t;
 
 /**
- * The syscall handler
+ * Syscall function type. ALl handlers follow this signature
+ */
+typedef uint32_t (*syscall_fn_t)(syscall_args_t*);
+
+/**
+ * Initialise the syscall table and register interrupt handler 0x80.
+ */
+void init_syscalls(void);
+
+/* TODO: Remove non-static handler declarations below once
+ * userspace exists.
+ * Then test_syscalls can be replaced by a userspace binary testing it properly
+ */
+// SYSCALL HANDLERS (non-static, can be called directly for testing)
+
+uint32_t sys_exit(syscall_args_t*);
+uint32_t sys_fork(syscall_args_t*);
+uint32_t sys_wait(syscall_args_t*);
+uint32_t sys_execve(syscall_args_t*);
+uint32_t sys_getpid(syscall_args_t*);
+
+uint32_t sys_read(syscall_args_t*);
+uint32_t sys_write(syscall_args_t*);
+uint32_t sys_open(syscall_args_t*);
+uint32_t sys_close(syscall_args_t*);
+uint32_t sys_lseek(syscall_args_t*);
+uint32_t sys_dup(syscall_args_t*);
+uint32_t sys_dup2(syscall_args_t*);
+
+uint32_t sys_brk(syscall_args_t*);
+
+uint32_t sys_getcwd(syscall_args_t*);
+uint32_t sys_chdir(syscall_args_t*);
+
+uint32_t sys_getuid(syscall_args_t*);
+uint32_t sys_getgid(syscall_args_t*);
+
+uint32_t sys_pipe(syscall_args_t*);
+
+/**
+ *  extract arguments from CPU registers into a
+ * syscall_args_t struct, look up the handler, and store the
+ * result back into regs->eax.
+ *
+ * Called from the 0x80 ISR stub in interrupts.asm.
  */
 void syscall_handler(registers_t* regs);
 
 /**
- * Registers a new syscall
- * @param num index into syscall table
- * @param handler handler for syscall
+ * Pointer to syscall table, userspace code can read to discover syscalls.
  */
-void register_syscall(uint32_t num, uint32_t (*handler)());
+extern void* syscall_table[MAX_SYSCALLS];
