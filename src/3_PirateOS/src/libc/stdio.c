@@ -173,13 +173,74 @@ void terminal_refresh(void)
 
 void terminal_print_logo(void)
 {
-    printf("========================================\n");
-    printf("=                                      =\n");
-    printf("=                UIAOS                 =\n");
-    printf("=                                      =\n");
-    printf("=             uiaOS kernel             =\n");
-    printf("=                                      =\n");
-    printf("========================================\n");
+    /* --- Flagg og mast --- */
+    terminal_color = 0x08;
+    printf("                           .  o  .                                   \n");
+    terminal_color = 0x0F;
+    printf("                         .^^^^^^^.                                   \n");
+    terminal_color = 0x08;
+    printf("                         | X   X |                                   \n");
+    printf("                         |   ^   |                                   \n");
+    printf("                         | X   X |                                   \n");
+    terminal_color = 0x07;
+    printf("                         '-------'                                   \n");
+
+    /* --- Mast --- */
+    terminal_color = 0x06;
+    printf("                             |                                       \n");
+    printf("                             |                                       \n");
+
+    /* --- Seil --- */
+    terminal_color = 0x0F;
+    printf("              .______________|______________.                         \n");
+    terminal_color = 0x07;
+    printf("              |  ~  ~  ~  ~  |  ~  ~  ~  ~ |                        \n");
+    printf("              |  ~  ~  ~  ~  |  ~  ~  ~  ~ |                        \n");
+    terminal_color = 0x0F;
+    printf("              '______________________________|                        \n");
+
+    /* --- Mast fortsetter --- */
+    terminal_color = 0x06;
+    printf("                             |                                       \n");
+
+    /* --- Tittel --- */
+    terminal_color = 0x0C;
+    printf("          >>=====[ ");
+    terminal_color = 0x0E;
+    printf("  P I R A T E   O S  ");
+    terminal_color = 0x0C;
+    printf("]=====>                              \n");
+
+    /* --- Skrog --- */
+    terminal_color = 0x06;
+    printf("                             |                                       \n");
+    terminal_color = 0x0F;
+    printf("       .======================|========================.              \n");
+    printf("       |    ");
+    terminal_color = 0x07;
+    printf("*");
+    terminal_color = 0x0F;
+    printf("                                    ");
+    terminal_color = 0x07;
+    printf("*");
+    terminal_color = 0x0F;
+    printf("    |              \n");
+    printf("       |                                                |              \n");
+    terminal_color = 0x08;
+    printf("        \\______________________________________________/               \n");
+    terminal_color = 0x0F;
+    printf("          \\____________________________________________/                \n");
+
+    /* --- Hav --- */
+    terminal_color = 0x0B;
+    printf("  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~   \n");
+    terminal_color = 0x09;
+    printf("~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  ~~~  \n");
+
+    /* --- Bunn-ramme --- */
+    terminal_color = 0x0E;
+    printf("======================================================================\n");
+    terminal_color = 0x0F;
 }
 
 void terminal_scroll_line_up(void)
