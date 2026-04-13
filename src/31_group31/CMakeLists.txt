@@ -58,9 +58,14 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 
 # Add executable target for the kernel
 add_executable(uiaos-kernel 
-	src/multiboot2.asm # TODO: Add multiboot2 support
+    src/multiboot2.asm
     src/kernel.c
-	src/gdt.asm
+    src/gdt.asm
+    src/idt.c
+    src/isr.c
+    src/interrupt.asm
+    src/ports.c
+    src/keyboard.c
 )
 
 # Include directories for the kernel target
@@ -69,8 +74,8 @@ target_include_directories(uiaos-kernel PUBLIC include)
 
 # Specify compile options for C and C++
 target_compile_options(uiaos-kernel PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
+    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
 )
 
@@ -117,7 +122,7 @@ set(ISO_DIR ${CMAKE_CURRENT_BINARY_DIR}/iso)
 set(LIMINE_CONFIG_DIR ${CMAKE_SOURCE_DIR})
 set(LIMINE_DIR /usr/local/limine)
 add_custom_target(
-	uiaos-create-image
+	uiaos-create-image ALL
 	COMMAND rm -rf ${ISO_DIR}
 	COMMAND mkdir -p ${ISO_DIR}
 	COMMAND cp -v $<TARGET_FILE:uiaos-kernel> 
