@@ -4,6 +4,8 @@
 #include "../../include/menu.h"
 #include "../lib/song/song.h"
 
+#define FIRST_SONG 0
+#define LAST_SONG 6
 // Defines all songs available in song.h
 Song song_1 = {.notes = music_1,
                .length = sizeof(music_1) / sizeof(music_1[0])};
@@ -26,15 +28,24 @@ Song song_6 = {.notes = music_6,
 Song song_7 = {.notes = nasjonal_sangen,
                .length = sizeof(nasjonal_sangen) / sizeof(nasjonal_sangen[0])};
 
-Song *songs[] = {[0] = &song_1, [1] = &song_2, [2] = &song_3, [3] = &song_4,
-                 [4] = &song_5, [5] = &song_6, [6] = &song_7};
+Song *songs[] = {
+    [FIRST_SONG] = &song_1, [1] = &song_2, [2] = &song_3,        [3] = &song_4,
+    [4] = &song_5,          [5] = &song_6, [LAST_SONG] = &song_7};
 
 void radio_keyboard_handler(int scancode) {
   int test_key = get_key(scancode);
   if (test_key == -1) {
     return;
   }
+
   int key = test_key - 48;
+  // Return early if key is out of range
+  if (key < FIRST_SONG || key > LAST_SONG) {
+    printf("You typed '%d' which is out of range, please choose a song between "
+           "%d - %d\n",
+           key, FIRST_SONG, LAST_SONG);
+    return;
+  }
 
   SongPlayer *songPlayer = create_song_player();
   printf("Playing song number: %d", key);

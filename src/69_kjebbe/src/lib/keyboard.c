@@ -85,6 +85,7 @@ static void keyboard_irq_handler(registers_t *regs) {
   if (scancode == 0x10) {
     active_program = PROGRAM_MENU;
     disable_speaker();
+    clearTerminal();
     print_menu();
     return;
   }

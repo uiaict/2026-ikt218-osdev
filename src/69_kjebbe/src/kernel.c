@@ -41,6 +41,7 @@ int main(uint32_t magic, struct multiboot_info *mb_info_addr) {
   int counter = reload;
 
   // Main kernel loop
+  printf("Memory information printed above. To display the menu press 'q'\n");
   while (true) {
     int entry = kb_dequeue(&kb);
     if (entry != -1) {
