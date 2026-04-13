@@ -245,6 +245,10 @@ bool pop_special_key(uint8_t* out) {
 }
 
 
+bool keyboard_has_key(void) {
+  return !rb_is_empty(&ascii_buffer);
+}
+
 bool has_special_key() {
   return !rb_is_empty(&special_buffer);
 }

@@ -40,3 +40,9 @@ bool has_special_key();
  * @return false if keybuffer is empty
  */
 bool pop_special_key(uint8_t* out);
+
+/**
+ * Check if the ascii keybuffer has any elements.
+ * @return true if it has 1 or more elements
+ */
+bool keyboard_has_key(void);
