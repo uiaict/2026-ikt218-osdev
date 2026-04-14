@@ -68,7 +68,7 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     init_paging();
     print_memory_layout();
     init_pit();
-    play_default_song();
+    // play_default_song();
 
     // Memory test:
     MemoryDebugData debug_data = get_memory_layout();

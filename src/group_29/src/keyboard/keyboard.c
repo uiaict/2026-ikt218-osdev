@@ -60,8 +60,7 @@ static const char keyboard_ascii_shift_map[128] = {
     ['\x39'] = ' '
 };
 
-static void push_ascii_buffer(char value)
-{
+static void push_ascii_buffer(char value) {
     if (ascii_buffer.count >= KEYBOARD_BUFFER_SIZE) {
         return;
     }
@@ -71,13 +70,11 @@ static void push_ascii_buffer(char value)
     ++ascii_buffer.count;
 }
 
-static bool is_letter(char value)
-{
+static bool is_letter(char value) {
     return value >= 'a' && value <= 'z';
 }
 
-static char uppercase(char value)
-{
+static char uppercase(char value) {
     if (value < 'a' || value > 'z') {
         return value;
     }
@@ -85,13 +82,11 @@ static char uppercase(char value)
     return (char)(value - ('a' - 'A'));
 }
 
-static bool shift_active(void)
-{
+static bool shift_active(void) {
     return left_shift_pressed || right_shift_pressed;
 }
 
-static char translate_keycode_to_ascii(keycode_t keycode)
-{
+static char translate_keycode_to_ascii(keycode_t keycode) {
     char ascii;
 
     if (keycode.release || keycode.keycode >= 128U) {
@@ -118,8 +113,7 @@ static char translate_keycode_to_ascii(keycode_t keycode)
     return ascii;
 }
 
-static void print_keyboard_char(char value)
-{
+static void print_keyboard_char(char value) {
     if (value == '\b') {
         if (main_interface.cursor.memory_position > main_interface.cursor.memory_start) {
             --main_interface.cursor.memory_position;
@@ -135,8 +129,7 @@ static void print_keyboard_char(char value)
     }
 }
 
-void push_scancode_buffer(scancode_buffer_t* buffer, uint8_t scancode)
-{
+void push_scancode_buffer(scancode_buffer_t* buffer, uint8_t scancode) {
     if (buffer->count >= KEYBOARD_BUFFER_SIZE) {
         return;
     }
@@ -146,8 +139,7 @@ void push_scancode_buffer(scancode_buffer_t* buffer, uint8_t scancode)
     ++buffer->count;
 }
 
-uint8_t pop_scancode_buffer(scancode_buffer_t* buffer)
-{
+uint8_t pop_scancode_buffer(scancode_buffer_t* buffer) {
     uint8_t value;
 
     if (buffer->count == 0U) {
@@ -160,14 +152,12 @@ uint8_t pop_scancode_buffer(scancode_buffer_t* buffer)
     return value;
 }
 
-scancode_buffer_t create_scancode_buffer(void)
-{
+scancode_buffer_t create_scancode_buffer(void) {
     scancode_buffer_t buffer = {0};
     return buffer;
 }
 
-void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode)
-{
+void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode) {
     if (buffer->count >= KEYBOARD_BUFFER_SIZE) {
         return;
     }
@@ -177,8 +167,7 @@ void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode)
     ++buffer->count;
 }
 
-keycode_t pop_keycode_buffer(keycode_buffer_t* buffer)
-{
+keycode_t pop_keycode_buffer(keycode_buffer_t* buffer) {
     keycode_t value = {0};
 
     if (buffer->count == 0U) {
@@ -191,22 +180,19 @@ keycode_t pop_keycode_buffer(keycode_buffer_t* buffer)
     return value;
 }
 
-keycode_buffer_t create_keycode_buffer(void)
-{
+keycode_buffer_t create_keycode_buffer(void) {
     keycode_buffer_t buffer = {0};
     return buffer;
 }
 
-keycode_t new_keycode(uint16_t keycode, bool release)
-{
+keycode_t new_keycode(uint16_t keycode, bool release) {
     keycode_t value;
     value.keycode = keycode;
     value.release = release;
     return value;
 }
 
-void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output)
-{
+void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output) {
     uint8_t scancode;
     bool release;
 
@@ -223,8 +209,7 @@ void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output)
     push_keycode_buffer(output, new_keycode((uint16_t)(scancode & 0x7FU), release));
 }
 
-void init_keyboard(void)
-{
+void init_keyboard(void) {
     scancode_buffer = create_scancode_buffer();
     keycode_buffer = create_keycode_buffer();
     ascii_buffer.head = 0;
@@ -235,8 +220,7 @@ void init_keyboard(void)
     caps_lock_enabled = false;
 }
 
-void keyboard_handle_scancode(uint8_t scancode)
-{
+void keyboard_handle_scancode(uint8_t scancode) {
     keycode_t keycode;
     char ascii;
 
@@ -271,13 +255,11 @@ void keyboard_handle_scancode(uint8_t scancode)
     }
 }
 
-bool keyboard_has_char(void)
-{
+bool keyboard_has_char(void) {
     return ascii_buffer.count > 0U;
 }
 
-char keyboard_pop_char(void)
-{
+char keyboard_pop_char(void) {
     char value;
 
     if (ascii_buffer.count == 0U) {
