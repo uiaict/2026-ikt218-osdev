@@ -70,6 +70,7 @@ add_executable(uiaos-kernel
 	src/sound/song_player.c
 	src/format/format.c
 	src/printing/printing.c
+	"src/command/command.c"
 )
 
 # Include directories for the kernel target

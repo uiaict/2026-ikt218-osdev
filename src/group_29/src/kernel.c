@@ -113,13 +113,13 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
         //     print(busy_start, VgaColor(vga_white, vga_black));
         //     free((void *)busy_start);
         // }
-        counter++;
+        // counter++;
 
-        const char *string = format_string("Counter: %d\n", counter);
-        print(string, VgaColor(vga_black, vga_light_magenta));
-        free(string);
-        string = NULL;
-        sleep_busy(500U);
+        // const char *string = format_string("Counter: %d\n", counter);
+        // print(string, VgaColor(vga_black, vga_light_magenta));
+        // free(string);
+        // string = NULL;
+        // sleep_busy(500U);
 
         // char* busy_done = format_string("[%d]: Slept using busy-waiting.\n", (int32_t)counter);
         // if (busy_done != NULL) {
