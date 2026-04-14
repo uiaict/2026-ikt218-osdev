@@ -60,6 +60,9 @@ static const char keyboard_ascii_shift_map[128] = {
     ['\x39'] = ' '
 };
 
+/// @brief Pushes one translated ASCII character into the ASCII buffer.
+/// 
+/// @param value The translated character to store for later shell input.
 static void push_ascii_buffer(char value) {
     if (ascii_buffer.count >= KEYBOARD_BUFFER_SIZE) {
         return;
@@ -70,10 +73,18 @@ static void push_ascii_buffer(char value) {
     ++ascii_buffer.count;
 }
 
+/// @brief Checks whether a translated ASCII character is a lowercase letter.
+/// 
+/// @param value The character to inspect.
+/// @return True if the character is between `a` and `z`.
 static bool is_letter(char value) {
     return value >= 'a' && value <= 'z';
 }
 
+/// @brief Converts one lowercase ASCII letter to uppercase.
+/// 
+/// @param value The character to convert.
+/// @return The uppercase version of the character, or the original value if unchanged.
 static char uppercase(char value) {
     if (value < 'a' || value > 'z') {
         return value;
@@ -82,10 +93,17 @@ static char uppercase(char value) {
     return (char)(value - ('a' - 'A'));
 }
 
+/// @brief Checks whether either Shift key is currently pressed.
+/// 
+/// @return True if left or right Shift is active.
 static bool shift_active(void) {
     return left_shift_pressed || right_shift_pressed;
 }
 
+/// @brief Translates one key event into an ASCII character.
+/// 
+/// @param keycode The decoded key event.
+/// @return The translated ASCII character, or 0 if the key should not produce output.
 static char translate_keycode_to_ascii(keycode_t keycode) {
     char ascii;
 
@@ -113,6 +131,9 @@ static char translate_keycode_to_ascii(keycode_t keycode) {
     return ascii;
 }
 
+/// @brief Echoes one translated character to the terminal.
+/// 
+/// @param value The character to print to the screen.
 static void print_keyboard_char(char value) {
     if (value == '\b') {
         if (main_interface.cursor.memory_position > main_interface.cursor.memory_start) {
@@ -129,6 +150,10 @@ static void print_keyboard_char(char value) {
     }
 }
 
+/// @brief Pushes a raw keyboard scancode into the scancode buffer.
+/// 
+/// @param buffer The scancode ring buffer to write to.
+/// @param scancode The raw byte read from the keyboard controller.
 void push_scancode_buffer(scancode_buffer_t* buffer, uint8_t scancode) {
     if (buffer->count >= KEYBOARD_BUFFER_SIZE) {
         return;
@@ -139,6 +164,10 @@ void push_scancode_buffer(scancode_buffer_t* buffer, uint8_t scancode) {
     ++buffer->count;
 }
 
+/// @brief Pops the oldest raw scancode from the scancode buffer.
+/// 
+/// @param buffer The scancode ring buffer to read from.
+/// @return The oldest scancode in the buffer, or 0 if the buffer is empty.
 uint8_t pop_scancode_buffer(scancode_buffer_t* buffer) {
     uint8_t value;
 
@@ -152,11 +181,18 @@ uint8_t pop_scancode_buffer(scancode_buffer_t* buffer) {
     return value;
 }
 
+/// @brief Creates and returns an empty scancode ring buffer.
+/// 
+/// @return A zero-initialized scancode buffer.
 scancode_buffer_t create_scancode_buffer(void) {
     scancode_buffer_t buffer = {0};
     return buffer;
 }
 
+/// @brief Pushes a decoded key event into the keycode buffer.
+/// 
+/// @param buffer The keycode ring buffer to write to.
+/// @param keycode The decoded key event to store.
 void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode) {
     if (buffer->count >= KEYBOARD_BUFFER_SIZE) {
         return;
@@ -167,6 +203,10 @@ void push_keycode_buffer(keycode_buffer_t* buffer, keycode_t keycode) {
     ++buffer->count;
 }
 
+/// @brief Pops the oldest key event from the keycode buffer.
+/// 
+/// @param buffer The keycode ring buffer to read from.
+/// @return The oldest key event in the buffer, or a zero-initialized keycode if empty.
 keycode_t pop_keycode_buffer(keycode_buffer_t* buffer) {
     keycode_t value = {0};
 
@@ -180,11 +220,19 @@ keycode_t pop_keycode_buffer(keycode_buffer_t* buffer) {
     return value;
 }
 
+/// @brief Creates and returns an empty keycode ring buffer.
+/// 
+/// @return A zero-initialized keycode buffer.
 keycode_buffer_t create_keycode_buffer(void) {
     keycode_buffer_t buffer = {0};
     return buffer;
 }
 
+/// @brief Creates a keycode struct describing one key press or release event.
+/// 
+/// @param keycode The decoded keyboard key identifier.
+/// @param release True if the key was released, false if it was pressed.
+/// @return A populated keycode struct.
 keycode_t new_keycode(uint16_t keycode, bool release) {
     keycode_t value;
     value.keycode = keycode;
@@ -192,6 +240,10 @@ keycode_t new_keycode(uint16_t keycode, bool release) {
     return value;
 }
 
+/// @brief Converts one buffered scancode into a keycode event.
+/// 
+/// @param input The input scancode buffer.
+/// @param output The output keycode buffer.
 void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output) {
     uint8_t scancode;
     bool release;
@@ -209,6 +261,7 @@ void scancode2keycode(scancode_buffer_t* input, keycode_buffer_t* output) {
     push_keycode_buffer(output, new_keycode((uint16_t)(scancode & 0x7FU), release));
 }
 
+/// @brief Initializes keyboard buffers and modifier state.
 void init_keyboard(void) {
     scancode_buffer = create_scancode_buffer();
     keycode_buffer = create_keycode_buffer();
@@ -220,6 +273,9 @@ void init_keyboard(void) {
     caps_lock_enabled = false;
 }
 
+/// @brief Processes one raw scancode from the keyboard controller.
+/// 
+/// @param scancode The raw byte read from port `0x60`.
 void keyboard_handle_scancode(uint8_t scancode) {
     keycode_t keycode;
     char ascii;
@@ -255,10 +311,16 @@ void keyboard_handle_scancode(uint8_t scancode) {
     }
 }
 
+/// @brief Checks whether a translated ASCII character is available.
+/// 
+/// @return True if the ASCII buffer contains at least one character.
 bool keyboard_has_char(void) {
     return ascii_buffer.count > 0U;
 }
 
+/// @brief Pops the oldest translated ASCII character.
+/// 
+/// @return The oldest character in the ASCII buffer, or 0 if the buffer is empty.
 char keyboard_pop_char(void) {
     char value;
 
