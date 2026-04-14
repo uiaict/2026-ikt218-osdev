@@ -4,6 +4,12 @@ typedef unsigned char  uint8_t;
 #include <stdarg.h>
 #include "isr.h"
 #include "keyboard.h"
+#include "memory.h"
+#include "pit.h"
+
+// This is defined in arch/i386/linker.ld
+extern uint32_t end;
+
 struct gdt_entry {
     uint16_t limit_low;
     uint16_t base_low;
@@ -131,16 +137,36 @@ void main(void) {
     // Task 4: Initialize the keyboard listener
     init_keyboard();
 
-    printf("Welcome to UiAOS!\n");
-    printf("Hardware Interrupts enabled. Try typing something:\n> ");
+    // Initialize the kernel's memory manager using the end address of the kernel.
+    init_kernel_memory(&end);
+
+    // Initialize paging for memory management.
+    init_paging();
+
+    // Print memory information.
+    print_memory_layout();
+
+    // Initialize PIT
+    init_pit();
+
+    printf("Hello World! Memory & PIT initialized.\n");
+
+    void* some_memory = malloc(12345); 
+    void* memory2 = malloc(54321); 
+    void* memory3 = malloc(13331);
 
     // CRITICAL: Enable external hardware interrupts.
     // 'sti' stands for Set Interrupt Flag. It tells the CPU to start listening.
     __asm__ volatile("sti");
 
-    // Infinite loop to keep the OS running so we can type
+    int counter = 0;
     while (1) {
-        // The CPU waits here, but whenever a key is pressed,
-        // it pauses this loop, runs keyboard_callback, and comes back.
+        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
+        sleep_busy(1000);
+        printf("[%d]: Slept using busy-waiting.\n", counter++);
+
+        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
+        sleep_interrupt(1000);
+        printf("[%d]: Slept using interrupts.\n", counter++);
     }
 }

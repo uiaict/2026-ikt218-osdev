@@ -66,6 +66,10 @@ add_executable(uiaos-kernel
     src/interrupt.asm
     src/ports.c
     src/keyboard.c
+    src/pit.c
+    src/memory.c
+    src/paging.c
+    src/memutils.c
 )
 
 # Include directories for the kernel target
