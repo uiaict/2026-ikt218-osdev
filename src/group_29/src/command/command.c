@@ -24,3 +24,8 @@ void run_shell_command(int argument_count, char* arguments[]) {
     print("Unknown command\n");
     return -1;
 }
+
+void display_command_input(const char username[]) {
+    print(username);
+    print(" > ");
+}

@@ -4,3 +4,5 @@
 #include "../printing/printing.h"
 
 void run_shell_command(int argument_count, char* arguments[]);
+
+void display_command_input(const char username[]);
