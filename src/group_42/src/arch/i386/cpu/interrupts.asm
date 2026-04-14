@@ -1,344 +1,160 @@
-[extern isr_handler]
-[extern irq_handler]
 [extern syscall_handler]
 
+%macro isr_err_stub 1   ; ISR with error codes
+isr_stub_%+%1:
+    CLI
+    PUSH BYTE %1       ; interrupt number
+    JMP isr_common_stub
+%endmacro
+
+%macro isr_no_err_stub 1; ISR without error codes
+isr_stub_%+%1:
+    CLI
+    PUSH BYTE 0        ; fake error code
+    PUSH BYTE %1       ; interrupt number
+    JMP isr_common_stub
+%endmacro
+
+%macro irq 2
+irq_stub_%+%1:
+    CLI
+    PUSH BYTE 0
+    PUSH BYTE %2
+    JMP irq_common_stub
+
+%endmacro
+
 isr_common_stub:
-    ; Save CPU state
-	pusha
-	mov ax, ds
-	push eax
-	mov ax, 0x10
+	pusha			; Pushes edi, esi, ebp, esp, ebx, edx, edx, eax
+
+	mov ax, ds		; Lower 16-bits of eax = ds.
+	push eax		; save the data segment descriptor
+
+	mov ax, 0x10	; load the kernel data segment descriptor
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-	push esp ; registers_t *r
-    ; Call C handler
-    cld
+
+    push esp
 	call isr_handler
+	add esp, 4
 
-    ; Restore state
-	pop eax
-    pop eax
+	pop eax			; reload the original data segment descriptor
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
-	popa
-	add esp, 8
-	iret
 
+	popa			; Pops edi, esi, ebp...
+	add esp, 8		; Cleans up the pushed error code and pushed ISR number
+	sti
+	iret			; pops 5 things at once, CS, EIP, EFLAGS, SS, and ESP
+
+
+extern isr_handler  ; implemented in c
 
 irq_common_stub:
-    pusha
-    mov ax, ds
-    push eax
-    mov ax, 0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
+	pusha			; Pushes edi, esi, ebp, esp, ebx, edx, edx, eax
+
+	mov ax, ds		; Lower 16-bits of eax = ds.
+	push eax		; save the data segment descriptor
+
+	mov ax, 0x10	; load the kernel data segment descriptor
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+
     push esp
-    cld
-    call irq_handler
-    pop ebx
-    pop ebx
-    mov ds, bx
-    mov es, bx
-    mov fs, bx
-    mov gs, bx
-    popa
-    add esp, 8
-    iret
+	call irq_handler
+	add esp, 4
 
-; ISRs
-global isr0
-global isr1
-global isr2
-global isr3
-global isr4
-global isr5
-global isr6
-global isr7
-global isr8
-global isr9
-global isr10
-global isr11
-global isr12
-global isr13
-global isr14
-global isr15
-global isr16
-global isr17
-global isr18
-global isr19
-global isr20
-global isr21
-global isr22
-global isr23
-global isr24
-global isr25
-global isr26
-global isr27
-global isr28
-global isr29
-global isr30
-global isr31
-; IRQs
-global irq0
-global irq1
-global irq2
-global irq3
-global irq4
-global irq5
-global irq6
-global irq7
-global irq8
-global irq9
-global irq10
-global irq11
-global irq12
-global irq13
-global irq14
-global irq15
-global syscall_stub
+	pop eax			; reload the original data segment descriptor
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 
-isr0:
-    push byte 0
-    push byte 0
-    jmp isr_common_stub
+	popa			; Pops edi, esi, ebp...
+	add esp, 8		; Cleans up the pushed error code and pushed ISR number
+	sti
+	iret			; pops 5 things at once, CS, EIP, EFLAGS, SS, and ESP
 
-isr1:
-    push byte 0
-    push byte 1
-    jmp isr_common_stub
 
-isr2:
-    push byte 0
-    push byte 2
-    jmp isr_common_stub
+extern irq_handler  ; implemented in c
 
-isr3:
-    push byte 0
-    push byte 3
-    jmp isr_common_stub
+; defines all CPU defined ISRs
+isr_no_err_stub 0
+isr_no_err_stub 1
+isr_no_err_stub 2
+isr_no_err_stub 3
+isr_no_err_stub 4
+isr_no_err_stub 5
+isr_no_err_stub 6
+isr_no_err_stub 7
+isr_err_stub    8
+isr_no_err_stub 9
+isr_err_stub    10
+isr_err_stub    11
+isr_err_stub    12
+isr_err_stub    13
+isr_err_stub    14
+isr_no_err_stub 15
+isr_no_err_stub 16
+isr_err_stub    17
+isr_no_err_stub 18
+isr_no_err_stub 19
+isr_no_err_stub 20
+isr_no_err_stub 21
+isr_no_err_stub 22
+isr_no_err_stub 23
+isr_no_err_stub 24
+isr_no_err_stub 25
+isr_no_err_stub 26
+isr_no_err_stub 27
+isr_no_err_stub 28
+isr_no_err_stub 29
+isr_err_stub    30
+isr_no_err_stub 31
 
-isr4:
-    push byte 0
-    push byte 4
-    jmp isr_common_stub
+irq  0,  32
+irq  1,  33
+irq  2,  34
+irq  3,  35
+irq  4,  36
+irq  5,  37
+irq  6,  38
+irq  7,  39
+irq  8,  40
+irq  9,  41
+irq 10,  42
+irq 11,  43
+irq 12,  44
+irq 13,  45
+irq 14,  46
+irq 15,  47
 
-isr5:
-    push byte 0
-    push byte 5
-    jmp isr_common_stub
+; ISR table to access set ISRs using array instead of defining many 'extern ISR_1'
+global isr_stub_table
+isr_stub_table:
+    %assign i 0
+    %rep    32
+        DD isr_stub_%+i
+    %assign i i+1
+    %endrep
 
-isr6:
-    push byte 0
-    push byte 6
-    jmp isr_common_stub
-
-isr7:
-    push byte 0
-    push byte 7
-    jmp isr_common_stub
-
-isr8:
-    push byte 8
-    jmp isr_common_stub
-
-isr9:
-    push byte 0
-    push byte 9
-    jmp isr_common_stub
-
-isr10:
-    push byte 10
-    jmp isr_common_stub
-
-isr11:
-    push byte 11
-    jmp isr_common_stub
-
-isr12:
-    push byte 12
-    jmp isr_common_stub
-
-isr13:
-    push byte 13
-    jmp isr_common_stub
-
-isr14:
-    push byte 14
-    jmp isr_common_stub
-
-isr15:
-    push byte 0
-    push byte 15
-    jmp isr_common_stub
-
-isr16:
-    push byte 0
-    push byte 16
-    jmp isr_common_stub
-
-isr17:
-    push byte 0
-    push byte 17
-    jmp isr_common_stub
-
-isr18:
-    push byte 0
-    push byte 18
-    jmp isr_common_stub
-
-isr19:
-    push byte 0
-    push byte 19
-    jmp isr_common_stub
-
-isr20:
-    push byte 0
-    push byte 20
-    jmp isr_common_stub
-
-isr21:
-    push byte 0
-    push byte 21
-    jmp isr_common_stub
-
-isr22:
-    push byte 0
-    push byte 22
-    jmp isr_common_stub
-
-isr23:
-    push byte 0
-    push byte 23
-    jmp isr_common_stub
-
-isr24:
-    push byte 0
-    push byte 24
-    jmp isr_common_stub
-
-isr25:
-    push byte 0
-    push byte 25
-    jmp isr_common_stub
-
-isr26:
-    push byte 0
-    push byte 26
-    jmp isr_common_stub
-
-isr27:
-    push byte 0
-    push byte 27
-    jmp isr_common_stub
-
-isr28:
-    push byte 0
-    push byte 28
-    jmp isr_common_stub
-
-isr29:
-    push byte 0
-    push byte 29
-    jmp isr_common_stub
-
-isr30:
-    push byte 0
-    push byte 30
-    jmp isr_common_stub
-
-isr31:
-    push byte 0
-    push byte 31
-    jmp isr_common_stub
-
-irq0:
-	push byte 0
-	push byte 32
-	jmp irq_common_stub
-
-irq1:
-	push byte 1
-	push byte 33
-	jmp irq_common_stub
-
-irq2:
-	push byte 2
-	push byte 34
-	jmp irq_common_stub
-
-irq3:
-	push byte 3
-	push byte 35
-	jmp irq_common_stub
-
-irq4:
-	push byte 4
-	push byte 36
-	jmp irq_common_stub
-
-irq5:
-	push byte 5
-	push byte 37
-	jmp irq_common_stub
-
-irq6:
-	push byte 6
-	push byte 38
-	jmp irq_common_stub
-
-irq7:
-	push byte 7
-	push byte 39
-	jmp irq_common_stub
-
-irq8:
-	push byte 8
-	push byte 40
-	jmp irq_common_stub
-
-irq9:
-	push byte 9
-	push byte 41
-	jmp irq_common_stub
-
-irq10:
-	push byte 10
-	push byte 42
-	jmp irq_common_stub
-
-irq11:
-	push byte 11
-	push byte 43
-	jmp irq_common_stub
-
-irq12:
-	push byte 12
-	push byte 44
-	jmp irq_common_stub
-
-irq13:
-	push byte 13
-	push byte 45
-	jmp irq_common_stub
-
-irq14:
-	push byte 14
-	push byte 46
-	jmp irq_common_stub
-
-irq15:
-	push byte 15
-	push byte 47
-	jmp irq_common_stub
-
+; IRQ table to acces IRQs using array
+global irq_stub_table
+irq_stub_table:
+    %assign i 0
+    %rep    16
+        DD irq_stub_%+i
+    %assign i i+1
+    %endrep
 
 ; syscalls
+global syscall_stub
 syscall_stub:
     push 0
     push 0x80           ; Interrupt vector 0x80
