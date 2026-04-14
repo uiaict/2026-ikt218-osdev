@@ -74,6 +74,60 @@ static int int_to_str(int32_t value, char *buf) {
     }
 }
 
+int32_t str_to_int_checked(const char string[], int* ok) {
+    if (!string) {
+        if (ok) *ok = 0;
+        return 0;
+    }
+
+    const char *start = string;
+    int32_t result = 0;
+    int32_t sign = 1;
+
+    // skip whitespace
+    while (*string == ' ' || *string == '\t' || *string == '\n' ||
+           *string == '\r' || *string == '\v' || *string == '\f') {
+        string++;
+    }
+
+    // sign
+    if (*string == '-') {
+        sign = -1;
+        string++;
+    } else if (*string == '+') {
+        string++;
+    }
+
+    // must have at least one digit
+    if (*string < '0' || *string > '9') {
+        if (ok) *ok = 0;
+        return 0;
+    }
+
+    int has_digits = 0;
+
+    while (*string >= '0' && *string <= '9') {
+        has_digits = 1;
+
+        result = result * 10 + (*string - '0');
+        string++;
+    }
+
+    // ensure full consumption (no trailing junk)
+    if (*string != '\0' && *string != '\n') {
+        if (ok) *ok = 0;
+        return 0;
+    }
+
+    if (!has_digits) {
+        if (ok) *ok = 0;
+        return 0;
+    }
+
+    if (ok) *ok = 1;
+    return result * sign;
+}
+
 char* format_string(char input_string[], int32_t value) {
     if (!input_string) {
         return NULL;
