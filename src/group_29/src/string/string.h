@@ -3,6 +3,8 @@
 #include "libc/stdint.h"
 #include "libc/stddef.h"
 
+#include "../memory/heap.h"
+
 
 /// @brief Finds the length of a string
 ///
@@ -38,7 +40,7 @@ int16_t strcmp(const char string_a[], const char string_b[]);
 /// @returns The number of characters written to the buffer (excluding any null terminator).
 ///
 /// @warning The buffer must be large enough to hold the result (up to 11 characters for "-2147483648"). The output is NOT null-terminated; you must append '\0' manually if needed. Passing a NULL buffer results in undefined behavior.
-static int int_to_str(int32_t value, char* buf);
+int int_to_str(int32_t value, char* buf);
 
 
 /// @brief Converts a string to a 32-bit signed integer with validation.
@@ -53,8 +55,7 @@ static int int_to_str(int32_t value, char* buf);
 ///
 /// @returns The parsed 32-bit signed integer. Returns 0 if parsing fails.
 ///
-/// @warning If `ok` is NULL, no success/failure information will be returned.
-///          The function does not currently detect integer overflow.
+/// @warning If `ok` is NULL, no success/failure information will be returned. The function does not currently detect integer overflow.
 int32_t str_to_int_checked(const char str[], int* ok);
 
 

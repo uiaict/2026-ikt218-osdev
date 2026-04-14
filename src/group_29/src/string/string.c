@@ -21,7 +21,7 @@ int16_t strcmp(const char string_a[], const char string_b[]) {
 }
 
 
-static int int_to_str(int32_t value, char *buf) {
+int int_to_str(int32_t value, char *buf) {
     // handle zero explicitly
     if (value == 0) {
         buf[0] = '0';

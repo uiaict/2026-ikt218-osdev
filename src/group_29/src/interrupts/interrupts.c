@@ -85,7 +85,7 @@ static void send_eoi(uint8_t irq_number)
 
 static void print_interrupt_message(const char* message, uint8_t color)
 {
-    print(message, color);
+    print_color(message, color);
 }
 
 static void handle_generic_irq(uint8_t irq_number, const char* message)
