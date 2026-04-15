@@ -2,8 +2,9 @@
 
 #include "libc/stdint.h"
 #include "../memory/heap.h"
+#include "../string/string.h"
 
-#define USER_MAX_USERNAME_LENGTH 32
+#define USER_MAX_USERNAME_LENGTH 24
 
 typedef struct {
     char username[USER_MAX_USERNAME_LENGTH + 1];

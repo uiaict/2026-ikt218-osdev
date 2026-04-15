@@ -31,3 +31,7 @@ void print(const char string[]);
 /// @param string The char array (string) to write. To include formatted values, use format_string as declared in string/string.h
 /// @param color_bitmap The color the string should be displayed as. For this parameter use VgaColor(bg, fg) where bg/fg are VGA color enums.
 void write_text_at(uint8_t row, uint8_t column, const char string[], uint8_t color_bitmap);
+
+void clear_screen();
+
+void fill_screen(uint8_t color_bitmap);

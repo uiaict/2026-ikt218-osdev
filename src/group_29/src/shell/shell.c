@@ -64,11 +64,11 @@ static void shell_begin_prompt(void) {
     marker_string[0] = shell_state.next_prompt_failed ? 'x' : '>';
     marker_string[1] = '\0';
 
-    print(" SH: ");
+    print_color(" SH ", VgaColor(vga_black, vga_light_gray));
     print_color(user_get_username(), VgaColor(vga_black, vga_light_green));
     // print();
     print(" ");
-    print_color(marker_string, VgaColor(vga_black, shell_state.next_prompt_failed ? vga_light_red : vga_light_green));
+    print_color(marker_string, VgaColor(vga_black, shell_state.next_prompt_failed ? vga_light_red : vga_white));
     print(" ");
     shell_state.next_prompt_failed = 0U;
 }
@@ -111,12 +111,32 @@ static void shell_submit_current_line(void) {
 
     shell_copy_current_line_to_submitted();
     result = run_command(shell_state.current_line);
+
+    const char *output = format_string("%d\n", result);
+    print(output);
+    free(output);
+
     if (result < 0) {
         shell_state.next_prompt_failed = 1U;
 
         if (result == COMMAND_STATUS_UNKNOWN) {
-            shell_print_failure_message(" Error > Unknown command: ", shell_state.submitted_line);
+            shell_print_failure_message(" Unknown command: ", shell_state.submitted_line);
             // shell_print_failure_message("        Failed line: ", shell_state.submitted_line);
+        }
+
+        if (result == COMMAND_TOO_FEW_ARGUMENTS) {
+            shell_print_failure_message(" Too few arguments in: ", shell_state.submitted_line);
+        }
+
+        if (result == COMMAND_TOO_MANY_ARGUMENTS) {
+            shell_print_failure_message(" Too many arguments in: ", shell_state.submitted_line);
+        }
+
+        if (result == COMMAND_ARGUMENT_USERNAME_TOO_LONG) {
+            const char* message = format_string(" Username too long! Max length: %d characters\n", USER_MAX_USERNAME_LENGTH);
+            print_color(message, VgaColor(vga_black, vga_light_red));
+            // shell_print_failure_message(message, shell_state.submitted_line);
+            free(message);
         }
     }
 

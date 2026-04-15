@@ -166,13 +166,13 @@ char* format_string(char input_string[], int32_t value) {
 }
 
 int16_t string_copy(const char input[], char output[], int16_t output_length) {
-    size_t input_length = strlen(input);
+    uint32_t input_length = strlen(input);
 
-    if (output_length < input_length) {
+    if (input_length >= output_length) {
         return -1;
     }
 
-    for (size_t i = 0; i <= input_length; i++) {
+    for (uint32_t i = 0; i <= input_length; i++) {
         output[i] = input[i];
     }
 

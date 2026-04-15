@@ -81,3 +81,9 @@ void write_text_at(uint8_t row, uint8_t column, const char string[], uint8_t col
         ++string;
     }
 }
+
+void clear_screen() {
+}
+
+void fill_screen(uint8_t color_bitmap) {
+}
