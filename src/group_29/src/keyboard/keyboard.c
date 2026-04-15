@@ -131,26 +131,6 @@ static char translate_keycode_to_ascii(keycode_t keycode) {
     return ascii;
 }
 
-/// @brief Echoes one translated character to the terminal.
-/// 
-/// @param value The character to print to the screen.
-static void print_keyboard_char(char value) {
-    if (value == '\b') {
-        if (main_interface.cursor.memory_position > main_interface.cursor.memory_start) {
-            --main_interface.cursor.memory_position;
-            *main_interface.cursor.memory_position = (uint16_t)(VgaColor(vga_black, vga_white) << 8 | ' ');
-            main_interface.cursor.CalculateRowColFromMemoryPosition(&main_interface.cursor);
-            VgaTextModeCursorSyncHardware(&main_interface.cursor);
-        }
-        return;
-    }
-
-    {
-        char output[2] = {value, 0};
-        print_color(output, VgaColor(vga_black, vga_white));
-    }
-}
-
 /// @brief Pushes a raw keyboard scancode into the scancode buffer.
 /// 
 /// @param buffer The scancode ring buffer to write to.
@@ -308,7 +288,6 @@ void keyboard_handle_scancode(uint8_t scancode) {
         }
 
         push_ascii_buffer(ascii);
-        print_keyboard_char(ascii);
     }
 }
 

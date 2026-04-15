@@ -27,7 +27,7 @@ int command_echo(int argument_count, char *arguments[])
 
 int run_command(char* input) {
     if (!input) {
-        return -1;
+        return COMMAND_STATUS_INVALID;
     }
 
     char* arguments[MAX_ARGS];
@@ -35,7 +35,7 @@ int run_command(char* input) {
     int argument_count = parse_command_aguments(input, arguments, MAX_ARGS);
 
     if (argument_count == 0) {
-        return -1;
+        return COMMAND_STATUS_INVALID;
     }
 
     return handle_command(argument_count, arguments);
@@ -44,12 +44,12 @@ int run_command(char* input) {
 
 void display_command_input(const char username[]) {
     print(username);
-    print(" > ");
+    print("> ");
 }
 
 int handle_command(int argument_count, char* arguments[]) {
     if (argument_count == 0) {
-        return -1;
+        return COMMAND_STATUS_INVALID;
     }
 
     for (int i = 0; i < command_count; i++) {
@@ -58,8 +58,7 @@ int handle_command(int argument_count, char* arguments[]) {
         }
     }
 
-    print("Unknown command\n");
-    return -1;
+    return COMMAND_STATUS_UNKNOWN;
 }
 
 int parse_command_aguments(char* input, char* arguments[], int max_args) {

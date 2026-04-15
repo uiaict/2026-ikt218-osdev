@@ -67,6 +67,7 @@ add_executable(uiaos-kernel
 	src/keyboard/keyboard.c
 	src/vga_text_mode_interface/vga_text_mode_interface.c
 	src/pit/pit.c
+	src/shell/shell.c
 	src/sound/song_player.c
 	src/printing/printing.c
 	src/command/command.c

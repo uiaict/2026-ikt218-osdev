@@ -6,6 +6,11 @@
 
 #define MAX_ARGS 10
 
+enum {
+    COMMAND_STATUS_INVALID = -1,
+    COMMAND_STATUS_UNKNOWN = -2
+};
+
 /// @brief Function pointer type for commands
 typedef int (*CommandFunction)(int argument_count, char *arguments[]);
 
