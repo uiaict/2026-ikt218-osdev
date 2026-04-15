@@ -10,6 +10,7 @@
 // Data structures
 
 enum {
+    COMMAND_SHELL_CLEARED = 2,
     COMMAND_STATUS_INVALID = -1,
     COMMAND_STATUS_UNKNOWN = -2,
     COMMAND_UNKNOWN_ARGUMENT = -3,
@@ -38,6 +39,9 @@ int8_t command_help(int argument_count, char* arguments[]);
 
 /// @brief Print user input to screen
 int8_t command_echo(int argument_count, char* arguments[]);
+
+/// @brief Clears the shell
+int8_t command_clear(int argument_count, char *arguments[]);
 
 /// @brief Sets the username of user
 int8_t command_set_username(int argument_count, char* arguments[]);

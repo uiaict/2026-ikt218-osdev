@@ -10,7 +10,8 @@
 #include "../user/user.h"
 
 
-#define SHELL_MAX_INPUT_LENGTH (VGA_TERMINAL_WIDTH - 8)
+#define SHELL_MAX_INPUT_LENGTH (VGA_TERMINAL_WIDTH - 16)
+#define SHELL_INPUT_FIELD_MARGIN 8
 
 typedef struct {
     char current_line[SHELL_MAX_INPUT_LENGTH + 1];

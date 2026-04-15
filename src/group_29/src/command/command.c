@@ -3,6 +3,7 @@
 static CommandEntry commands[] = {
     { "help", "[command]", "Display this screen", command_help },
     { "echo", "<content>", "Prints arguments to screen", command_echo },
+    { "clear", "[none]", "Clears the shell content", command_clear },
     { "setusername", "<new-username>", "Changes the shell user display name", command_set_username }
 };
 
@@ -12,7 +13,7 @@ static const int command_count = sizeof(commands) / sizeof(commands[0]);
 
 static void display_help_header() {
     print(" ---- Help menu ----\n");
-    print(" <command> <options>: <description>\n\n");
+    print(" <command> [options]: <description>\n\n");
 }
 
 static void display_command_info(const char name[], const char options[], const char description[]) {
@@ -34,12 +35,12 @@ static int8_t check_argument_count(uint8_t actual_count, uint8_t required_count)
         return COMMAND_TOO_MANY_ARGUMENTS;
     }
 
-    return 0;
+    return COMMAND_SHELL_CLEARED;
 }
 
 // Commands
 
-int8_t command_help(int argument_count, char* arguments[]) {
+int8_t command_help(int argument_count, char *arguments[]) {
     if (command_count < 1) {
         return 1;
     }
@@ -82,7 +83,7 @@ int8_t command_help(int argument_count, char* arguments[]) {
     }
 
     // Show all commands
-    for (uint32_t i = 0; i < command_count; i++) {
+    for (int i = 0; i < command_count; i++) {
         display_command_info(commands[i].name, commands[i].options, commands[i].description);
     }
 
@@ -106,6 +107,16 @@ int8_t command_echo(int argument_count, char* arguments[]) {
 
     print("\n");
     return 0;
+}
+
+int8_t command_clear(int argument_count, char *arguments[]) {
+    if (argument_count > 1) {
+        return COMMAND_TOO_MANY_ARGUMENTS;
+    }
+
+    clear_screen();
+
+    return COMMAND_SHELL_CLEARED;
 }
 
 int8_t command_set_username(int argument_count, char* arguments[]) {

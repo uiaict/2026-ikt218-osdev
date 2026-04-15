@@ -31,8 +31,8 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     init_vga_interface_for_printing();
 
     // Terminal header and footer
-    print(" HEADER - This row and the one below will not be printed/scrolled on\n\n");
-    write_text_at(VGA_TERMINAL_HEIGHT - 1, 0, "This row and the one above will not be printed/scrolled on", VgaColor(vga_white, vga_black));
+    print(" HEADER - This row will not be printed/scrolled on\n\n");
+    write_text_at(VGA_TERMINAL_HEIGHT - 1, 0, "This row will not be printed/scrolled on", VgaColor(vga_white, vga_black));
 
     gdt_init();
     init_keyboard();

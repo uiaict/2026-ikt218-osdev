@@ -5,8 +5,8 @@
 #define VGA_TERMINAL_WIDTH 80
 #define VGA_TERMINAL_HEIGHT 25
 
-#define VGA_MARGIN_TOP_ROWS 2
-#define VGA_MARGIN_BOTTOM_ROWS 2
+#define VGA_MARGIN_TOP_ROWS 1
+#define VGA_MARGIN_BOTTOM_ROWS 1
 
 /**
  * \enum Gives acces to standard VGA text mode colors.

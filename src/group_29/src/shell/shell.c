@@ -18,7 +18,7 @@ static ShellState shell_state;
 // }
 
 static uint8_t get_shell_prompt_width(void) {
-    return (uint8_t)(strlen(user_get_username()) + 3);
+    return (uint8_t)(strlen(user_get_username()) + SHELL_INPUT_FIELD_MARGIN);
 }
 
 static uint16_t shell_max_edit_length(void) {
@@ -102,19 +102,19 @@ static void shell_append_char(char value) {
 static void shell_submit_current_line(void) {
     int result;
 
-    print("\n");
-
     if (shell_state.current_length == 0U) {
         shell_begin_prompt();
         return;
     }
 
+    print("\n");
+
     shell_copy_current_line_to_submitted();
     result = run_command(shell_state.current_line);
 
-    const char *output = format_string("%d\n", result);
-    print(output);
-    free(output);
+    // const char *output = format_string("%d\n", result);
+    // print(output);
+    // free(output);
 
     if (result < 0) {
         shell_state.next_prompt_failed = 1U;
@@ -140,7 +140,10 @@ static void shell_submit_current_line(void) {
         }
     }
 
-    print("\n");
+    // Avoid adding extra newline before user input right after clear
+    if (result != COMMAND_SHELL_CLEARED) {
+        print("\n");
+    }
 
     shell_begin_prompt();
 }
