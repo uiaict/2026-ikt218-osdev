@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "pit.h"
 #include "song.h"
+#include "snake.h"
 
 extern uint32_t end;
 
@@ -30,26 +31,8 @@ void main(uint32_t mb_magic, void* mb_info) {
     __asm__ volatile ("sti"); //enable interrupts after PIC is remapped
 
     printf("Hello World\n");
+    printf("Starting Snake Game...\n");
+    sleep_interrupt(1000);
 
-    Song songs[] = {
-        {music_1, sizeof(music_1) / sizeof(Note)},
-        {starwars_theme, sizeof(starwars_theme) / sizeof(Note)},
-        {battlefield_1942_theme, sizeof(battlefield_1942_theme) / sizeof(Note)},
-        {music_2, sizeof(music_2) / sizeof(Note)},
-        {music_3, sizeof(music_3) / sizeof(Note)},
-        {music_4, sizeof(music_4) / sizeof(Note)},
-        {music_5, sizeof(music_5) / sizeof(Note)},
-        {music_6, sizeof(music_6) / sizeof(Note)},
-    };
-    uint32_t n_songs = sizeof(songs) / sizeof(Song);
-
-    SongPlayer* player = create_song_player();
-
-    while(1) {
-        for (uint32_t i = 0; i < n_songs; i++) {
-            printf("Playing Song...\n");
-            player->play_song(&songs[i]);
-            printf("Finished playing the song.\n");
-        }
-    }
+    snake_game(); //this never returns
 }

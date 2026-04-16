@@ -1,6 +1,7 @@
 #include "irq.h"
 #include "terminal.h"
 #include "pit.h"
+#include "snake.h"
 
 
 //master and slave PIC port addresses
@@ -73,10 +74,8 @@ void irq_handler(uint32_t irq_number) {
     if (irq_number == 1) {
         uint8_t scancode = inb(0x60); //read scancode from keyboard port
         if (scancode < 128) { //ignore key release events (bit 7 set)
-            char c = scancode_table[scancode];
-            if (c != 0) {
-                terminal_write_char(c);
-            }
+            snake_key_handler(scancode);
+            snake_restart_handler(scancode);
         }
     }
     //send EOI to slave PIC if IRQ came from it
