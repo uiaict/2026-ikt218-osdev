@@ -1,5 +1,5 @@
-#include "song.h";
-#include "kernel_memory.h";
+#include "song.h"
+#include "kernel_memory.h"
 
 //convers an array of notes into a song object
 Song* notes_to_song(Note* notes_arr[], uint32_t notes_arr_size) {

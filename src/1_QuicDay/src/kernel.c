@@ -12,7 +12,7 @@
 #include "pit.h"
 #include "libc/string.h"
 
-#include "../quicmusic/SongPlayer.h";
+#include "../quicmusic/SongPlayer.h"
 #include "../quicmusic/frequencies.h"
 
 extern uint32_t end;

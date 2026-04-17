@@ -1,8 +1,8 @@
-#include "SongPlayer.h";
-#include "pit.h";
-#include "libc/stdio.h";
+#include "SongPlayer.h"
+#include "pit.h"
+#include "libc/stdio.h"
 #include "libc/stdint.h"
-#include "song.h";
+#include "song.h"
 
 static inline void outb(uint16_t port, uint8_t value)
 {
