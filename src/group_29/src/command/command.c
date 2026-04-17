@@ -1,8 +1,5 @@
 #include "command.h"
 
-#include "../disk/ata.h"
-#include "../fs/tinyfs.h"
-
 static CommandEntry commands[] = {
     { "help", "[command]", "Display this screen", command_help },
     { "echo", "<content>", "Prints arguments to screen", command_echo },
@@ -44,41 +41,6 @@ static int8_t check_argument_count(uint8_t actual_count, uint8_t required_count)
     }
 
     return COMMAND_VALID_ARGUMENTS;
-}
-
-static void print_command_error(const char* message) {
-    print_color(" ", VgaColor(vga_black, vga_light_red));
-    print_color(message, VgaColor(vga_black, vga_light_red));
-    print_color("\n", VgaColor(vga_black, vga_light_red));
-}
-
-static void print_tinyfs_error(int8_t status) {
-    if (status == TINYFS_STATUS_NOT_FORMATTED) {
-        print_command_error("Disk is not formatted. Run format first.");
-        return;
-    }
-
-    if (status == TINYFS_STATUS_FILE_NOT_FOUND) {
-        print_command_error("File not found.");
-        return;
-    }
-
-    if (status == TINYFS_STATUS_NO_SPACE) {
-        print_command_error("Filesystem is full.");
-        return;
-    }
-
-    if (status == TINYFS_STATUS_INVALID_NAME) {
-        print_command_error("Invalid filename. Use 1-15 characters.");
-        return;
-    }
-
-    if (status == TINYFS_STATUS_OUT_OF_MEMORY) {
-        print_command_error("Not enough memory to read file.");
-        return;
-    }
-
-    print_command_error("Disk operation failed.");
 }
 
 static char* join_arguments(int argument_count, char* arguments[], int start_index) {
@@ -231,8 +193,7 @@ int8_t command_disktest(int argument_count, char* arguments[]) {
         }
 
         if (!ata_write_sector(10U, sector)) {
-            print_command_error("Failed to write sector 10.");
-            return 0;
+            return TINYFS_STATUS_FAILED_TO_WRITE_SECTOR_10;
         }
 
         print(" Wrote test message to sector 10\n");
@@ -242,13 +203,11 @@ int8_t command_disktest(int argument_count, char* arguments[]) {
     }
 
     if (argument_count == 2 && strcmp(arguments[1], "read") != 0 && strcmp(arguments[1], "write") != 0) {
-        print_command_error("Usage: disktest [read|write]");
-        return 0;
+        return TINYFS_STATUS_DISKTEST_INVALID_USAGE;
     }
 
     if (!ata_read_sector(10U, sector)) {
-        print_command_error("Failed to read sector 10.");
-        return 0;
+        return TINYFS_STATUS_FAILED_TO_READ_SECTOR_10;
     }
 
     sector[ATA_SECTOR_SIZE - 1U] = 0U;
@@ -268,8 +227,7 @@ int8_t command_format(int argument_count, char* arguments[]) {
 
     status = tinyfs_format();
     if (status != TINYFS_STATUS_OK) {
-        print_tinyfs_error(status);
-        return 0;
+        return status;
     }
 
     print(" TinyFS formatted\n");
@@ -286,7 +244,7 @@ int8_t command_ls(int argument_count, char* arguments[]) {
 
     status = tinyfs_list();
     if (status != TINYFS_STATUS_OK) {
-        print_tinyfs_error(status);
+        return status;
     }
 
     return 0;
@@ -302,16 +260,14 @@ int8_t command_write_file(int argument_count, char* arguments[]) {
 
     content = join_arguments(argument_count, arguments, 2);
     if (content == NULL) {
-        print_command_error("Not enough memory to build file content.");
-        return 0;
+        return TINYFS_STATUS_NOT_ENOUGH_MEMORY_TO_BUILD_FILE_CONTENT;
     }
 
     status = tinyfs_write_file(arguments[1], content);
     free(content);
 
     if (status != TINYFS_STATUS_OK) {
-        print_tinyfs_error(status);
-        return 0;
+        return status;
     }
 
     print(" File saved\n");
@@ -329,8 +285,7 @@ int8_t command_cat(int argument_count, char* arguments[]) {
 
     status = tinyfs_read_file(arguments[1], &content, &size_bytes);
     if (status != TINYFS_STATUS_OK) {
-        print_tinyfs_error(status);
-        return 0;
+        return status;
     }
 
     (void)size_bytes;

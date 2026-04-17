@@ -4,6 +4,8 @@
 #include "../printing/printing.h"
 #include "../libc/stdint.h"
 #include "../user/user.h"
+#include "../disk/ata.h"
+#include "../fs/tinyfs.h"
 
 #define MAX_ARGS 10
 

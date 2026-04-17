@@ -8,6 +8,7 @@
 #include "../string/string.h"
 #include "../vga_text_mode_interface/vga_text_mode_interface.h"
 #include "../user/user.h"
+#include "../fs/tinyfs.h"
 
 
 #define SHELL_MAX_INPUT_LENGTH (VGA_TERMINAL_WIDTH - 16)
