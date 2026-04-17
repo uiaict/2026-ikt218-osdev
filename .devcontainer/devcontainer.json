@@ -40,7 +40,7 @@
 		"source=/mnt/wslg,target=/mnt/wslg,type=bind,consistency=cached"
     ],
 	"containerEnv": {
-		"PULSE_SERVER": "/mnt/wslg/PulseServer"
+    	"PULSE_SERVER": "unix:/mnt/wslg/PulseServer"
 	},
 
 

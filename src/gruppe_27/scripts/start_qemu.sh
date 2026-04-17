@@ -4,8 +4,24 @@ DISK_PATH=$2
 
 # Start QEMU in the background
 echo "Starting QEMU"
-qemu-system-i386 -S -gdb tcp::1234 -boot d -hda $KERNEL_PATH -hdb $DISK_PATH -m 64 -audiodev sdl,id=sdl1,out.buffer-length=40000 -machine pcspk-audiodev=sdl1 -serial pty &
+echo "Starting QEMU"
+
+
+PULSE_SERVER=unix:/mnt/wslg/PulseServer 
+
+export PULSE_SERVER=unix:/mnt/wslg/PulseServer
+
+qemu-system-i386 -S -gdb tcp::1234 -boot d \
+  -drive file=$KERNEL_PATH,format=raw,media=cdrom \
+  -drive file=$DISK_PATH,format=raw,media=disk \
+  -m 256 \
+  -rtc base=localtime,clock=host,driftfix=slew \
+  -audiodev pa,id=snd0,server=$PULSE_SERVER,out.frequency=48000,out.buffer-length=120000,out.latency=60000 \
+  -machine pcspk-audiodev=snd0 \
+  -serial pty &
 QEMU_PID=$!
+
+
 
 # Function to check if gdb is running
 is_gdb_running() {

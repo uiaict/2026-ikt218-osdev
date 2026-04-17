@@ -13,15 +13,43 @@ static uint32_t parse_uint(const char* str) {
     }
     return result;
 }
-
-Song mario = {
+Song Song_1 = {
+    .notes = music_1,
+    .length = sizeof(music_1) / sizeof(Note)
+};
+Song Song_2 = {
+    .notes = music_2,
+    .length = sizeof(music_2) / sizeof(Note)
+};
+Song Song_3 = {
+    .notes = music_3,
+    .length = sizeof(music_3) / sizeof(Note)
+};
+Song Song_4 = {
+    .notes = music_4,
+    .length = sizeof(music_4) / sizeof(Note)
+};
+Song Song_5 = {
+    .notes = music_5,
+    .length = sizeof(music_5) / sizeof(Note)
+};
+Song Song_6 = {
+    .notes = music_6,
+    .length = sizeof(music_6) / sizeof(Note)
+};
+Song starwars = {
     .notes = starwars_theme,
     .length = sizeof(starwars_theme) / sizeof(Note)
 };
+Song battlefield_1942 = {
+    .notes = battlefield_1942_theme,
+    .length = sizeof(battlefield_1942_theme) / sizeof(Note)
+};
+
 
 //possible to add more commands for help here
 void command_help(){
-    terminal_write("\nCommands avalible:\nclear\nhello\nmemory\ntriangle\nsleep_b <value>\nsleep_i <value>\nhelp\n");
+    terminal_write("\nCommands avalible:\nclear\nhello\nmemory\ntriangle\nsleep_b <value>\nsleep_i <value>\nsong <song number>\nhelp\n");
 }
 
 void command_triangle() {
@@ -71,9 +99,44 @@ void command_sleep_interrupt(const char* args) {
     }
     terminal_write("Done.\n");
 }
-void command_song() {
-    terminal_write("\nNow playing mario\n");
-    play_song(&mario);
+void command_song(const char* args) {
+    uint32_t song_number = parse_uint(args);
+    switch(song_number) {
+        case 1:
+            terminal_write("\nNow playing mario\n");
+            play_song(&Song_1);
+            break;
+        case 2:
+            terminal_write("\now playing music_2\n");
+            play_song(&Song_2);
+            break;
+        case 3:
+            terminal_write("\now playing music_3\n");
+            play_song(&Song_3);
+            break;
+        case 4:
+            terminal_write("\nNow playing music_4\n");
+            play_song(&Song_4);
+            break;
+        case 5:
+            terminal_write("\nNow playing music_5\n");
+            play_song(&Song_5);
+            break;
+        case 6:
+            terminal_write("\nNow playing music_6\n");
+            play_song(&Song_6);
+            break;
+        case 7:
+            terminal_write("\nNow playing starwars theme\n");
+            play_song(&starwars);
+            break;
+        case 8:
+            terminal_write("\nNow playing Battlefield 1942 theme\n");
+            play_song(&battlefield_1942);
+            break;
+        default:
+            terminal_write("\nInvalid song number. Please choose a valid song (1-8).\n");
+    }
 }
 
 void shell_execute_command(char* input) {
@@ -113,7 +176,7 @@ void shell_execute_command(char* input) {
         command_sleep_interrupt(args);
     }
     else if(strcmp(input, "song") == 0) {
-        command_song();
+        command_song(args);
     }
     else {
         terminal_write("\n");
