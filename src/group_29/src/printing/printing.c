@@ -81,3 +81,21 @@ void write_text_at(uint8_t row, uint8_t column, const char string[], uint8_t col
         ++string;
     }
 }
+
+void clear_screen() {
+    fill_screen(VgaColor(vga_black, vga_white));
+}
+
+void fill_screen(uint8_t color_bitmap) {
+    uint16_t* screen = main_interface.cursor.memory_start;
+
+    for (int i = 0; i < VGA_TERMINAL_WIDTH * VGA_TERMINAL_HEIGHT; i++) {
+        screen[i] = (uint16_t)(color_bitmap << 8 | ' ');
+    }
+
+    // Reset cursor to top (or top margin)
+    main_interface.cursor.memory_position = screen + (VGA_MARGIN_TOP_ROWS * VGA_TERMINAL_WIDTH);
+
+    main_interface.cursor.CalculateRowColFromMemoryPosition(&(main_interface.cursor));
+    VgaTextModeCursorSyncHardware(&(main_interface.cursor));
+}

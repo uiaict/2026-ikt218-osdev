@@ -164,3 +164,17 @@ char* format_string(char input_string[], int32_t value) {
     out[j] = '\0';
     return out;
 }
+
+int16_t string_copy(const char input[], char output[], int16_t output_length) {
+    int input_length = strlen(input);
+
+    if (input_length >= output_length) {
+        return -1;
+    }
+
+    for (int i = 0; i <= input_length; i++) {
+        output[i] = input[i];
+    }
+
+    return 0;
+}
