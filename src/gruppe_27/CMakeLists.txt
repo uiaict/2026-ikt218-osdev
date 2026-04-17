@@ -74,6 +74,7 @@ add_executable(uiaos-kernel
 	src/shell.c
 	src/pit.c
 	src/songPlayer.c
+	src/vga_mode13.c
 )
 
 # Include directories for the kernel target

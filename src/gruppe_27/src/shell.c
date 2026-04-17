@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "song/song.h"
 #include "pit.h"
+#include "vga_mode13.h"
 
 static uint32_t parse_uint(const char* str) {
     uint32_t result = 0;
@@ -138,6 +139,21 @@ void command_song(const char* args) {
             terminal_write("\nInvalid song number. Please choose a valid song (1-8).\n");
     }
 }
+void command_draw() {
+    terminal_save_screen();
+    vga_enter_mode13();
+    vga_clear(0);                        // black background
+
+    // Draw a red rectangle (color index 4 = red in default palette)
+    for (int y = 50; y < 100; y++)
+        for (int x = 50; x < 150; x++)
+            vga_put_pixel(x, y, 4);
+
+    sleep_interrupt(3000);                    // admire it for 3 seconds
+
+    vga_exit_mode13();
+    terminal_restore_screen();
+}
 
 void shell_execute_command(char* input) {
     if(strlen(input) == 0) {
@@ -177,6 +193,9 @@ void shell_execute_command(char* input) {
     }
     else if(strcmp(input, "song") == 0) {
         command_song(args);
+    }
+    else if(strcmp(input, "draw") == 0) {
+        command_draw();
     }
     else {
         terminal_write("\n");

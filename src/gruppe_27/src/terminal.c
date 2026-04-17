@@ -10,6 +10,10 @@ int terminal_row;
 int terminal_column;
 static uint8_t terminal_color;
 
+static uint16_t screen_snapshot[80 * 25];
+static int snapshot_row;
+static int snapshot_col;
+
 // Helper to create the 2-byte VGA entry (Character + Color)
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color) {
     return (uint16_t) uc | (uint16_t) color << 8;
@@ -133,6 +137,29 @@ void terminal_initialize() {
             VGA_BUFFER[index] = vga_entry(' ', terminal_color);
         }
     }
+}
+
+void terminal_save_screen() {
+    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
+        screen_snapshot[i] = VGA_BUFFER[i];
+    }
+    snapshot_row = terminal_row;
+    snapshot_col = terminal_column;
+}
+
+void terminal_restore_screen() {
+    // 1. Re-apply the orange palette entry (wiped by mode switch)
+    vga_set_color(1, 255, 127, 0);
+
+    // 2. Copy the saved content back to the VGA text buffer
+    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
+        VGA_BUFFER[i] = screen_snapshot[i];
+    }
+
+    // 3. Restore cursor position
+    terminal_row    = snapshot_row;
+    terminal_column = snapshot_col;
+    terminal_update_cursor();
 }
 
 void terminal_refresh_line(char* buffer_from_cursor) {

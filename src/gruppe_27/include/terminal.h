@@ -10,6 +10,8 @@ void terminal_update_cursor();
 void terminal_move_left();
 void terminal_move_right();
 void terminal_refresh_line(char* buffer);
+void terminal_save_screen();
+void terminal_restore_screen();
 extern int terminal_column;
 extern int terminal_row;
 
