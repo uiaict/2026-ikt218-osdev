@@ -10,6 +10,7 @@
 // Data structures
 
 enum {
+    COMMAND_VALID_ARGUMENTS = 3,
     COMMAND_SHELL_CLEARED = 2,
     COMMAND_STATUS_INVALID = -1,
     COMMAND_STATUS_UNKNOWN = -2,
