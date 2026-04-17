@@ -35,7 +35,7 @@ static int8_t check_argument_count(uint8_t actual_count, uint8_t required_count)
         return COMMAND_TOO_MANY_ARGUMENTS;
     }
 
-    return COMMAND_SHELL_CLEARED;
+    return COMMAND_VALID_ARGUMENTS;
 }
 
 // Commands
@@ -121,7 +121,7 @@ int8_t command_clear(int argument_count, char *arguments[]) {
 
 int8_t command_set_username(int argument_count, char* arguments[]) {
     int8_t argument_result = check_argument_count(argument_count, 2);
-    if (argument_result == COMMAND_TOO_FEW_ARGUMENTS) return argument_result;
+    if (argument_result != COMMAND_VALID_ARGUMENTS) return argument_result;
 
     // uint8_t length = strlen(arguments[1]);
     // if (length > USER_MAX_USERNAME_LENGTH) {

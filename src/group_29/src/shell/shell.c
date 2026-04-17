@@ -112,7 +112,7 @@ static void shell_submit_current_line(void) {
     shell_copy_current_line_to_submitted();
     result = run_command(shell_state.current_line);
 
-    // const char *output = format_string("%d\n", result);
+    // const char* output = format_string("%d\n", result);
     // print(output);
     // free(output);
 
