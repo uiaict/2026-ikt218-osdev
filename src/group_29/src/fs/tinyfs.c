@@ -1,24 +1,4 @@
-#include "tinyfs.h"
-
-#include "../disk/ata.h"
-#include "../memory/heap.h"
-#include "../printing/printing.h"
-#include "../string/string.h"
-
-#define TINYFS_SUPERBLOCK_SECTOR 0U
-#define TINYFS_FILE_TABLE_START 1U
-#define TINYFS_FILE_TABLE_SECTORS 4U
-#define TINYFS_DATA_START (TINYFS_FILE_TABLE_START + TINYFS_FILE_TABLE_SECTORS)
-
-typedef struct {
-    uint32_t magic;
-    uint32_t version;
-    uint32_t file_table_start;
-    uint32_t file_table_sectors;
-    uint32_t data_start;
-    uint32_t next_free_sector;
-    uint8_t reserved[ATA_SECTOR_SIZE - (6U * sizeof(uint32_t))];
-} TinyFsSuperblock;
+#include "./tinyfs.h"
 
 static bool tinyfs_ready;
 
