@@ -47,6 +47,12 @@ int8_t command_clear(int argument_count, char *arguments[]);
 /// @brief Sets the username of user
 int8_t command_set_username(int argument_count, char* arguments[]);
 
+int8_t command_disktest(int argument_count, char* arguments[]);
+int8_t command_format(int argument_count, char* arguments[]);
+int8_t command_ls(int argument_count, char* arguments[]);
+int8_t command_write_file(int argument_count, char* arguments[]);
+int8_t command_cat(int argument_count, char* arguments[]);
+
 
 // Command parsing/handling
 
