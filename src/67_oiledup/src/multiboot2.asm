@@ -20,6 +20,13 @@ header_start:
 ;framebuffer_tag_end:
 
 align 8
+console_flags_start:
+    dw 4                                              ; type
+    dw 0                                              ; flags
+    dd 12                                             ; size
+    dd 2                                              ; EGA text supported
+
+align 8
     ; Required end tag:
     dw 0	; type
     dw 0	; flags
