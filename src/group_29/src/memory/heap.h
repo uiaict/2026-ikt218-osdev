@@ -36,6 +36,38 @@ typedef struct {
     char formatted[80];
 } MemoryDebugData;
 
+typedef struct {
+    // data
+    size_t total_payload_bytes;
+    size_t total_bytes_with_meta;
+
+    size_t used_bytes;
+    size_t free_bytes;
+
+    size_t used_bytes_with_meta;
+    size_t free_bytes_with_meta;
+
+    // counts
+    size_t total_blocks;
+    size_t used_blocks;
+    size_t free_blocks;
+
+    // fragmentation
+    size_t largest_free_block;
+    size_t smallest_free_block;
+
+    // fragmentation ratio
+    size_t fragmentation_per_mille;
+
+    // allocation
+    size_t largest_used_block;
+    size_t smallest_used_block;
+
+    // averages
+    size_t avg_free_block_size;
+    size_t avg_used_block_size;
+} HeapInformation;
+
 /* Initializes the kernel heap at the first aligned address after kernel_end. */
 void init_kernel_memory(uint32_t* kernel_end);
 
@@ -58,3 +90,5 @@ void free(void* ptr);
 void print_memory_layout(void);
 
 MemoryDebugData get_memory_layout(void);
+
+HeapInformation get_heap_stats(void);

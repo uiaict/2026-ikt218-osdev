@@ -10,5 +10,5 @@ BUILD_DIR="$WORKSPACE/build/group_29"
 echo "Launching QEMU without debugger... close the QEMU window or press Ctrl+C in this terminal to stop."
 /bin/bash "$SRC_DIR/scripts/run_no_debug.sh" \
   "$BUILD_DIR/kernel.iso" \
-  "$BUILD_DIR/disk.iso"
+  "$BUILD_DIR/fs.img"
   

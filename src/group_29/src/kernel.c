@@ -3,6 +3,7 @@
 #include "libc/stdbool.h"
 #include <multiboot2.h>
 #include "gdt/gdt.h"
+#include "fs/tinyfs.h"
 #include "interrupts/interrupts.h"
 #include "keyboard/keyboard.h"
 #include "memory/heap.h"
@@ -69,6 +70,7 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     init_paging();
     print_memory_layout();
     init_pit();
+    tinyfs_init();
     // play_default_song();
 
     // Memory test:
@@ -104,6 +106,12 @@ int kernel_main_c(uint32_t magic, struct multiboot_info* mb_info_addr) {
     // screen.Print(&screen, output, VgaColor(vga_black, vga_white));
     print(output);
     free((void *)output);
+
+    if (tinyfs_is_ready()) {
+        print("TinyFS disk ready\n");
+    } else {
+        print("TinyFS disk not formatted. Run format\n");
+    }
 
     shell_init("user");
 

@@ -60,6 +60,8 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 add_executable(uiaos-kernel 
 	src/multiboot2.asm # TODO: Add multiboot2 support
     src/kernel.c
+	src/disk/ata.c
+	src/fs/tinyfs.c
 	src/gdt/gdt.c
 	src/memory/heap.c
 	src/memory/paging.c
@@ -110,19 +112,6 @@ set_target_properties(uiaos-kernel PROPERTIES
 )
 
 ########################################
-# Create Empty Fat32 Disk Image
-########################################
-set(DISK_IMAGE "${CMAKE_CURRENT_BINARY_DIR}/disk.iso")
-
-# Custom target to create an empty FAT32 disk image of 32MB
-add_custom_target(
-    create-fat32-disk
-    COMMAND dd if=/dev/zero of=${DISK_IMAGE} bs=1M count=32
-    COMMAND mkfs.fat -F 32 ${DISK_IMAGE}
-    VERBATIM
-)
-
-########################################
 # OS-Image Target
 ########################################
 set(ISO_DIR ${CMAKE_CURRENT_BINARY_DIR}/iso)
@@ -145,6 +134,6 @@ add_custom_target(
 	 	${ISO_DIR} -o ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
 	COMMAND ${LIMINE_DIR}/limine bios-install ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
 	#COMMAND sudo rm -rf ${ISO_DIR}
-	DEPENDS create-fat32-disk uiaos-kernel
+	DEPENDS uiaos-kernel
 	VERBATIM
 )

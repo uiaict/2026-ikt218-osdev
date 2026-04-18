@@ -138,6 +138,43 @@ static void shell_submit_current_line(void) {
             // shell_print_failure_message(message, shell_state.submitted_line);
             free(message);
         }
+
+        if (result == TINYFS_STATUS_NOT_FORMATTED) {
+            shell_print_failure_message(" Disk is not formatted.", "Run format first.");
+        }
+
+        if (result == TINYFS_STATUS_FILE_NOT_FOUND) {
+            shell_print_failure_message(" File not found. Fail command: ", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_NO_SPACE) {
+            shell_print_failure_message(" Filesystem is full. Fail: ", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_INVALID_NAME) {
+            shell_print_failure_message(" Invalid filename. ", "Use 1-15 characters.");
+        }
+
+        if (result == TINYFS_STATUS_OUT_OF_MEMORY) {
+            shell_print_failure_message(" Not enough memory to read file. Fail: ", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_FAILED_TO_WRITE_SECTOR_10) {
+            shell_print_failure_message(" Failed to write sector 10.", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_DISKTEST_INVALID_USAGE) {
+            shell_print_failure_message(" Usage: disktest [read|write]", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_FAILED_TO_READ_SECTOR_10) {
+            shell_print_failure_message(" Failed to read sector 10.", shell_state.submitted_line);
+        }
+
+        if (result == TINYFS_STATUS_NOT_ENOUGH_MEMORY_TO_BUILD_FILE_CONTENT) {
+            shell_print_failure_message(" Not enough memory to build file content.", shell_state.submitted_line);
+        }
+
     }
 
     // Avoid adding extra newline before user input right after clear

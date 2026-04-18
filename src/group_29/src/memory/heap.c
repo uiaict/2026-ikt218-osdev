@@ -178,3 +178,80 @@ MemoryDebugData get_memory_layout(void) {
 
     return data;
 }
+
+HeapInformation get_heap_stats(void) {
+    HeapInformation stats = {0};
+    struct heap_block* current = heap_head;
+
+    size_t free_block_size_sum = 0;
+    size_t used_block_size_sum = 0;
+
+    // initialize min values
+    stats.smallest_free_block = (size_t)-1;
+    stats.smallest_used_block = (size_t)-1;
+
+    while (current != NULL) {
+        size_t payload = current->size;
+        size_t total = payload + sizeof(struct heap_block);
+
+        stats.total_blocks++;
+        stats.total_payload_bytes += payload;
+        stats.total_bytes_with_meta += total;
+
+        if (current->is_free) {
+            stats.free_blocks++;
+            stats.free_bytes += payload;
+            stats.free_bytes_with_meta += total;
+
+            free_block_size_sum += payload;
+
+            if (payload > stats.largest_free_block) {
+                stats.largest_free_block = payload;
+            }
+            if (payload < stats.smallest_free_block) {
+                stats.smallest_free_block = payload;
+            }
+
+        } else {
+            stats.used_blocks++;
+            stats.used_bytes += payload;
+            stats.used_bytes_with_meta += total;
+
+            used_block_size_sum += payload;
+
+            if (payload > stats.largest_used_block) {
+                stats.largest_used_block = payload;
+            }
+            if (payload < stats.smallest_used_block) {
+                stats.smallest_used_block = payload;
+            }
+        }
+
+        current = current->next;
+    }
+
+    // fix edge cases (no blocks of a type)
+    if (stats.free_blocks == 0) {
+        stats.smallest_free_block = 0;
+    }
+    if (stats.used_blocks == 0) {
+        stats.smallest_used_block = 0;
+    }
+
+    // averages
+    if (stats.free_blocks > 0) {
+        stats.avg_free_block_size = free_block_size_sum / stats.free_blocks;
+    }
+    if (stats.used_blocks > 0) {
+        stats.avg_used_block_size = used_block_size_sum / stats.used_blocks;
+    }
+
+    // fragmentation metric: (1 - largest_free / total_free) * 1000
+    if (stats.free_bytes > 0 && stats.largest_free_block > 0) {
+        stats.fragmentation_per_mille = (size_t)((1000U * (stats.free_bytes - stats.largest_free_block)) / stats.free_bytes);
+    } else {
+        stats.fragmentation_per_mille = 0;
+    }
+
+    return stats;
+}

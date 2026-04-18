@@ -4,6 +4,8 @@
 #include "../printing/printing.h"
 #include "../libc/stdint.h"
 #include "../user/user.h"
+#include "../disk/ata.h"
+#include "../fs/tinyfs.h"
 
 #define MAX_ARGS 10
 
@@ -12,6 +14,7 @@
 enum {
     COMMAND_VALID_ARGUMENTS = 3,
     COMMAND_SHELL_CLEARED = 2,
+    COMMAND_SUCCESS = 0,
     COMMAND_STATUS_INVALID = -1,
     COMMAND_STATUS_UNKNOWN = -2,
     COMMAND_UNKNOWN_ARGUMENT = -3,
@@ -46,6 +49,15 @@ int8_t command_clear(int argument_count, char *arguments[]);
 
 /// @brief Sets the username of user
 int8_t command_set_username(int argument_count, char* arguments[]);
+
+/// @brief Displays memory info
+int8_t command_heapinfo(int argument_count, char* arguments[]);
+
+int8_t command_disktest(int argument_count, char* arguments[]);
+int8_t command_format(int argument_count, char* arguments[]);
+int8_t command_ls(int argument_count, char* arguments[]);
+int8_t command_write_file(int argument_count, char* arguments[]);
+int8_t command_cat(int argument_count, char* arguments[]);
 
 
 // Command parsing/handling
