@@ -1,6 +1,7 @@
 #include "song.h"
 #include "libc/stdio.h"
 #include "kernel_memory.h"
+#include "libc/stddef.h"
 
 //convers an array of notes into a song object
 Song* notes_to_song(Note* notes_arr[], uint32_t notes_arr_size) {
@@ -11,9 +12,13 @@ Song* notes_to_song(Note* notes_arr[], uint32_t notes_arr_size) {
     }
 
     Song* song = malloc(sizeof(Song));
+    if (!song) return NULL;
     song->length = song_length;
     song->notes = malloc(notes_arr_size * sizeof(Note*));
-    memcpy(song->notes, notes_arr, notes_arr_size * sizeof(Note*));
+    // Memcpy isn't implemented.
+    for (uint32_t i = 0; i < notes_arr_size; ++i) {
+        song->notes[i] = *notes_arr[i];
+    }
     return song;
 };
 

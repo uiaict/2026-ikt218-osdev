@@ -1,5 +1,5 @@
-#ifdef SONGPLAYER_H
-#define SONGPLAYER_H
+#ifdef SOUNDPLAYER_H
+#define SOUNDPLAYER_H
 
 #include "libc/stdint.h"
 
@@ -15,4 +15,4 @@ void play_sound(uint32_t frequency);
 
 void stop_sound();
 
-#endif //SONGPLAYER_H
+#endif //SOUNDPLAYER_H

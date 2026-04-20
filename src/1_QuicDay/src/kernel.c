@@ -12,7 +12,7 @@
 #include "pit.h"
 #include "libc/string.h"
 
-#include "../quicmusic/SongPlayer.h"
+#include "../quicmusic/SoundPlayer.h"
 #include "../quicmusic/frequencies.h"
 
 extern uint32_t end;
@@ -83,7 +83,7 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
 
     asm volatile("sti");
 
-    print_memory_layout();
+    /*print_memory_layout();
     sleep_interrupt(SCREEN_PAUSE_MS);
     wait_for_user_next_screen();
 
@@ -124,25 +124,26 @@ int main(uint32_t myStruct, uint32_t magic, struct multiboot_info* mb_info_addr)
     uint32_t elapsed_interrupt = get_current_tick() - start_tick_interrupt;
     printf("[%u]: Slept using interrupts. ticks=%u\n", counter++, elapsed_interrupt);
     sleep_interrupt(SCREEN_PAUSE_MS);
-    wait_for_user_next_screen();
+    wait_for_user_next_screen();*/
 
     printf("PIT timing test complete. Playing sound test....\n");
 
-    printf("Enabling speaker");
+    printf("Enabling speaker\n");
     enable_speaker();
 
-    printf("Playing note");
+    printf("Playing note A6 for 1000 ms...\n");
     play_sound(A6);
+    sleep_interrupt(1000);
 
-    printf("Disabling speaker");
+    printf("Disabling speaker\n");
     disable_speaker();
 
-    halt_forever();
+    //halt_forever();
 
     //Free memory before exiting
-    free(some_memory);
+    /*free(some_memory);
     free(memory2);
-    free(memory3);
+    free(memory3);*/
 
     return 0;
 }

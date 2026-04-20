@@ -1,4 +1,4 @@
-#include "SongPlayer.h"
+#include "SoundPlayer.h"
 #include "pit.h"
 #include "libc/stdio.h"
 #include "libc/stdint.h"
@@ -17,8 +17,11 @@ static inline uint8_t inb(uint16_t port)
 
 void enable_speaker() {
     uint8_t controller = inb(PC_SPEAKER_PORT);
-    controller |= 0x3; // Set bits 0 and 1
-    outb(PC_SPEAKER_PORT, controller);
+
+    if (controller != (controller | 0x03)) { // only write when the bits aren’t already set
+        controller |= 0x03; // Set bits 0 and 1
+        outb(PC_SPEAKER_PORT, controller);
+    }
 }
 
 void disable_speaker() {
@@ -47,7 +50,7 @@ void play_sound(uint32_t frequency) {
     outb(PIT_CHANNEL2_PORT, (uint8_t)(divisor & 0xFF));      /* low  */
     outb(PIT_CHANNEL2_PORT, (uint8_t)(divisor >> 8));        /* high */
     /* 4. Enable the speaker (bits 0 and 1 of 0x61) */
-    speaker_enable();
+    enable_speaker();
 }
 
 void stop_sound() {
