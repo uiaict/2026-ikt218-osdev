@@ -69,6 +69,8 @@ add_executable(group_42-kernel
         src/kernel/util.c
         src/kernel/syscall.c
         src/kernel/util/ring_buffer8.c
+        src/kernel/filesystem/vfs.c
+        src/kernel/filesystem/ramfs.c
 
         src/boot/multiboot2.asm
 
@@ -80,14 +82,22 @@ add_executable(group_42-kernel
 
         src/shell/shell.c
         src/shell/shell_command.c
-        src/shell/commands/help.c
+        src/shell/commands/cat.c
+        src/shell/commands/cd.c
         src/shell/commands/clear.c
         src/shell/commands/echo.c
+        src/shell/commands/help.c
         src/shell/commands/keyboard_logger.c
-        src/shell/commands/timer_test.c
-        src/shell/commands/print_memory.c
+        src/shell/commands/loadkeys.c
+        src/shell/commands/ls.c
+        src/shell/commands/mkdir.c
         src/shell/commands/music_player.c
+        src/shell/commands/print_memory.c
+        src/shell/commands/pwd.c
         src/shell/commands/test_syscalls.c
+        src/shell/commands/timer_test.c
+        src/shell/commands/touch.c
+        src/shell/commands/write.c
         src/shell/commands/loadkeys.c
 
 

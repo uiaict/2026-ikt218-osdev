@@ -1,5 +1,6 @@
 #include "libc/string.h"
 
+#include "stddef.h"
 #include "libc/stdint.h"
 
 size_t strlen(const char* str) {
@@ -13,6 +14,21 @@ int strcmp(const char* l, const char* r) {
   for (; *l == *r && *l; l++, r++)
     ;
   return *(unsigned char*)l - *(unsigned char*)r;
+}
+
+int strncmp(const char* l, const char* r, size_t num) {
+  if (num == 0) return 0;
+
+  while (num > 0) {
+    if (*l != *r || *l == '\0') {
+      return *(unsigned char*)l - *(unsigned char*)r;
+    }
+    l++;
+    r++;
+    num--;
+
+  }
+  return 0;
 }
 
 void* memcpy(void* restrict dest, const void* restrict src, size_t count) {
@@ -42,4 +58,48 @@ void* memset(void* ptr, int value, size_t num) {
   while (num--)
     *p++ = (unsigned char)value; // Set each byte to the given value
   return ptr;                    // Return the pointer to the block of memory
+}
+
+char* strcpy(char* dest, const char* src) {
+  char* saved = dest;
+  while ((*dest++ = *src++));
+  return saved;
+}
+
+char* strncpy(char* dest, const char* src, size_t n) {
+  size_t i;
+  for (i = 0; i < n && src[i] != '\0'; i++) {
+    dest[i] = src[i];
+  }
+  // Standard C behavior: pad the rest with null bytes
+  for (; i < n; i++) {
+    dest[i] = '\0';
+  }
+  return dest;
+}
+
+char* strrchr (const char* s, int c) {
+  char* last = NULL;
+  unsigned char target = (unsigned char)c;
+
+  // Iterate through the string until the null terminator
+  do {
+    if ((unsigned char)*s == target) {
+      last = (char*)s;
+    }
+  } while (*s++);
+
+  return last;
+}
+
+char* strncat(char* dest, const char* src, size_t n) {
+  size_t dest_len = strlen(dest);
+  size_t i;
+
+  for (i = 0; i < n && src[i] != '\0'; i++) {
+    dest[dest_len + i] = src[i];
+  }
+  dest[dest_len + i] = '\0';
+
+  return dest;
 }
