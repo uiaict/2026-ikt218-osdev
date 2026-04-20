@@ -174,6 +174,7 @@ EOF
 		sed 's/\\/\\\\/g' "$fullpath"
 
 		cat <<EOF
+
 \end{minted}
 
 EOF

@@ -1,8 +1,10 @@
 #include "../../include/radio.h"
+#include "../../include/kernel/memory.h"
 #include "../../include/keyboard.h"
 #include "../../include/libc/stdio.h"
 #include "../../include/menu.h"
 #include "../lib/song/song.h"
+// #include <stdlib.h>
 
 #define FIRST_SONG 0
 #define LAST_SONG 6
@@ -54,4 +56,5 @@ void radio_keyboard_handler(int scancode) {
   songPlayer->play_song(&song_spaced);
   // printf("Finished playing song number: %d", key);
   // print_radio_menu();
+  free(song_spaced.notes);
 }

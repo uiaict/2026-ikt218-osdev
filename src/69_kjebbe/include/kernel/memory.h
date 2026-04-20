@@ -8,9 +8,9 @@
 #define MEMORY_H
 
 #include "../libc/stddef.h" /* Include standard definitions */
-#include "../libc/stdint.h" * Include standard integer types * /
+#include "../libc/stdint.h" /* Include standard integer types * /
 
-/*
+*
  * Definition of a struct that represents a memory allocation.
  * It contains a status field (0 or 1) indicating if the memory
  * is currently allocated or not, and a size field indicating

@@ -1,3 +1,4 @@
+#include "../../include/kernel/memory.h"
 #include "../../include/kernel/pit.h"
 #include "../../include/keyboard.h"
 #include "../../include/libc/stdio.h"
@@ -15,6 +16,7 @@ void hedre_fedrelandet() {
   clearTerminal();
   ja_vi_elsker();
   songPlayer->play_song(&song_spaced);
+  free(song_spaced.notes);
 }
 
 void fedrelandet_keyboard_handler(int scancode) {

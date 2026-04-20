@@ -51,8 +51,8 @@ void gdt_init(void) {
   // Bits 6-5 DPL = 00, sets segment to highest privilege.
   // Bit 4 descriptor type = 1, defines a code or datasegment
   // Bit 3 Executable bit = 0 for a data segment.
-  // Bit 2 Conforming bit = 0, Code in the segment can only be exectued from the
-  // same DPL level.
+  // Bit 2 Direction bit = 0, set to 0 the segment grows up, otherwise it grows
+  // down.
   // Bit 1 Write = 1, The segment is writable
   // Bit 0  Accessed bit = 0. The CPU will set this when it uses the segment.
   //
