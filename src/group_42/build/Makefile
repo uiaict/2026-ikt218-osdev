@@ -130,6 +130,19 @@ group_42-kernel/fast:
 .PHONY : group_42-kernel/fast
 
 #=============================================================================
+# Target rules for targets named shell_elf
+
+# Build rule for target.
+shell_elf: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 shell_elf
+.PHONY : shell_elf
+
+# fast build rule for target.
+shell_elf/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/shell_elf.dir/build.make CMakeFiles/shell_elf.dir/build
+.PHONY : shell_elf/fast
+
+#=============================================================================
 # Target rules for targets named create-fat32-disk
 
 # Build rule for target.
@@ -298,6 +311,14 @@ src/arch/i386/cpu/tss.s: src/arch/i386/cpu/tss.c.s
 src/arch/i386/cpu/tss.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/arch/i386/cpu/tss.c.s
 .PHONY : src/arch/i386/cpu/tss.c.s
+
+src/arch/i386/cpu/user_mode_asm.o: src/arch/i386/cpu/user_mode_asm.asm.o
+.PHONY : src/arch/i386/cpu/user_mode_asm.o
+
+# target to build an object file
+src/arch/i386/cpu/user_mode_asm.asm.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/arch/i386/cpu/user_mode_asm.asm.o
+.PHONY : src/arch/i386/cpu/user_mode_asm.asm.o
 
 src/boot/multiboot2.o: src/boot/multiboot2.asm.o
 .PHONY : src/boot/multiboot2.o
@@ -667,6 +688,54 @@ src/kernel/syscall.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/syscall.c.s
 .PHONY : src/kernel/syscall.c.s
 
+src/kernel/user_mode.o: src/kernel/user_mode.c.o
+.PHONY : src/kernel/user_mode.o
+
+# target to build an object file
+src/kernel/user_mode.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_mode.c.o
+.PHONY : src/kernel/user_mode.c.o
+
+src/kernel/user_mode.i: src/kernel/user_mode.c.i
+.PHONY : src/kernel/user_mode.i
+
+# target to preprocess a source file
+src/kernel/user_mode.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_mode.c.i
+.PHONY : src/kernel/user_mode.c.i
+
+src/kernel/user_mode.s: src/kernel/user_mode.c.s
+.PHONY : src/kernel/user_mode.s
+
+# target to generate assembly for a file
+src/kernel/user_mode.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_mode.c.s
+.PHONY : src/kernel/user_mode.c.s
+
+src/kernel/user_program.o: src/kernel/user_program.c.o
+.PHONY : src/kernel/user_program.o
+
+# target to build an object file
+src/kernel/user_program.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_program.c.o
+.PHONY : src/kernel/user_program.c.o
+
+src/kernel/user_program.i: src/kernel/user_program.c.i
+.PHONY : src/kernel/user_program.i
+
+# target to preprocess a source file
+src/kernel/user_program.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_program.c.i
+.PHONY : src/kernel/user_program.c.i
+
+src/kernel/user_program.s: src/kernel/user_program.c.s
+.PHONY : src/kernel/user_program.s
+
+# target to generate assembly for a file
+src/kernel/user_program.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/kernel/user_program.c.s
+.PHONY : src/kernel/user_program.c.s
+
 src/kernel/util.o: src/kernel/util.c.o
 .PHONY : src/kernel/util.o
 
@@ -955,6 +1024,54 @@ src/shell/commands/print_memory.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/print_memory.c.s
 .PHONY : src/shell/commands/print_memory.c.s
 
+src/shell/commands/run_userspace.o: src/shell/commands/run_userspace.c.o
+.PHONY : src/shell/commands/run_userspace.o
+
+# target to build an object file
+src/shell/commands/run_userspace.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/run_userspace.c.o
+.PHONY : src/shell/commands/run_userspace.c.o
+
+src/shell/commands/run_userspace.i: src/shell/commands/run_userspace.c.i
+.PHONY : src/shell/commands/run_userspace.i
+
+# target to preprocess a source file
+src/shell/commands/run_userspace.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/run_userspace.c.i
+.PHONY : src/shell/commands/run_userspace.c.i
+
+src/shell/commands/run_userspace.s: src/shell/commands/run_userspace.c.s
+.PHONY : src/shell/commands/run_userspace.s
+
+# target to generate assembly for a file
+src/shell/commands/run_userspace.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/run_userspace.c.s
+.PHONY : src/shell/commands/run_userspace.c.s
+
+src/shell/commands/test_malloc.o: src/shell/commands/test_malloc.c.o
+.PHONY : src/shell/commands/test_malloc.o
+
+# target to build an object file
+src/shell/commands/test_malloc.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/test_malloc.c.o
+.PHONY : src/shell/commands/test_malloc.c.o
+
+src/shell/commands/test_malloc.i: src/shell/commands/test_malloc.c.i
+.PHONY : src/shell/commands/test_malloc.i
+
+# target to preprocess a source file
+src/shell/commands/test_malloc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/test_malloc.c.i
+.PHONY : src/shell/commands/test_malloc.c.i
+
+src/shell/commands/test_malloc.s: src/shell/commands/test_malloc.c.s
+.PHONY : src/shell/commands/test_malloc.s
+
+# target to generate assembly for a file
+src/shell/commands/test_malloc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/commands/test_malloc.c.s
+.PHONY : src/shell/commands/test_malloc.c.s
+
 src/shell/commands/test_syscalls.o: src/shell/commands/test_syscalls.c.o
 .PHONY : src/shell/commands/test_syscalls.o
 
@@ -1051,6 +1168,30 @@ src/shell/shell_command.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/shell_command.c.s
 .PHONY : src/shell/shell_command.c.s
 
+src/shell/shell_elf.o: src/shell/shell_elf.c.o
+.PHONY : src/shell/shell_elf.o
+
+# target to build an object file
+src/shell/shell_elf.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/shell_elf.c.o
+.PHONY : src/shell/shell_elf.c.o
+
+src/shell/shell_elf.i: src/shell/shell_elf.c.i
+.PHONY : src/shell/shell_elf.i
+
+# target to preprocess a source file
+src/shell/shell_elf.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/shell_elf.c.i
+.PHONY : src/shell/shell_elf.c.i
+
+src/shell/shell_elf.s: src/shell/shell_elf.c.s
+.PHONY : src/shell/shell_elf.s
+
+# target to generate assembly for a file
+src/shell/shell_elf.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_42-kernel.dir/build.make CMakeFiles/group_42-kernel.dir/src/shell/shell_elf.c.s
+.PHONY : src/shell/shell_elf.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1061,6 +1202,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... create-fat32-disk"
 	@echo "... group_42-create-image"
+	@echo "... shell_elf"
 	@echo "... group_42-kernel"
 	@echo "... src/arch/i386/cpu/gdt.o"
 	@echo "... src/arch/i386/cpu/gdt.i"
@@ -1080,6 +1222,7 @@ help:
 	@echo "... src/arch/i386/cpu/tss.o"
 	@echo "... src/arch/i386/cpu/tss.i"
 	@echo "... src/arch/i386/cpu/tss.s"
+	@echo "... src/arch/i386/cpu/user_mode_asm.o"
 	@echo "... src/boot/multiboot2.o"
 	@echo "... src/drivers/audio/PCSPK.o"
 	@echo "... src/drivers/audio/PCSPK.i"
@@ -1126,6 +1269,12 @@ help:
 	@echo "... src/kernel/syscall.o"
 	@echo "... src/kernel/syscall.i"
 	@echo "... src/kernel/syscall.s"
+	@echo "... src/kernel/user_mode.o"
+	@echo "... src/kernel/user_mode.i"
+	@echo "... src/kernel/user_mode.s"
+	@echo "... src/kernel/user_program.o"
+	@echo "... src/kernel/user_program.i"
+	@echo "... src/kernel/user_program.s"
 	@echo "... src/kernel/util.o"
 	@echo "... src/kernel/util.i"
 	@echo "... src/kernel/util.s"
@@ -1162,6 +1311,12 @@ help:
 	@echo "... src/shell/commands/print_memory.o"
 	@echo "... src/shell/commands/print_memory.i"
 	@echo "... src/shell/commands/print_memory.s"
+	@echo "... src/shell/commands/run_userspace.o"
+	@echo "... src/shell/commands/run_userspace.i"
+	@echo "... src/shell/commands/run_userspace.s"
+	@echo "... src/shell/commands/test_malloc.o"
+	@echo "... src/shell/commands/test_malloc.i"
+	@echo "... src/shell/commands/test_malloc.s"
 	@echo "... src/shell/commands/test_syscalls.o"
 	@echo "... src/shell/commands/test_syscalls.i"
 	@echo "... src/shell/commands/test_syscalls.s"
@@ -1174,6 +1329,9 @@ help:
 	@echo "... src/shell/shell_command.o"
 	@echo "... src/shell/shell_command.i"
 	@echo "... src/shell/shell_command.s"
+	@echo "... src/shell/shell_elf.o"
+	@echo "... src/shell/shell_elf.i"
+	@echo "... src/shell/shell_elf.s"
 .PHONY : help
 
 

@@ -17,9 +17,13 @@
 #include "kernel/log.h"
 #include "kernel/syscall.h"
 #include "kernel/util.h"
+#include "kernel/user_mode.h"
 #include "kernel/filesystem/ramfs.h"
 #include "kernel/filesystem/vfs.h"
 #include "shell/shell.h"
+
+extern const uint8_t shell_elf[];
+extern const uint32_t shell_elf_size;
 
 
 extern uint32_t end;
@@ -196,15 +200,20 @@ void kernel_main(uint32_t magic, void* addr) {
 
   init_gdt();
   init_idt();
+  init_pit();
   keyboard_set_scancode_set2();
 
   pmm_init(addr);
   init_paging(addr);
   init_tss();
   init_syscalls();
+  PCSPK_init();
 
   log_info("PMM: %d free frames (%d KB)\n", pmm_get_free_count(), pmm_get_free_count() * 4);
 
+  printf("\nStarting kernel shell...\n");
+  printf("Type 'help' for commands.\n");
+  printf("Use 'run_userspace' to launch userspace shell.\n\n");
   printf("Testing page fault handler...\n");
   uint32_t* test = (uint32_t*)0x10000;
   *test = 42;
@@ -217,10 +226,6 @@ void kernel_main(uint32_t magic, void* addr) {
 
   log_info("Starting shell...\n");
 
-  printf("\nInitializing shell...\n");
-  vga_text_enable_debug_serial(true);
-  shell_init();
-  printf("Starting shell...\n\n");
   shell_run();
 
   __asm__ volatile("hlt");

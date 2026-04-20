@@ -21,6 +21,7 @@ extern int cmd_timer_test(int argc, char** argv);
 extern int cmd_music_player(int argc, char** argv);
 extern int cmd_test_syscalls(int argc, char** argv);
 extern int cmd_loadkeys(int argc, char** argv);
+extern int cmd_test_malloc(int argc, char** argv);
 extern int run_userspace_handler(int argc, char** argv);
 
 extern int cmd_pwd(int argc, char** argv);
@@ -68,7 +69,8 @@ const shell_command_t command_table[] = {
     {"mkdir", "create directory", cmd_mkdir},
     {"cat", "concatenate / read files", cmd_cat},
     {"write", "write to file", cmd_write},
-    {       "loadkeys",         "Load keys locale [no, us]",        cmd_loadkeys},
+    {     "loadkeys",         "Load keys locale [no, us]",        cmd_loadkeys},
+    {    "test_malloc",             "Test malloc and free",        cmd_test_malloc},
     {"run_userspace",        "Run a userspace program",         run_userspace_handler}
 };
 const size_t NUM_COMMANDS = sizeof(command_table) / sizeof(command_table[0]);

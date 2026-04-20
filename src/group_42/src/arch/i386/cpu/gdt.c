@@ -81,12 +81,5 @@ void gdt_set_entry(int32_t num, uint32_t base, uint32_t limit, uint8_t access, u
 }
 
 void gdt_reload(void) {
-    log_info("GDT: base=0x%x, limit=0x%x\n", gdt_ptr.base, gdt_ptr.limit);
-    for (int i = 0; i < 6; i++) {
-        log_info("GDT[%d]: base=0x%x%x%x, limit=0x%x%x, access=0x%x, gran=0x%x\n",
-            i, gdt[i].base_high, gdt[i].base_middle, gdt[i].base_low,
-            gdt[i].granularity & 0xF, gdt[i].limit_low,
-            gdt[i].access, gdt[i].granularity);
-    }
     gdt_set_gdt(&gdt_ptr);
 }

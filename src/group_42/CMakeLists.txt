@@ -93,6 +93,7 @@ add_executable(group_42-kernel
         src/shell/commands/print_memory.c
         src/shell/commands/pwd.c
         src/shell/commands/test_syscalls.c
+        src/shell/commands/test_malloc.c
         src/shell/commands/run_userspace.c
         src/shell/commands/timer_test.c
         src/shell/commands/touch.c
@@ -126,10 +127,36 @@ add_executable(group_42-kernel
         src/drivers/audio/PCSPK.c
         include/drivers/video/vga_text.h
 
+        src/shell/shell_elf.c
 
 )
 
 set_target_properties(group_42-kernel PROPERTIES LINKER_LANGUAGE C)
+
+# Build userspace shell ELF and generate C array
+set(SHELL_SRC ${CMAKE_SOURCE_DIR}/src/shell/userspace_shell.c)
+set(SHELL_ELF ${CMAKE_SOURCE_DIR}/src/shell/shell_elf.elf)
+set(SHELL_ELF_C ${CMAKE_SOURCE_DIR}/src/shell/shell_elf.c)
+set(SHELL_ELF_SIZE_VAR "const uint32_t shell_elf_size = @SIZE@;")
+
+add_custom_command(
+        OUTPUT ${SHELL_ELF}
+        COMMAND ${CMAKE_C_COMPILER} -m32 -nostdlib -static -ffreestanding -DUSERSPACE_ONLY -I${CMAKE_SOURCE_DIR}/include -Wl,--section-start=.text=0x08001000 -o ${SHELL_ELF} ${SHELL_SRC}
+        DEPENDS ${SHELL_SRC}
+        COMMENT "Building userspace shell ELF"
+)
+
+add_custom_command(
+        OUTPUT ${SHELL_ELF_C}
+        COMMAND ${CMAKE_SOURCE_DIR}/scripts/gen_shell_elf.sh ${SHELL_ELF} ${SHELL_ELF_C}
+        DEPENDS ${SHELL_ELF}
+        COMMENT "Generating shell ELF C array"
+)
+
+add_custom_target(shell_elf ALL DEPENDS ${SHELL_ELF_C})
+set_property(SOURCE ${SHELL_ELF_C} PROPERTY GENERATED TRUE)
+
+add_dependencies(group_42-kernel shell_elf)
 
 # Include directories for the kernel target
 target_include_directories(group_42-kernel PUBLIC include include/libc)
@@ -175,7 +202,7 @@ set(DISK_IMAGE "${CMAKE_CURRENT_BINARY_DIR}/disk.iso")
 add_custom_target(
         create-fat32-disk
         COMMAND dd if=/dev/zero of=${DISK_IMAGE} bs=1M count=32
-        COMMAND mkfs.fat -F 32 ${DISK_IMAGE}
+        COMMAND mkfs.fat -F 32 ${DISK_IMAGE} || true
         VERBATIM
 )
 

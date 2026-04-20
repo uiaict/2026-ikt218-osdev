@@ -121,6 +121,12 @@ void init_paging(void* mb_info) {
     }
     page_directory[1] = ((uint32_t)second_pt) | PAGE_PRESENT | PAGE_RW;
 
+    uint32_t user_pt = pmm_alloc_frame();
+    if (user_pt) {
+        memset((void*)user_pt, 0, PAGE_SIZE);
+        page_directory[32] = user_pt | PAGE_PRESENT | PAGE_RW | PAGE_USER;
+    }
+
     load_cr3((uint32_t)page_dir_loc);
     enable_paging();
 

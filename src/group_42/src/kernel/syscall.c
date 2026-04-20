@@ -1,6 +1,8 @@
 #include "kernel/syscall.h"
 
+#include <drivers/audio/PCSPK.h>
 #include <drivers/input/keyboard.h>
+#include <kernel/pit.h>
 #include <drivers/video/vga_text.h>
 #include <kernel/errno.h>
 #include <kernel/fcntl.h>
@@ -12,6 +14,8 @@
 
 #include "arch/i386/cpu/isr.h"
 #include "arch/i386/cpu/ports.h"
+#include "drivers/input/keyboard.h"
+#include "shell/shell.h"
 
 
 void* syscall_table[MAX_SYSCALLS];
@@ -62,9 +66,40 @@ uint32_t sys_wait(syscall_args_t* args) {
  * Returns: -1 (not implemented)
  * Errors:  ENOSYS
  */
+extern void switch_to_user_mode(uint32_t entry, uint32_t stack_top);
+extern int vmm_map_user_page(uint32_t virt, uint32_t phys, uint32_t flags);
+extern void* pmm_alloc_frame(void);
+extern void* memset(void*, int, unsigned long);
+
+#define PAGE_USER_RW 0x007
+
 uint32_t sys_execve(syscall_args_t* args) {
-  (void)args;
-  return -1;
+  uint32_t elf_ptr = args->a;
+  (void)args->b;  /* argv - not used yet */
+  (void)args->c;  /* envp - not used yet */
+  
+  if (elf_ptr == 0) {
+    return -1;
+  }
+  
+  /* ELF is already loaded at 0x08050000 - entry is just offset 0x72 */
+  uint32_t entry = elf_ptr + 0x72;
+  
+  /* Set up stack - ALLOCATE AND MAP PAGES */
+  uint32_t stack_top = 0x08040000;
+  uint32_t stack_pages = 4;  /* 16KB stack */
+  
+  for (uint32_t page = stack_top - (stack_pages * 4096); page < stack_top; page += 4096) {
+    uint32_t phys = (uint32_t)pmm_alloc_frame();
+    if (!phys) return -1;
+    memset((void*)phys, 0, 4096);
+    vmm_map_user_page(page, phys, PAGE_USER_RW);
+  }
+  
+  /* Switch to the new program - this doesn't return */
+  switch_to_user_mode(entry, stack_top);
+  
+  return 0;
 }
 
 /**
@@ -104,12 +139,14 @@ uint32_t sys_read(syscall_args_t* args) {
     uint8_t* buf = (uint8_t*)buf_ptr;
 
     while (bytes_read < count) {
-      while (!keyboard_has_key()) {
-        __asm__ volatile("hlt");
-        decode_keyboard();
-      }
-      if (pop_key(&buf[bytes_read])) {
-        bytes_read++;
+      decode_keyboard();
+      if (keyboard_has_key()) {
+        if (pop_key(&buf[bytes_read])) {
+          bytes_read++;
+        }
+      } else {
+        /* No key available - return what we have */
+        break;
       }
     }
     return bytes_read;
@@ -132,14 +169,11 @@ uint32_t sys_write(syscall_args_t* args) {
   uint32_t buf_ptr = args->b;
   uint32_t count = args->c;
 
-  log_info("sys_write: fd=%d, buf=0x%x, count=%d\n", fd, buf_ptr, count);
-
   if (buf_ptr == 0 || count == 0)
     return -EINVAL;
 
   if (fd == 1 || fd == 2) {
     const char* str = (const char*)buf_ptr;
-    log_info("sys_write: first char=0x%x ('%c')\n", (unsigned char)str[0], str[0]);
     for (uint32_t i = 0; i < count && str[i]; i++) {
       vga_text_putchar(str[i]);
     }
@@ -371,6 +405,60 @@ void init_syscalls(void) {
   syscall_register(SYS_getgid, sys_getgid);
 
   syscall_register(SYS_pipe, sys_pipe);
+
+uint32_t sys_timer(syscall_args_t* args) {
+  uint32_t ms = args->a;
+  sleep_interrupt(ms);
+  return 0;
+}
+
+uint32_t sys_beep(syscall_args_t* args) {
+  uint32_t freq = args->a;
+  if (freq == 0) {
+    PCSPK_STOP();
+  } else {
+    PCSPK_PLAY(freq);
+  }
+  return 0;
+}
+
+uint32_t sys_getkey(syscall_args_t* args) {
+  (void)args;
+  decode_keyboard();
+  if (keyboard_has_key()) {
+    uint8_t key;
+    if (pop_key(&key)) {
+      return key;
+    }
+  }
+  return 0;
+}
+
+uint32_t sys_nanosleep(syscall_args_t* args) {
+  uint32_t ms = args->a;
+  sleep_interrupt(ms);
+  return 0;
+}
+
+uint32_t sys_ioctl(syscall_args_t* args) {
+  uint32_t fd = args->a;
+  uint32_t cmd = args->b;
+  uint32_t val = args->c;
+  (void)fd;
+  (void)val;
+  if (cmd == 0) {
+    PCSPK_STOP();
+  } else if (cmd == 1) {
+    PCSPK_PLAY(val);
+  }
+  return 0;
+}
+
+  syscall_register(SYS_timer, sys_timer);
+  syscall_register(SYS_beep, sys_beep);
+  syscall_register(SYS_getkey, sys_getkey);
+  syscall_register(SYS_nanosleep, sys_nanosleep);
+  syscall_register(SYS_ioctl, sys_ioctl);
 
   register_interrupt_handler(0x80, (isr_t)syscall_stub);
 

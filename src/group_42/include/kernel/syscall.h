@@ -25,6 +25,11 @@
 #define SYS_getpid 20
 #define SYS_getuid 61
 #define SYS_getgid 62
+#define SYS_ioctl 16
+#define SYS_nanosleep 35
+#define SYS_timer 64
+#define SYS_beep 65
+#define SYS_getkey 66
 
 #define MAX_SYSCALLS 64
 

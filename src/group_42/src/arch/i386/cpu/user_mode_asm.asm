@@ -10,7 +10,7 @@ switch_to_user_mode:
 
     PUSH  0x23  ; user SS
     PUSH  ECX   ; user ESP
-    PUSH  0x202 ; EFLAGS (reserved bit 1 set)
+    PUSH  0x202 ; EFLAGS
     PUSH  0x1B  ; user CS
     PUSH  EDX   ; user EIP
     

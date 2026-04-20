@@ -22,11 +22,6 @@ typedef struct {
 } memory_info_t;
 
 /**
- * Initializes memory management
- */
-void init_mm(const uint32_t* kernel_end);
-
-/**
  * Initializes paging
  */
 void init_paging();

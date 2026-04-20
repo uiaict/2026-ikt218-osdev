@@ -3,64 +3,66 @@
 
 #include "kernel/log.h"
 #include "kernel/memory.h"
+#include "kernel/paging.h"
+#include "kernel/pmm.h"
 #include "kernel/panic.h"
 
 
-extern memory_info_t memory_info;
+memory_info_t memory_info;
 
+static uint32_t heap_next = 0x08000000;
 
 void free(void* mem) {
-  alloc_t* alloc = (mem - sizeof(alloc_t));
-  memory_info.memory_used -= alloc->size + sizeof(alloc_t);
-  alloc->status = 0;
+    if (!mem)
+        return;
+
+    alloc_t* header = (alloc_t*)((uint32_t)mem - sizeof(alloc_t));
+    uint32_t size = header->size;
+    uint32_t block_start = (uint32_t)header;
+    header->status = 0;
+
+    size_t total_size = size + sizeof(alloc_t);
+    size_t num_pages = (total_size + 4095) / 4096;
+    if (num_pages == 0) num_pages = 1;
+
+    for (size_t i = 0; i < num_pages; i++) {
+        uint32_t virt = block_start + (i * 4096);
+        uint32_t phys = paging_get_phys(virt);
+        if (phys) {
+            pmm_free_frame(phys);
+            vmm_unmap_page(virt);
+        }
+    }
+
+    memory_info.memory_used -= size;
 }
 
 void* malloc(size_t size) {
-  if (!size)
-    return NULL;
+    if (!size)
+        return NULL;
 
-  uint8_t* mem = (uint8_t*)memory_info.heap_begin;
-  while ((uint32_t)mem < memory_info.last_alloc) {
-    alloc_t* a = (alloc_t*)mem;
-    log_debug("mem=0x%x a={.status=%d, .size=%d}\n", mem, a->status, a->size);
+    size_t total_size = size + sizeof(alloc_t);
+    size_t num_pages = (total_size + 4095) / 4096;
+    if (num_pages == 0) num_pages = 1;
+    size_t actual_size = num_pages * 4096;
 
-    if (!a->size)
-      goto nalloc;
-    if (a->status) {
-      mem += a->size;
-      mem += sizeof(alloc_t);
-      mem += 4;
-      continue;
-    }
-    // Not allocated but big enough, adjust size, set status, and return location
-    if (a->size >= size) {
-      a->status = 1;
-      log_debug("RE:Allocated %d bytes from 0x%x to 0x%x\n", size, mem + sizeof(alloc_t),
-                mem + sizeof(alloc_t) + size);
-      memset(mem + sizeof(alloc_t), 0, size);
-      memory_info.memory_used += size + sizeof(alloc_t);
-      return (char*)(mem + sizeof(alloc_t));
+    uint32_t virt = heap_next;
+    heap_next += actual_size;
+
+    for (size_t i = 0; i < num_pages; i++) {
+        uint32_t phys = pmm_alloc_frame();
+        if (!phys) {
+            kernel_panic("malloc: out of memory\n");
+        }
+        vmm_map_page(virt + (i * 4096), phys, PAGE_USER_RW);
     }
 
-    mem += a->size;
-    mem += sizeof(alloc_t);
-    mem += 4;
-  }
+    alloc_t* header = (alloc_t*)virt;
+    header->status = 1;
+    header->size = size;
 
-nalloc:;
-  if (memory_info.last_alloc + size + sizeof(alloc_t) >= memory_info.heap_end) {
-    kernel_panic("Cannot allocate bytes! Out of memory.\n");
-  }
-  alloc_t* alloc = (alloc_t*)memory_info.last_alloc;
-  alloc->status = 1;
-  alloc->size = size;
+    memory_info.memory_used += size;
+    memset((void*)(virt + sizeof(alloc_t)), 0, size);
 
-  memory_info.last_alloc += size;
-  memory_info.last_alloc += sizeof(alloc_t);
-  memory_info.last_alloc += 4;
-  log_debug("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)alloc + sizeof(alloc_t),
-            memory_info.last_alloc);
-  memory_info.memory_used += size + 4 + sizeof(alloc_t);
-  memset((char*)((uint32_t)alloc + sizeof(alloc_t)), 0, size);
-  return (char*)((uint32_t)alloc + sizeof(alloc_t));
+    return (void*)(virt + sizeof(alloc_t));
 }
