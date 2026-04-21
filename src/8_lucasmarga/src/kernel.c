@@ -65,6 +65,6 @@ void kmain(uint32_t magic, void* mb_info_addr) {
         sleep_interrupt(1000);
         terminal_print_string("[");
         print_int(counter++);
-        terminal_print_string("]: Finished sleeping with interrutps.\n");
+        terminal_print_string("]: Finished sleeping with interrupts.\n");
     }
 }
