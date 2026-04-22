@@ -60,7 +60,7 @@ static void display_command_info(const char name[], const char options[], const 
 static void display_song_help() {
     const CommandColors colors = get_command_colors();
 
-    print("Enter the corresponding value to select which song:\n");
+    print(" Enter the corresponding value in options field to select which song:\n");
     print_color(" <song number>", colors.name);
     print_color(" -> ", colors.options);
     print_color("<song name>\n", colors.name);
