@@ -6,7 +6,7 @@ static CommandEntry commands[] = {
     { "clear", "[none]", "Clears the shell content", command_clear },
     { "setusername", "<new-username>", "Changes the shell user display name", command_set_username },
     { "heapinfo", "[none]", "Displays information about the heap of memory", command_heapinfo },
-    { "playsong", "<1-9 | help>", "Plays a song as defined in 'playsong help'", command_playsong },
+    { "playsong", "<1-8 | help>", "Plays a song as defined in 'playsong help'", command_playsong },
     { "disktest", "[read|write]", "Reads or writes one raw disk sector", command_disktest },
     { "format", "[none]", "Formats the tiny persistent filesystem", command_format },
     { "ls", "[none]", "Lists files in the tiny filesystem", command_ls },
