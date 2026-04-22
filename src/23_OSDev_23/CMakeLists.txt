@@ -69,6 +69,7 @@ add_executable(uiaos-kernel
     src/memory.c
     src/paging.c
     src/pit.c
+	src/SongPlayer.cpp
 )
 
 # Include directories for the kernel target

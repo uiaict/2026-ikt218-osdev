@@ -1,7 +1,11 @@
-#include "song/song.h"
-#include "pit.h"
-#include "common.h"
-#include "libc/stdio.h"
+extern "C" {
+    #include "songs/song.h"
+    #include "pit.h"
+    #include "libc/stdio.h"
+    #include "memory.h"
+    #include "common.h"
+}
+
 
 void enable_speaker() {
     // Pseudocode for enable_speaker:
@@ -76,7 +80,7 @@ void play_song_impl(Song *song) {
                song->notes[i].frequency, 
                song->notes[i].duration);
         play_sound(song->notes[i].frequency);
-        sleep(song->notes[i].duration);
+        sleep_interrupt(song->notes[i].duration);
         stop_sound();
     }
     // 3. Disable the speaker after all notes have been played.
@@ -89,3 +93,10 @@ void play_song(Song *song) {
     //    - This function handles the entire process of playing each note in the song.
     play_song_impl(song);
 }
+
+SongPlayer* create_song_player() {
+    SongPlayer* player = (SongPlayer*)malloc(sizeof(SongPlayer));
+    player->play_song = play_song_impl;
+    return player;
+}
+
