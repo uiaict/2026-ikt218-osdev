@@ -363,7 +363,23 @@ int8_t command_playsong(int argument_count, char* arguments[]) {
         return COMMAND_SUCCESS;
     }
 
-    return COMMAND_ARGUMENT_INVALID_SONG_NUMBER;
+    uint8_t ok;
+    const uint8_t selected_song_number = str_to_int_checked(arguments[1], ok);
+
+    if (!ok) {
+        return COMMAND_ARGUMENT_INVALID_SONG_NUMBER;
+    }
+
+
+    const uint8_t selected_song_index = selected_song_number - 1;
+
+    if (selected_song_index < 0 || selected_song_index > song_count - 1) {
+        return COMMAND_ARGUMENT_INVALID_SONG_NUMBER;
+    }
+
+    play_song_by_index(selected_song_index);
+
+    return COMMAND_SUCCESS;
 }
 
 int8_t command_disktest(int argument_count, char *arguments[])

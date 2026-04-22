@@ -6,6 +6,7 @@
 #include "../user/user.h"
 #include "../disk/ata.h"
 #include "../fs/tinyfs.h"
+#include "../sound/song_player.h"
 
 #define MAX_ARGS 10
 
