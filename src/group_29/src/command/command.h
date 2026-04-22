@@ -42,10 +42,14 @@ typedef struct {
     uint8_t description;
 } CommandColors;
 
+typedef struct {
+    char* song_name;
+} SongMapEntry;
+
 // Commands
 
 /// @brief Displays all commands
-int8_t command_help(int argument_count, char* arguments[]);
+int8_t command_help(int argument_count, char *arguments[]);
 
 /// @brief Print user input to screen
 int8_t command_echo(int argument_count, char* arguments[]);
@@ -58,6 +62,9 @@ int8_t command_set_username(int argument_count, char* arguments[]);
 
 /// @brief Displays memory info
 int8_t command_heapinfo(int argument_count, char* arguments[]);
+
+/// @brief Plays a song
+int8_t command_playsong(int argument_count, char* arguments[]);
 
 int8_t command_disktest(int argument_count, char* arguments[]);
 int8_t command_format(int argument_count, char* arguments[]);
