@@ -6,6 +6,7 @@ typedef unsigned char  uint8_t;
 #include "keyboard.h"
 #include "memory.h"
 #include "pit.h"
+#include "song.h"
 
 // This is defined in arch/i386/linker.ld
 extern uint32_t end;
@@ -68,6 +69,17 @@ void putchar(char c) {
     if (cursor_x >= 80) {
         cursor_x = 0;
         cursor_y++;
+    }
+
+    // Scroll the screen if we reach the bottom (25th row)
+    if (cursor_y >= 25) {
+        for (int i = 0; i < 24 * 80; i++) {
+            video[i] = video[i + 80];
+        }
+        for (int i = 24 * 80; i < 25 * 80; i++) {
+            video[i] = (uint16_t)' ' | 0x0F00;
+        }
+        cursor_y = 24;
     }
 }
 
@@ -159,14 +171,23 @@ void main(void) {
     // 'sti' stands for Set Interrupt Flag. It tells the CPU to start listening.
     __asm__ volatile("sti");
 
-    int counter = 0;
-    while (1) {
-        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
-        sleep_busy(1000);
-        printf("[%d]: Slept using busy-waiting.\n", counter++);
+    // Assignment 5 - Music Player Logic
+    Song songs[] = {
+        {starwars_theme, sizeof(starwars_theme) / sizeof(Note)},
+        {battlefield_1942_theme, sizeof(battlefield_1942_theme) / sizeof(Note)},
+        {music_1, sizeof(music_1) / sizeof(Note)}
+    };
+    uint32_t n_songs = sizeof(songs) / sizeof(Song);
+    SongPlayer* player = create_song_player();
 
-        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
-        sleep_interrupt(1000);
-        printf("[%d]: Slept using interrupts.\n", counter++);
+    while (1) {
+        for(uint32_t i = 0; i < n_songs; i++) {
+            printf("Playing Song %d...\n", i + 1);
+            player->play_song(&songs[i]);
+            printf("Finished playing the song.\n\n");
+            
+            // Take a short breath before playing the next song
+            sleep_interrupt(2000);
+        }
     }
 }

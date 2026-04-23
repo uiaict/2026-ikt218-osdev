@@ -2,7 +2,7 @@
 #include "ports.h"
 #include "isr.h"
 
-uint32_t timer_ticks = 0;
+volatile uint32_t timer_ticks = 0;
 
 void timer_callback(registers_t *r) {
     timer_ticks++;
