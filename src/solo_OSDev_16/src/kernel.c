@@ -1,5 +1,11 @@
+#include "gdt.h" 
+#include "terminal.h"
+
+
 void kmain(void) {
-    for (;;) {
-        __asm__ volatile ("hlt");
-    }
+gdt_initialize();
+terminal_initialize();
+terminal_write("Hello World");
+
+while(1){}
 }
