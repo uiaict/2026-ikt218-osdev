@@ -1,6 +1,9 @@
 #pragma once
 
 
+/**
+Mapping for special keys, useful for instance for arrow mappings in the shell
+*/
 enum special_key {
   KEY_UP = 1,
   KEY_DOWN = 2,

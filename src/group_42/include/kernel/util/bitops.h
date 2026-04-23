@@ -3,6 +3,11 @@
 #include <stdint.h>
 
 /**
+ * Operations for bit operations, all decleared static inline to suggest to the compiler to inline
+ * these for performance
+ */
+
+/**
  * Set a bit to 1
  * @param var variable to modify
  * @param bit bit to set

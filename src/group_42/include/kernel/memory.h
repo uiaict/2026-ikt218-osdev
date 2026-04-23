@@ -3,22 +3,27 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
+/**
+ * Represents an allocation region
+ *
+ * Status:
+ * 0 - free
+ * 1 - used
+ */
 typedef struct {
   uint8_t status;
   uint32_t size;
 } alloc_t;
 
 typedef struct {
-  uint32_t last_alloc;
-  uint32_t heap_end;
-  uint32_t heap_begin;
-  uint32_t memory_used;
+  uint32_t last_alloc;  // memory location of last allocation
+  uint32_t heap_end;    // location of end of heap
+  uint32_t heap_begin;  // location of beginning of heap
+  uint32_t memory_used; // total memory used
 
-  uint32_t pheap_begin;
-  uint32_t pheap_end;
-  uint8_t* pheap_desc;
-
+  uint32_t pheap_begin; // beginning of physical heap
+  uint32_t pheap_end;   // ending of physical heap
+  uint8_t* pheap_desc;  // not currently used
 } memory_info_t;
 
 /**

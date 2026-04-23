@@ -1,7 +1,11 @@
 #pragma once
-#include "libc/stdint.h"
 #include <stdbool.h>
 
+#include "libc/stdint.h"
+
+/**
+ * VGA colours
+ */
 enum vga_text_color {
   VGA_COLOR_BLACK = 0,
   VGA_COLOR_BLUE = 1,
