@@ -9,21 +9,23 @@ void timer_callback(registers_t *r) {
 }
 
 void init_pit() {
-    uint16_t divisor = DIVIDER;
+    // Base frequency: 1193180 Hz. Target: 1000 Hz (1 ms per tick).
+    // Divisor = 1193180 / 1000 = 1193
+    uint16_t divisor = 1193;
 
-    // Send the command byte (0x36 sets the PIT to square wave mode)
-    port_byte_out(PIT_CMD_PORT, 0x36);
+    // Send the command byte (0x36 sets PIT to Channel 0, lobyte/hibyte, square wave mode)
+    port_byte_out(0x43, 0x36);
 
-    // Send the divisor (split into low and high bytes)
-    port_byte_out(PIT_CHANNEL0_PORT, (uint8_t)(divisor & 0xFF));
-    port_byte_out(PIT_CHANNEL0_PORT, (uint8_t)((divisor >> 8) & 0xFF));
+    // Send the divisor to Channel 0 data port (0x40)
+    port_byte_out(0x40, (uint8_t)(divisor & 0xFF));
+    port_byte_out(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 
-    // Register our timer callback to IRQ0
-    register_interrupt_handler(IRQ0, timer_callback);
+    // Register our timer callback specifically to Interrupt 32 (IRQ0 mapped)
+    register_interrupt_handler(32, timer_callback);
 }
 
 void sleep_busy(uint32_t milliseconds) {
-    uint32_t ticks_to_wait = milliseconds * TICKS_PER_MS;
+    uint32_t ticks_to_wait = milliseconds; // 1 tick = 1 ms
     uint32_t start_tick = timer_ticks;
     uint32_t elapsed_ticks = 0;
     
@@ -36,13 +38,11 @@ void sleep_busy(uint32_t milliseconds) {
 }
 
 void sleep_interrupt(uint32_t milliseconds) {
-    uint32_t current_tick = timer_ticks;
-    uint32_t ticks_to_wait = milliseconds * TICKS_PER_MS;
-    uint32_t end_ticks = current_tick + ticks_to_wait;
+    // Calculate the target tick to wake up
+    uint32_t end_ticks = timer_ticks + milliseconds;
     
-    while (current_tick < end_ticks) {
+    while (timer_ticks < end_ticks) {
         __asm__ volatile("sti");
         __asm__ volatile("hlt");
-        current_tick = timer_ticks;
     }
 }

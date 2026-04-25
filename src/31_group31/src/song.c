@@ -2,6 +2,7 @@
 #include "pit.h"
 #include "memory.h"
 #include "ports.h"
+#include "shell.h"
 
 extern void printf(const char* format, ...);
 
@@ -38,17 +39,16 @@ void stop_sound() {
 }
 
 void play_song_impl(Song *song) {
-    enable_speaker();
-    for (uint32_t i = 0; i < song->length; i++) {
+    for (uint32_t i = 0; i < song->length && song_running; i++) {
         Note* note = &song->notes[i];
         if (note->frequency == 0) stop_sound();
         else play_sound(note->frequency);
         
-        sleep_interrupt(note->duration);
+        sleep_busy(note->duration);
         stop_sound();
         
         // Add a tiny delay to prevent notes from blending together
-        sleep_interrupt(20);
+        sleep_busy(20);
     }
 }
 

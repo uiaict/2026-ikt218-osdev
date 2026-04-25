@@ -7,6 +7,8 @@ typedef unsigned char  uint8_t;
 #include "memory.h"
 #include "pit.h"
 #include "song.h"
+#include "ports.h"
+#include "shell.h"
 
 // This is defined in arch/i386/linker.ld
 extern uint32_t end;
@@ -61,6 +63,14 @@ void putchar(char c) {
     if (c == '\n') {
         cursor_x = 0;
         cursor_y++;
+    } else if (c == '\b') { // Backspace (Geri Silme) yetenegi
+        if (cursor_x > 0) {
+            cursor_x--;
+        } else if (cursor_y > 0) {
+            cursor_y--;
+            cursor_x = 79;
+        }
+        video[cursor_y * 80 + cursor_x] = (uint16_t)' ' | 0x0F00;
     } else {
         video[cursor_y * 80 + cursor_x] = (uint16_t)c | 0x0F00;
         cursor_x++;
@@ -140,8 +150,6 @@ void printf(const char* format, ...) {
     va_end(args);
 }
 
-
-
 void main(void) {
     gdt_install();
     isr_install(); // Installs IDT, CPU Exceptions, and IRQs
@@ -171,23 +179,12 @@ void main(void) {
     // 'sti' stands for Set Interrupt Flag. It tells the CPU to start listening.
     __asm__ volatile("sti");
 
-    // Assignment 5 - Music Player Logic
-    Song songs[] = {
-        {starwars_theme, sizeof(starwars_theme) / sizeof(Note)},
-        {battlefield_1942_theme, sizeof(battlefield_1942_theme) / sizeof(Note)},
-        {music_1, sizeof(music_1) / sizeof(Note)}
-    };
-    uint32_t n_songs = sizeof(songs) / sizeof(Song);
-    SongPlayer* player = create_song_player();
+    // Yeni Altyapimiz: Komut Satiri (Terminal)
+    shell_init();
 
     while (1) {
-        for(uint32_t i = 0; i < n_songs; i++) {
-            printf("Playing Song %d...\n", i + 1);
-            player->play_song(&songs[i]);
-            printf("Finished playing the song.\n\n");
-            
-            // Take a short breath before playing the next song
-            sleep_interrupt(2000);
-        }
+        shell_update();
+        // Islemler artik Interrupt (Klavye) uzerinden donecegi icin CPU'yu uyutuyoruz.
+        __asm__ volatile("hlt");
     }
 }
