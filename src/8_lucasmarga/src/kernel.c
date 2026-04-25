@@ -5,6 +5,7 @@
 #include "pic.h"
 #include "memory.h"
 #include "pit.h"
+#include "song.h"
 
 extern uint32_t end;
 
@@ -49,6 +50,7 @@ void kmain(uint32_t magic, void* mb_info_addr) {
 
     __asm__ __volatile__("sti");
 
+    /* PIT VERIFICATION LOOP
     int counter = 0;
     while (1) {
         terminal_print_string("[");
@@ -67,4 +69,19 @@ void kmain(uint32_t magic, void* mb_info_addr) {
         print_int(counter++);
         terminal_print_string("]: Finished sleeping with interrupts.\n");
     }
+    */
+
+    Song songs[] = {
+    {music_1, sizeof(music_1) / sizeof(Note)}
+};
+
+SongPlayer* player = create_song_player();
+
+while (1) {
+    terminal_print_string("Playing song =D\n");
+    player->play_song(&songs[0]);
+    terminal_print_string("Finished song :(\n");
+    sleep_interrupt(1000);
+}
+
 }
