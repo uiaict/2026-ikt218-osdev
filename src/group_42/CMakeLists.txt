@@ -100,6 +100,7 @@ add_executable(group_42-kernel
         src/shell/commands/timer_test.c
         src/shell/commands/touch.c
         src/shell/commands/write.c
+        src/shell/commands/vfs_test.c
 
 
         src/drivers/input/keyboard.c
@@ -123,7 +124,6 @@ add_executable(group_42-kernel
         src/kernel/paging.c
         src/kernel/page_fault.c
         src/kernel/user_mode.c
-        src/kernel/user_program.c
         src/kernel/memory.c
         src/kernel/pit.c
         src/drivers/audio/PCSPK.c

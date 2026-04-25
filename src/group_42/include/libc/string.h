@@ -6,7 +6,7 @@
  * @param str string
  * @return length of string
  */
-size_t strlen(const char* str);
+size_t strlen(const char *str);
 
 /**
  * Check if two strings are identical
@@ -14,7 +14,7 @@ size_t strlen(const char* str);
  * @param r string
  * @return 0 if identical
  */
-int strcmp(const char* l, const char* r);
+int strcmp(const char *l, const char *r);
 
 /**
  * Compares up to num characters of c strings l and r.
@@ -23,7 +23,7 @@ int strcmp(const char* l, const char* r);
  * @param n maximum number of characters to compare
  * @return 0 if equal, else l < r
  */
-int strncmp(const char* l, const char* r, size_t n);
+int strncmp(const char *l, const char *r, size_t n);
 
 /**
  * Copy memory from one location to another
@@ -32,7 +32,7 @@ int strncmp(const char* l, const char* r, size_t n);
  * @param count bytes to copy
  * @return destination memory address
  */
-void* memcpy(void* restrict dest, const void* restrict src, size_t count);
+void *memcpy(void *restrict dest, const void *restrict src, size_t count);
 
 /**
  * Sets memory in destination memory to supplied byte
@@ -41,7 +41,7 @@ void* memcpy(void* restrict dest, const void* restrict src, size_t count);
  * @param count number of bytes to set
  * @return destination memory address
  */
-void* memset(void* dest, int ch, size_t count);
+void *memset(void *dest, int ch, size_t count);
 
 /**
  * String copy
@@ -49,7 +49,7 @@ void* memset(void* dest, int ch, size_t count);
  * @param src string source
  * @return new string pointer
  */
-char* strcpy(char* dest, const char* src);
+char *strcpy(char *dest, const char *src);
 
 /**
  * String copy with max charactes to copy
@@ -58,7 +58,7 @@ char* strcpy(char* dest, const char* src);
  * @param count max size
  * @return new string pointer
  */
-char* strncpy(char* dest, const char* src, size_t count);
+char *strncpy(char *dest, const char *src, size_t count);
 
 /**
  * Returns a pointer to the last occurrence of character in the C string str.
@@ -66,7 +66,16 @@ char* strncpy(char* dest, const char* src, size_t count);
  * @param c character
  * @return pointer to last character in string or NULL
  */
-char* strrchr (const char* s, int c);
+char *strrchr(const char *s, int c);
+
+/**
+ *  Appends all characters of source to destsination string
+ *  Assumes zero termination
+ * @param dest
+ * @param src  c string to be appened
+ * @return  returns pointer to destination. (in case of relocation)
+ */
+char *strcat(char *dest, const char *src);
 
 /**
  * Appends the first num characters of source to destination, plus a terminating null-character.
@@ -75,4 +84,4 @@ char* strrchr (const char* s, int c);
  * @param n Maximum number of characters to be appended.
  * @return destination is returned.
  */
-char* strncat (char* dest, const char* src, size_t n);
+char *strncat(char *dest, const char *src, size_t n);

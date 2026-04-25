@@ -1,7 +1,6 @@
 #include "arch/i386/cpu/idt.h"
 
 #include <kernel/log.h>
-#include <stdio.h>
 
 #include "arch/i386/cpu/isr.h"
 

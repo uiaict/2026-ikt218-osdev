@@ -17,8 +17,20 @@
 #define USER_VIRT_TOP 0xBFFFFFFF
 #define KERNEL_HEAP_VIRT 0xC0100000
 
-#define PGD_INDEX(addr) (((addr) >> 22) & 0x3FF)
-#define PTE_INDEX(addr) (((addr) >> 12) & 0x3FF)
+
+// PAGING SETUP STUFF
+#define PAGE_BITS 12
+#define PAGE_SIZE (1UL << PAGE_BITS)
+#define PAGE_MASK (~(PAGE_SIZE - 1))
+#define PT_ENTRIES 1024
+
+#define PTE_SHIFT PAGE_BITS
+#define PGD_SHIFT 22 // page global directory shift
+#define PT_INDEX_MASK 0x3FF
+
+#define PGD_INDEX(addr) (((addr) >> PGD_SHIFT) & PT_INDEX_MASK)
+#define PTE_INDEX(addr) (((addr) >> PTE_SHIFT) & PT_INDEX_MASK)
+
 
 /**
  * Initializes paging for user space

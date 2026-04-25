@@ -31,6 +31,8 @@ extern int cmd_touch(int argc, char** argv);
 extern int cmd_mkdir(int argc, char** argv);
 extern int cmd_cat(int argc, char** argv);
 extern int cmd_write(int argc, char** argv);
+extern int cmd_vfs_test(int argc, char** argv);
+extern int cmd_tree(int argc, char** argv);
 
 
 #define SHELL_BUFFER_SIZE 256
@@ -72,7 +74,9 @@ const shell_command_t command_table[] = {
     {"write", "write to file", cmd_write},
     {     "loadkeys",         "Load keys locale [no, us]",        cmd_loadkeys},
     {    "test_malloc",             "Test malloc and free",        cmd_test_malloc},
-    {"run_userspace",        "Run a userspace program",         run_userspace_handler}
+    {"run_userspace",        "Run a userspace program",         run_userspace_handler},
+    {     "vfs_test",              "Run VFS integration tests",     cmd_vfs_test},
+    {        "tree",              "Show VFS directory tree",        cmd_tree}
 };
 const size_t NUM_COMMANDS = sizeof(command_table) / sizeof(command_table[0]);
 

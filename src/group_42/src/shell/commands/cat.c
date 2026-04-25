@@ -14,10 +14,10 @@ int cmd_cat(int argc, char** argv) {
     char buffer[512]; // A reasonable chunk size for stack allocation
 
     for (int i = 1; i < argc; i++) {
-        // 1. Resolve path (relative to absolute)
+        //  Resolve path (relative to absolute)
         shell_build_absolute_path(full_path, argv[i]);
 
-        // 2. Open for reading
+        //  Open for reading
         int fd = vfs_open(full_path, O_READ);
         if (fd == VFS_INVALID_FD) {
             printf("cat: %s: No such file\n", argv[i]);
@@ -32,7 +32,7 @@ int cmd_cat(int argc, char** argv) {
             continue;
         }
 
-        // 3. Read in chunks until EOF
+        //  Read in chunks until EOF
         int bytes_read;
         while ((bytes_read = vfs_read(fd, buffer, sizeof(buffer) - 1)) > 0) {
             // Null-terminate the chunk so printf knows where to stop
@@ -40,7 +40,6 @@ int cmd_cat(int argc, char** argv) {
             printf("%s", buffer);
         }
 
-        // 4. Cleanup
         vfs_close(fd);
     }
 

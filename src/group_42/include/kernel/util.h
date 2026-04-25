@@ -42,3 +42,6 @@ static inline uint32_t div_u64_by_10(uint64_t* n) {
   *n = (q_high << 32) | q_low;
   return full - q_low * 10;
 }
+
+// Should only be called with compatible types
+#define CLAMP(x, min, max) (((x) < (min)) ? (min) : (((x) > (max)) ? (max) : (x)))

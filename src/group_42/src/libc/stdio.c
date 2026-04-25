@@ -204,6 +204,27 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
 
     i++; // skip '%'
 
+    // Check for minus flag (left alignment)
+    int left_align = 0;
+    if (format[i] == '-') {
+      left_align = 1;
+      i++;
+    }
+
+    // Check for dynamic width (e.g., %*s) or static width (e.g., %10s)
+    int width = 0;
+    if (format[i] == '*') {
+      // Get width from va_arg
+      width = va_arg(arg, int);
+      i++;
+    } else if (format[i] >= '0' && format[i] <= '9') {
+      // Parse static width
+      while (format[i] >= '0' && format[i] <= '9') {
+        width = width * 10 + (format[i] - '0');
+        i++;
+      }
+    }
+
     // Length modifier
     int length = 0; // 0: default, 1: l, 2: ll
     if (format[i] == 'l') {
@@ -226,9 +247,39 @@ int vfprintf(FILE* stream, const char* format, va_list arg) {
         const char* s = va_arg(arg, const char*);
         if (!s)
           s = "(null)";
-        while (*s) {
-          fputc(*s++, stream);
-          printed_chars++;
+
+        // Calculate string length for padding
+        int len = 0;
+        const char* tmp = s;
+        while (*tmp++) len++;
+
+        // If left aligned, print string first then padding
+        if (left_align) {
+          while (*s) {
+            fputc(*s++, stream);
+            printed_chars++;
+          }
+          // Pad on right
+          if (width > len) {
+            int pad = width - len;
+            for (int p = 0; p < pad; p++) {
+              fputc(' ', stream);
+              printed_chars++;
+            }
+          }
+        } else {
+          // Print left padding if width > string length
+          if (width > len) {
+            int pad = width - len;
+            for (int p = 0; p < pad; p++) {
+              fputc(' ', stream);
+              printed_chars++;
+            }
+          }
+          while (*s) {
+            fputc(*s++, stream);
+            printed_chars++;
+          }
         }
         break;
       }

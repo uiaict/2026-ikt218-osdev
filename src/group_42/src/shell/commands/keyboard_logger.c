@@ -13,6 +13,7 @@ int cmd_keyboard_logger(int argc, char** argv) {
     pop_key(&key);
 
     if (key != 0) {
+      // ctrl -c or esc
       if (key == 27 || key == 3) {
         printf("\nLogger exited.\n");
         return 0;
@@ -21,5 +22,4 @@ int cmd_keyboard_logger(int argc, char** argv) {
       fflush(stdout);
     }
   }
-  return 0;
 }

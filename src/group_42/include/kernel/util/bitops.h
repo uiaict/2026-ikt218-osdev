@@ -12,7 +12,7 @@
  * @param var variable to modify
  * @param bit bit to set
  */
-static inline void bit_set(uint8_t* var, uint8_t bit) {
+inline __attribute__((always_inline)) void bit_set(uint8_t* var, uint8_t bit) {
   *var |= (uint8_t)(1u << bit);
 }
 
@@ -21,7 +21,7 @@ static inline void bit_set(uint8_t* var, uint8_t bit) {
  * @param var variable to modify
  * @param bit bit to set
  */
-static inline void bit_clear(uint8_t* var, uint8_t bit) {
+inline __attribute__((always_inline)) void bit_clear(uint8_t* var, uint8_t bit) {
   *var &= ~(uint8_t)(1u << bit);
 }
 
@@ -30,7 +30,7 @@ static inline void bit_clear(uint8_t* var, uint8_t bit) {
  * @param var variable to modify
  * @param bit bit to flip
  */
-static inline void bit_toggle(uint8_t* var, uint8_t bit) {
+inline __attribute__((always_inline)) void bit_toggle(uint8_t* var, uint8_t bit) {
   *var ^= (uint8_t)(1u << bit);
 }
 
@@ -40,6 +40,6 @@ static inline void bit_toggle(uint8_t* var, uint8_t bit) {
  * @param bit bit to test
  * @return true if bit is 1, false if 0.
  */
-static inline bool bit_test(uint8_t var, uint8_t bit) {
+inline __attribute__((always_inline)) bool bit_test(uint8_t var, uint8_t bit) {
   return (var & (1 << bit)) != 0;
 }

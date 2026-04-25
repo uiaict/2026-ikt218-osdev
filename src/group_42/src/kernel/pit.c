@@ -2,6 +2,7 @@
 
 #include "arch/i386/cpu/isr.h"
 #include "arch/i386/cpu/ports.h"
+#include "kernel/util.h"
 
 // PIT (Programmable Interval Timer) related macros
 #define PIT_CMD_PORT 0x43
@@ -11,6 +12,7 @@
 #define PC_SPEAKER_PORT 0x61
 #define PIT_DEFAULT_DIVISOR 0x4E20 // 20000, which gives about 18.2 Hz (1193180 / 20000)
 
+// Channel 0 mod 2  (rate generator)
 #define PIT_MODE_2 0x34
 
 // IRQ0 related macros
@@ -25,19 +27,21 @@
 #define TICKS_PER_MS (TARGET_FREQUENCY / 1000)
 
 
-#define CLAMP(low, high, value) (value < low ? low : (value > high ? high : value))
-
 volatile uint32_t ticks = 0;
 
+// increment global ticks counter and send EOI to PIC.
 void timer_handler(registers_t* regs) {
+  // make "atomic"
   __asm__ volatile("cli");
   ticks++;
   port_byte_out(PIC1_CMD_PORT, PIC_EOI); // acknowledge
   __asm__ volatile("sti");
 }
 
+// Configure pit channel 0 as a periodic timer at TARGET_FREQUENCY hz
+// connected to IRQ0, and install timer handler in IDT
 void init_pit() {
-  uint32_t divisor = CLAMP(1, 65536, DIVIDER);
+  uint32_t divisor = CLAMP(DIVIDER, 1, 65536);
 
   // Must be atomic
   __asm__ volatile("cli");
@@ -49,6 +53,7 @@ void init_pit() {
   register_interrupt_handler(IRQ0, timer_handler);
 }
 uint32_t get_current_tick() {
+  // must be atomic
   __asm__ volatile("cli");
   uint32_t tick = ticks;
   __asm__ volatile("sti");

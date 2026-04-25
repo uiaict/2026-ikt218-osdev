@@ -110,9 +110,12 @@ static const song_t songs[] = {
 #define NUM_SONGS (sizeof(songs) / sizeof(songs[0]))
 
 static int check_interrupt(void) {
-  decode_keyboard();
+  if (!keyboard_has_key()) {
+    return 0;
+  }
   uint8_t key = 0;
   pop_key(&key);
+  // return on esc or ctrl c
   if (key == 27 || key == 3) {
     return 1;
   }
@@ -122,7 +125,7 @@ static int check_interrupt(void) {
 // Plays a song
 static void play_song(const song_t* song) {
   for (size_t i = 0; i < song->length; i++) {
-    if (check_interrupt()) {
+    if (i % 10 == 0 && check_interrupt()) {
       printf("\nSong interrupted.\n");
       PCSPK_STOP();
       return;

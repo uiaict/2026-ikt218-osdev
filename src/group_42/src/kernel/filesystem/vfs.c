@@ -1,15 +1,14 @@
 #include <kernel/filesystem/vfs.h>
-#include <kernel/filesystem/ramfs.h>
 
 #include "stddef.h"
 #include "string.h"
 
 vfs_fd_t fd_table[MAX_OPEN_FILES];
-static vfs_mount_t mount_table[8]; // example limit
+static vfs_mount_t mount_table[8];
 
 void vfs_init() {
-    // 1. Initialize the FD table
-    for(int i = 0; i < MAX_OPEN_FILES; i++) {
+    //  Initialize the FD table
+    for (int i = 0; i < MAX_OPEN_FILES; i++) {
         fd_table[i].used = 0;
     }
 
@@ -20,7 +19,7 @@ void vfs_init() {
 }
 
 /* --- common stub for resolving paths to driver and getting relative fs path --- */
-static vfs_mount_t* vfs_resolve_mount(const char* path, const char** out_relative_path) {
+static vfs_mount_t *vfs_resolve_mount(const char *path, const char **out_relative_path) {
     if (path == NULL) return NULL;
 
     int mount_idx = -1;
@@ -47,7 +46,7 @@ static vfs_mount_t* vfs_resolve_mount(const char* path, const char** out_relativ
     if (mount_idx == -1) return NULL;
 
     // Calculate relative path for the driver
-    const char* rel = path + longest_match;
+    const char *rel = path + longest_match;
     while (*rel == '/') rel++; // Strip leading slashes
 
     if (out_relative_path) *out_relative_path = rel;
@@ -55,7 +54,7 @@ static vfs_mount_t* vfs_resolve_mount(const char* path, const char** out_relativ
     return &mount_table[mount_idx];
 }
 
-int vfs_mount(const char* target, vfs_driver_t* driver) {
+int vfs_mount(const char *target, vfs_driver_t *driver) {
     if (target == NULL || driver == NULL) return -1;
 
     for (int i = 0; i < 8; i++) {
@@ -70,7 +69,7 @@ int vfs_mount(const char* target, vfs_driver_t* driver) {
     return -1;
 }
 
-int vfs_unmount(const char* target) {
+int vfs_unmount(const char *target) {
     if (target == NULL) return -1;
 
     for (int i = 0; i < 8; i++) {
@@ -86,11 +85,11 @@ int vfs_unmount(const char* target) {
     return -1;
 }
 
-int vfs_open(const char* path, int flags) {
+int vfs_open(const char *path, int flags) {
     if (path == NULL) return -1;
 
-    const char* rel_path;
-    vfs_mount_t* mnt = vfs_resolve_mount(path, &rel_path);
+    const char *rel_path;
+    vfs_mount_t *mnt = vfs_resolve_mount(path, &rel_path);
     if (!mnt) return -1;
 
     // Find free file descriptor
@@ -104,7 +103,7 @@ int vfs_open(const char* path, int flags) {
     if (fd == -1) return -1;
 
     // get file descriptor
-    vfs_fd_t* file = &fd_table[fd];
+    vfs_fd_t *file = &fd_table[fd];
     file->driver = mnt->driver;
     file->flags = flags;
     // file->offset = 0; // NOTE: lseek should do this
@@ -119,7 +118,7 @@ int vfs_open(const char* path, int flags) {
 
 int vfs_close(const int fd) {
     if (fd >= 0 && fd < MAX_OPEN_FILES) {
-        vfs_fd_t* file = &fd_table[fd];
+        vfs_fd_t *file = &fd_table[fd];
         if (file->driver->close != NULL) file->driver->close(file);
         file->used = 0;
         file->offset = 0;
@@ -128,10 +127,10 @@ int vfs_close(const int fd) {
     return -1;
 }
 
-int vfs_read(const int fd, void* buf, const size_t n) {
+int vfs_read(const int fd, void *buf, const size_t n) {
     if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd].used) return -1;
 
-    vfs_fd_t* file = &fd_table[fd];
+    vfs_fd_t *file = &fd_table[fd];
 
     int bytes_read = file->driver->read(file, buf, n);
 
@@ -142,11 +141,11 @@ int vfs_read(const int fd, void* buf, const size_t n) {
     return bytes_read;
 }
 
-int vfs_write(const int fd, const void* buf, const size_t n) {
+int vfs_write(const int fd, const void *buf, const size_t n) {
     if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd].used) return -1;
 
-    vfs_fd_t* file = &fd_table[fd];
-    
+    vfs_fd_t *file = &fd_table[fd];
+
     int bytes_written = file->driver->write(file, buf, n);
 
     if (bytes_written == -1) return -1;
@@ -159,18 +158,18 @@ int vfs_write(const int fd, const void* buf, const size_t n) {
 int vfs_lseek(int fd, int offset, int whence) {
     if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd].used) return -1;
 
-    vfs_fd_t* file = &fd_table[fd];
+    vfs_fd_t *file = &fd_table[fd];
 
-    if (whence == 0)      file->offset = offset;          // SEEK_SET
-    else if (whence == 1) file->offset += offset;         // SEEK_CUR
+    if (whence == 0) file->offset = offset; // SEEK_SET
+    else if (whence == 1) file->offset += offset; // SEEK_CUR
     else return -1;
 
     return file->offset;
 }
 
-int vfs_mkdir(const char* path) {
-    const char* rel_path;
-    vfs_mount_t* mnt = vfs_resolve_mount(path, &rel_path);
+int vfs_mkdir(const char *path) {
+    const char *rel_path;
+    vfs_mount_t *mnt = vfs_resolve_mount(path, &rel_path);
 
     // Note: mkdir usually needs an fd or a specialized path call.
     // If your interface uses fd->driver->mkdir(fd, path):
@@ -179,19 +178,18 @@ int vfs_mkdir(const char* path) {
     return mnt->driver->mkdir(rel_path);
 }
 
-int vfs_stat(const char* path, vfs_stat_t* st)
-{
-    const char* rel_path;
-    vfs_mount_t* mnt = vfs_resolve_mount(path, &rel_path);
+int vfs_stat(const char *path, vfs_stat_t *st) {
+    const char *rel_path;
+    vfs_mount_t *mnt = vfs_resolve_mount(path, &rel_path);
 
     if (!mnt || !mnt->driver->stat) return -1;
     return mnt->driver->stat(rel_path, st);
 }
 
-int vfs_fstat(int fd, vfs_stat_t* st) {
+int vfs_fstat(int fd, vfs_stat_t *st) {
     if (fd < 0 || fd >= MAX_OPEN_FILES) return -1;
 
-    vfs_fd_t* file = &fd_table[fd];
+    vfs_fd_t *file = &fd_table[fd];
 
     return file->driver->fstat(file, st);
 }

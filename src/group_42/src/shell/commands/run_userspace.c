@@ -27,6 +27,7 @@ int run_userspace_handler(int argc, char** argv) {
         return -1;
     }
 
+    // create user stack at fixed address
     uint32_t stack_top = 0x08040000;
     uint32_t stack_pages = 4;
     printf("Setting up stack at 0x%x\n", stack_top);

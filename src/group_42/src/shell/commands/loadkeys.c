@@ -1,6 +1,5 @@
 #include "drivers/input/keymap.h"
 #include "stdio.h"
-#include "string.h"
 
 int cmd_loadkeys(int argc, char** argv) {
   if (argc > 1) {

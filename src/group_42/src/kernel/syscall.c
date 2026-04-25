@@ -2,20 +2,15 @@
 
 #include <drivers/audio/PCSPK.h>
 #include <drivers/input/keyboard.h>
-#include <kernel/pit.h>
 #include <drivers/video/vga_text.h>
 #include <kernel/errno.h>
-#include <kernel/fcntl.h>
 #include <kernel/log.h>
-#include <kernel/unistd.h>
+#include <kernel/pit.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 
 #include "arch/i386/cpu/isr.h"
-#include "arch/i386/cpu/ports.h"
-#include "drivers/input/keyboard.h"
-#include "shell/shell.h"
 
 
 void* syscall_table[MAX_SYSCALLS];
@@ -25,16 +20,16 @@ void* syscall_table[MAX_SYSCALLS];
  */
 
 /**
- * terminate the current process.
+ * This cant currently be called from suerspace since it calls the privileged "hlt" instruction, but
+ * interestingly enough this will cause an GPF which will stall our kernel currnetly.
  * Args:    int status
  * Returns: never
- * Errors:  none (process halts)
  */
 uint32_t sys_exit(syscall_args_t* args) {
   (void)args;
-  for (;;)
+  while (true) {
     __asm__ volatile("hlt");
-  return 0;
+  }
 }
 
 /**
@@ -68,36 +63,37 @@ uint32_t sys_wait(syscall_args_t* args) {
 extern void switch_to_user_mode(uint32_t entry, uint32_t stack_top);
 extern int vmm_map_user_page(uint32_t virt, uint32_t phys, uint32_t flags);
 extern void* pmm_alloc_frame(void);
-extern void* memset(void*, int, unsigned long);
 
+// PAGE_USER_RW: user, read/write, 4 KiB page (equivalent to paging.h's PAGE_USER_RW).
 #define PAGE_USER_RW 0x007
 
 uint32_t sys_execve(syscall_args_t* args) {
-  uint32_t elf_ptr = args->a;
-  (void)args->b;  /* argv - not used yet */
-  (void)args->c;  /* envp - not used yet */
-  
+  const uint32_t elf_ptr = args->a;
+  (void)args->b; /* argv - not used yet */
+  (void)args->c; /* envp - not used yet */
+
   if (elf_ptr == 0) {
     return -1;
   }
-  
+
   /* ELF is already loaded at 0x08050000 - entry is just offset 0x72 */
   uint32_t entry = elf_ptr + 0x72;
-  
+
   /* Set up stack - ALLOCATE AND MAP PAGES */
   uint32_t stack_top = 0x08040000;
-  uint32_t stack_pages = 4;  /* 16KB stack */
-  
+  uint32_t stack_pages = 4; /* 16KB stack */
+
   for (uint32_t page = stack_top - (stack_pages * 4096); page < stack_top; page += 4096) {
     uint32_t phys = (uint32_t)pmm_alloc_frame();
-    if (!phys) return -1;
+    if (!phys)
+      return -1;
     memset((void*)phys, 0, 4096);
     vmm_map_user_page(page, phys, PAGE_USER_RW);
   }
-  
+
   /* Switch to the new program - this doesn't return */
   switch_to_user_mode(entry, stack_top);
-  
+
   return 0;
 }
 
@@ -126,9 +122,9 @@ uint32_t sys_getpid(syscall_args_t* args) {
  * All other fds return -1.
  */
 uint32_t sys_read(syscall_args_t* args) {
-  int fd = (int)args->a;
-  uint32_t buf_ptr = args->b;
-  uint32_t count = args->c;
+  const int fd = (int)args->a;
+  const uint32_t buf_ptr = args->b;
+  const uint32_t count = args->c;
 
   if (buf_ptr == 0 || count == 0)
     return -EINVAL;
@@ -264,18 +260,18 @@ uint32_t sys_brk(syscall_args_t* args) {
  */
 uint32_t sys_getcwd(syscall_args_t* args) {
   char* buf = (char*)args->a;
-  uint32_t size = args->b;
+  const uint32_t size = args->b;
 
   if (buf == 0 || size == 0)
     return -EINVAL;
 
-  const char* path = "/";
-  size_t len = 2; /* "/" + NUL */
+  const size_t len = 2; /* "/" + NUL */
 
   if (size < len)
     return -EINVAL;
 
   for (size_t i = 0; i < len; i++) {
+    const char* path = "/";
     buf[i] = path[i];
   }
 
@@ -342,6 +338,53 @@ static void syscall_register(uint32_t num, syscall_fn_t fn) {
     syscall_table[num] = (void*)fn;
   }
 }
+uint32_t sys_timer(syscall_args_t* args) {
+  const uint32_t ms = args->a;
+  sleep_interrupt(ms);
+  return 0;
+}
+
+uint32_t sys_beep(syscall_args_t* args) {
+  const uint32_t freq = args->a;
+  if (freq == 0) {
+    PCSPK_STOP();
+  } else {
+    PCSPK_PLAY(freq);
+  }
+  return 0;
+}
+
+uint32_t sys_getkey(syscall_args_t* args) {
+  (void)args;
+  decode_keyboard();
+  if (keyboard_has_key()) {
+    uint8_t key;
+    if (pop_key(&key)) {
+      return key;
+    }
+  }
+  return 0;
+}
+
+uint32_t sys_nanosleep(syscall_args_t* args) {
+  const uint32_t ms = args->a;
+  sleep_interrupt(ms);
+  return 0;
+}
+
+uint32_t sys_ioctl(syscall_args_t* args) {
+  const uint32_t fd = args->a;
+  const uint32_t cmd = args->b;
+  const uint32_t val = args->c;
+  (void)fd;
+  (void)val;
+  if (cmd == 0) {
+    PCSPK_STOP();
+  } else if (cmd == 1) {
+    PCSPK_PLAY(val);
+  }
+  return 0;
+}
 
 /**
  *  extract arguments from CPU registers into a
@@ -404,54 +447,6 @@ void init_syscalls(void) {
   syscall_register(SYS_getgid, sys_getgid);
 
   syscall_register(SYS_pipe, sys_pipe);
-
-uint32_t sys_timer(syscall_args_t* args) {
-  uint32_t ms = args->a;
-  sleep_interrupt(ms);
-  return 0;
-}
-
-uint32_t sys_beep(syscall_args_t* args) {
-  uint32_t freq = args->a;
-  if (freq == 0) {
-    PCSPK_STOP();
-  } else {
-    PCSPK_PLAY(freq);
-  }
-  return 0;
-}
-
-uint32_t sys_getkey(syscall_args_t* args) {
-  (void)args;
-  decode_keyboard();
-  if (keyboard_has_key()) {
-    uint8_t key;
-    if (pop_key(&key)) {
-      return key;
-    }
-  }
-  return 0;
-}
-
-uint32_t sys_nanosleep(syscall_args_t* args) {
-  uint32_t ms = args->a;
-  sleep_interrupt(ms);
-  return 0;
-}
-
-uint32_t sys_ioctl(syscall_args_t* args) {
-  uint32_t fd = args->a;
-  uint32_t cmd = args->b;
-  uint32_t val = args->c;
-  (void)fd;
-  (void)val;
-  if (cmd == 0) {
-    PCSPK_STOP();
-  } else if (cmd == 1) {
-    PCSPK_PLAY(val);
-  }
-  return 0;
-}
 
   syscall_register(SYS_timer, sys_timer);
   syscall_register(SYS_beep, sys_beep);

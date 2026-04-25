@@ -2,6 +2,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/*
+ * PIT (Programmable Interval Timer) driver.
+ *
+ * Channel 0 is configured to generate IRQ0 at TARGET_FREQUENCY Hz,
+ * which is converted into a tick counter used by sleep and time.
+ * Each tick corresponds to TICKS_PER_MS milliseconds.
+ *
+ * PIT base frequency: PIT_BASE_FREQUENCY = 1193182 Hz (8254 crystal).
+ */
 
 /**
  * Initialize the programmable interval timer

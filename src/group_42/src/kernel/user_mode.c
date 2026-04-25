@@ -6,9 +6,17 @@
 #include <stdint.h>
 #include <string.h>
 
-#define ELF_MAGIC 0x464C457F
-#define ELF_TYPE_EXEC 2
-#define ELF_PHDR_LOAD 1
+// ELF format constants
+#define ELF_MAGIC         0x464C457F          // 0x7F 'E' 'L' 'F'
+#define ELF_TYPE_EXEC     2                   // PT_EXECUTABLE
+#define ELF_PHDR_LOAD     1                   // PT_LOAD
+
+// CPU target
+#define ELF_MACHINE_I386  3                   // i386
+
+// User program layout
+#define USER_PROGRAM_VADDR      0x08000000    // 128 MiB
+#define USER_PROGRAM_MAX_VADDR  0x40000000    // 1 GiB (user space upper bound)
 
 typedef struct {
     uint32_t e_magic;
@@ -44,21 +52,22 @@ typedef struct {
     uint32_t p_align;
 } __attribute__((packed)) elf_phdr_t;
 
+// validate elf header and extract metadata
 int elf_get_info(const void* elf_data, elf_info_t* info) {
-    const elf_header_t* ehdr = (const elf_header_t*)elf_data;
+    const elf_header_t* ehdr = elf_data;
 
     if (ehdr->e_magic != ELF_MAGIC) {
-        log_info("ELF: invalid magic 0x%x\n", ehdr->e_magic);
+        log_info("ELF: invalid magic 0x%x\\n", ehdr->e_magic);
         return -1;
     }
 
     if (ehdr->e_type != ELF_TYPE_EXEC) {
-        log_info("ELF: not an executable (type %d)\n", ehdr->e_type);
+        log_info("ELF: not an executable (type %d)\\n", ehdr->e_type);
         return -1;
     }
-
-    if (ehdr->e_machine != 3) {
-        log_info("ELF: not i386 (machine %d)\n", ehdr->e_machine);
+    // only accept i386 executables
+    if (ehdr->e_machine != ELF_MACHINE_I386) {
+        log_info("ELF: not i386 (machine %d)\\n", ehdr->e_machine);
         return -1;
     }
 
@@ -67,7 +76,7 @@ int elf_get_info(const void* elf_data, elf_info_t* info) {
     info->phnum = ehdr->e_phnum;
     info->type = ehdr->e_type;
 
-    log_info("ELF: entry=0x%x, phdr=0x%x, phnum=%d\n", info->entry, info->phdr, info->phnum);
+    log_info("ELF: entry=0x%x, phdr=0x%x, phnum=%d\\n", info->entry, info->phdr, info->phnum);
     return 0;
 }
 
@@ -76,7 +85,7 @@ int elf_load(const void* elf_data) {
     if (elf_get_info(elf_data, &info) < 0) {
         return -1;
     }
-
+    // program headers are loadable memory segments. we walk them and load PT_LOAD entries.
     const elf_phdr_t* phdr = (const elf_phdr_t*)((uint32_t)elf_data + info.phdr);
 
     for (int i = 0; i < info.phnum; i++) {
@@ -86,35 +95,38 @@ int elf_load(const void* elf_data) {
             uint32_t memsz = phdr[i].p_memsz;
             uint32_t offset = phdr[i].p_offset;
 
-            if (vaddr < USER_PROGRAM_VADDR || vaddr >= 0x40000000) {
-                log_info("ELF: load segment %d vaddr 0x%x out of user range\n", i, vaddr);
+            // Reject segments outside user-space range
+            if (vaddr < USER_PROGRAM_VADDR || vaddr >= USER_PROGRAM_MAX_VADDR) {
+                log_info("ELF: load segment %d vaddr 0x%x out of user range\\n", i, vaddr);
                 continue;
             }
 
-            log_info("ELF: loading segment %d: vaddr=0x%x, filesz=%d, memsz=%d\n",
+            log_info("ELF: loading segment %d: vaddr=0x%x, filesz=%d, memsz=%d\\n",
                      i, vaddr, filesz, memsz);
 
-            uint32_t start_page = vaddr & ~0xFFF;
-            uint32_t end_page = (vaddr + memsz + 0xFFF) & ~0xFFF;
+            // align segment
+            uint32_t start_page = vaddr & PAGE_MASK;
+            uint32_t end_page   = (vaddr + memsz + PAGE_MASK) & ~PAGE_MASK;
 
-            for (uint32_t page = start_page; page < end_page; page += 4096) {
-                uint32_t phys = pmm_alloc_frame();
+            for (uint32_t page = start_page; page < end_page; page += PAGE_SIZE) {
+                uint32_t phys = (uint32_t)pmm_alloc_frame();
                 if (!phys) {
-                    log_info("ELF: failed to allocate frame\n");
+                    log_info("ELF: failed to allocate frame\\n");
                     return -1;
                 }
-                memset((void*)phys, 0, 4096);
+                memset((void*)phys, 0, PAGE_SIZE);
                 vmm_map_user_page(page, phys, PAGE_USER_RW);
             }
 
             memcpy((void*)vaddr, (const uint8_t*)elf_data + offset, filesz);
 
+            // elf requires in memory tail
             if (memsz > filesz) {
                 memset((void*)(vaddr + filesz), 0, memsz - filesz);
             }
         }
     }
 
-    log_info("ELF: load complete\n");
+    log_info("ELF: load complete\\n");
     return 0;
 }

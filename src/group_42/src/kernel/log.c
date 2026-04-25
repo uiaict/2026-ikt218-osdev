@@ -14,7 +14,7 @@ static const char* g_subsys_names[LOG_SUBSYS_COUNT] = {[LOG_SUBSYS_KERNEL] = "",
                                                        [LOG_SUBSYS_IRQ] = "IRQ  ",
                                                        [LOG_SUBSYS_PANIC] = ""};
 
-static uint8_t level_to_color(log_level_t level) {
+static uint8_t level_to_color(const log_level_t level) {
   switch (level) {
     case LOG_LEVEL_FATAL:
       return vga_text_entry_color(VGA_COLOR_WHITE, VGA_COLOR_RED);
@@ -46,6 +46,7 @@ static int log_vprintf_internal(log_level_t level, log_subsys_t subsys, const ch
   if (level > g_min_level)
     return 0;
 
+  // store old color to restore
   uint8_t old_color = vga_text_get_color();
   vga_text_setcolor(level_to_color(level));
 
@@ -54,6 +55,7 @@ static int log_vprintf_internal(log_level_t level, log_subsys_t subsys, const ch
 
   int chars = vfprintf(stdout, fmt, ap);
 
+  // restore old color
   vga_text_setcolor(old_color);
   fflush(stdout);
   return chars;

@@ -14,17 +14,17 @@ int cmd_cd(int argc, char** argv) {
     char target_path[MAX_PATH_LEN];
     const char* input = argv[1];
 
-    // 1. Resolve Absolute vs Relative
+    //  Resolve Absolute vs Relative
     shell_build_absolute_path(target_path, input);
 
-    // 2. Validate the path exists
+    //  Validate the path exists
     int fd = vfs_open(target_path, O_READ);
     if (fd == VFS_INVALID_FD) {
         printf("cd: %s: No such directory\n", input);
         return 1;
     }
 
-    // 3. Ensure it's a directory
+    //  Ensure it's a directory
     vfs_stat_t st;
     if (vfs_fstat(fd, &st) == 0) {
         if (st.type != VFS_DIRECTORY) {
@@ -36,7 +36,6 @@ int cmd_cd(int argc, char** argv) {
 
     vfs_close(fd);
 
-    // 4. Update the Shell CWD
     shell_set_cwd(target_path);
     return 0;
 }

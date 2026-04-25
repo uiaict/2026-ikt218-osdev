@@ -8,19 +8,19 @@
 static size_t text_row;
 static size_t text_column;
 static uint8_t text_color;
-static uint16_t* text_buffer = (uint16_t*)VGA_TEXT_MEMORY;
+static uint16_t *text_buffer = (uint16_t *) VGA_TEXT_MEMORY;
 static bool vga_debug_serial = false;
 
 void vga_text_enable_debug_serial(bool enable) {
-    vga_debug_serial = enable;
+  vga_debug_serial = enable;
 }
 
 static void serial_putchar(char c) {
-    port_byte_out(0xE9, (uint8_t)c);
+  port_byte_out(0xE9, (uint8_t) c);
 }
 
 static uint16_t vga_entry(char uc, uint8_t color) {
-  return (uint16_t)uc | (uint16_t)color << 8;
+  return (uint16_t) uc | (uint16_t) color << 8;
 }
 
 void vga_text_initialise(void) {
@@ -56,6 +56,7 @@ void vga_text_putchar(char c) {
   if (vga_debug_serial) {
     serial_putchar(c);
   }
+  // handle ANSI control characters and cursor
   switch (c) {
     case '\n': {
       const size_t index = text_row * VGA_TEXT_WIDTH + text_column;
@@ -129,12 +130,12 @@ void vga_text_putchar(char c) {
   }
 }
 
-void vga_text_write(const char* data, size_t size) {
+void vga_text_write(const char *data, size_t size) {
   for (size_t i = 0; i < size; i++)
     vga_text_putchar(data[i]);
 }
 
-void vga_text_writestring(const char* data) {
+void vga_text_writestring(const char *data) {
   vga_text_write(data, strlen(data));
 }
 
@@ -159,7 +160,7 @@ uint8_t vga_text_get_color(void) {
   return text_color;
 }
 
-void vga_text_get_cursor_position(size_t* x, size_t* y) {
+void vga_text_get_cursor_position(size_t *x, size_t *y) {
   *x = text_column;
   *y = text_row;
 }

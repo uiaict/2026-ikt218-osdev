@@ -42,4 +42,6 @@ bool rb_pop(ring_buffer8_t* rb, uint8_t* out_data);
  * @param rb ringbuffer
  * @return true if its empty
  */
-bool rb_is_empty(const ring_buffer8_t* rb);
+inline __attribute__((always_inline)) bool rb_is_empty(const ring_buffer8_t* rb) {
+  return rb->head == rb->tail;
+}
