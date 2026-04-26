@@ -77,6 +77,7 @@ add_executable(uiaos-kernel
     src/kernel.c
     src/kernel.cpp
 	src/memory/new.cpp
+)
 
 # Include directories for the kernel target
 target_include_directories(uiaos-kernel PUBLIC include)
