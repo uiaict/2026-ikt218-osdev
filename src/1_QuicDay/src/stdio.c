@@ -149,3 +149,9 @@ int printf(const char* __restrict__ format, ...) {
     va_end(args);
     return written;
 }
+
+// for reseting text position on top
+void reset_cursor(void) {
+    cursor_row = 0;
+    cursor_column = 0;
+}

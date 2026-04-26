@@ -65,8 +65,10 @@ typedef struct{
 
 // assignment 2
 void assignment_2() {
-    initGdt();
-    print_string("Hello World", 0x0F);
+    clear_text(0x0F);
+    reset_cursor();
+    printf("Hello World");
+    wait_for_user_next_screen();
 }
 
 // assignment 3 (usikker på om jeg har fått denne riktig)
@@ -115,7 +117,7 @@ void userMenu() {
     printf("   ___       _    ___               ___  ___ \n");
     printf("  / _ \\ _  _(_)__|   \\ __ _ _  _   / _ \\/ __|\n");
     printf(" | (_) | || | / _| |) / _` | || | | (_) \\__ \\\n");
-    printf("  \\__\\_\\\\_,_|_\\__|___/\\__,_|\\_, |  \\___/|___/\n");
+    printf("  \\__\\_\\_,_|_\\__|___/\\__,_|\\_, |  \\___/|___/\n");
     printf("              --QuicDay OS  |__/              \n");
     printf("\n");
     printf("\n");
@@ -153,8 +155,10 @@ void userMenu() {
             break;
         case 5:
             printf("     QuicDay Piano!     \n");
-            printf("Play by pressing 1-8 on the keypad\n\n");
+            printf("Play by pressing 1-8 on the keypad\n");
+            printf("Press 9 to return to menu\n\n");
             piano_play_sound_keys();
+            clear_text(0x0F);
             break;
         case 6:
             // Exit message without functionality..
