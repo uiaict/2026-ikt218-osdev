@@ -4,6 +4,7 @@
 #include "libc/stdbool.h"
 #include "libc/string.h"
 #include <multiboot2.h>
+#include "idt/idt.h"
 
 struct multiboot_info {
     uint32_t size;
@@ -29,6 +30,7 @@ static void serial_write(const char* str) {
 }
 
 int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
+    idt_init();
     serial_write("[kernel] Starting up...\n");
     
     gdt_install();
@@ -46,6 +48,8 @@ int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
     }
     
     serial_write("[kernel] Video output written, calling kernel_main()\n");
+
+    asm("int $0x0");
 
     // Call cpp kernel_main (defined in kernel.cpp)
     return kernel_main();
