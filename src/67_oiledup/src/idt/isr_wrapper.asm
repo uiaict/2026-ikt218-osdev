@@ -21,7 +21,9 @@ isr14:
 isr_wrapper:
     pushad
     cld
+    push dword [esp+32]
     call interrupt_handler
+    add esp, 4
     popad
     add esp, 4
     iret
