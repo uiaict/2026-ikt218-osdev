@@ -1,6 +1,6 @@
-.globl idt_load
+global idt_load
 
 idt_load:
-    mov 4(%esp), %eax   ; Get the address for idtr from the stack
-    lidt (%eax)
+    mov eax, [esp+4]    ; Get the address for idtr from the stack
+    lidt [eax]
     ret
