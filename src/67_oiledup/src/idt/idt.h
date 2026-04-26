@@ -27,6 +27,8 @@ void idt_init(void);
 void isr0(void);
 void isr8(void);
 void isr14(void);
+void isr32(void);
+void isr33(void);
 
 void idt_load(struct idtr *idtr);
 

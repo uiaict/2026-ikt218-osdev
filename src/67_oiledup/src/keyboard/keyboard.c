@@ -1,6 +1,12 @@
 #include "keyboard.h"
 #include "../../include/libc/stdio.h"
 
+static inline unsigned char inb(unsigned short port) {
+    unsigned char val;
+    __asm__ volatile ("inb %1, %0" : "=a"(val) : "Nd"(port));
+    return val;
+}
+
 static const char scancode_to_ascii[] = {
     0,   0,  '1', '2', '3', '4', '5', '6',
    '7', '8', '9', '0', '-', '=',  0,   0,

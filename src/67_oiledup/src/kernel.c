@@ -23,6 +23,7 @@ int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
     
     idt_init();
     printf("IDT Starting");
+    asm volatile ("sti");
     
     gdt_install();
     printf("[kernel] GDT installed\n");
@@ -34,8 +35,6 @@ int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
     
     printf("[kernel] Video+serial output written, calling kernel_main()\n");
 
-    //Interrupt test
-    asm("int $0xE");
 
     // Call cpp kernel_main (defined in kernel.cpp)
     return kernel_main();

@@ -70,6 +70,7 @@ add_executable(uiaos-kernel
 	src/idt/isr_wrapper.asm
     src/kernel.c
     src/kernel.cpp
+	src/keyboard/keyboard.c
 )
 
 # Include directories for the kernel target
