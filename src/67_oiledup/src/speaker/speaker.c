@@ -16,10 +16,6 @@ static inline uint8_t inb(uint16_t port) {
     return ret;
 }
 
-static void delay(uint32_t ticks) {
-    for (volatile uint32_t i = 0; i < ticks; i++);
-}
-
 void enable_speaker() {
     uint8_t val = inb(SPEAKER_PORT);
     outb(SPEAKER_PORT, val | 0x03);

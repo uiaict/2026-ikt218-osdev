@@ -18,7 +18,7 @@ extern "C" void play_music() {
     }
 }
 
-int kernel_main(){
+extern "C" int kernel_main(){
     
     //Allocation test
     int* alloc = new int(12);
