@@ -179,6 +179,14 @@ src/kernel.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/kernel.c.s
 .PHONY : src/kernel.c.s
 
+src/multiboot2.o: src/multiboot2.asm.o
+.PHONY : src/multiboot2.o
+
+# target to build an object file
+src/multiboot2.asm.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/multiboot2.asm.o
+.PHONY : src/multiboot2.asm.o
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -193,6 +201,7 @@ help:
 	@echo "... src/kernel.o"
 	@echo "... src/kernel.i"
 	@echo "... src/kernel.s"
+	@echo "... src/multiboot2.o"
 .PHONY : help
 
 
