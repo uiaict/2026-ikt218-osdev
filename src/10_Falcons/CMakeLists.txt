@@ -33,6 +33,13 @@ add_executable(uiaos-kernel
     src/kernel.c
     src/gdt.c
     src/gdt_flush.asm
+    src/idt.c
+    src/idt_load.asm
+    src/isr.c
+    src/isr.asm
+    src/irq.c
+    src/irq.asm
+    src/keyboard.c
 )
 
 target_include_directories(uiaos-kernel PUBLIC include)

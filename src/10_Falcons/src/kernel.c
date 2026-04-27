@@ -1,6 +1,10 @@
 #include <libc/stddef.h>
 #include <libc/stdint.h>
 #include "gdt.h"
+#include "idt.h"
+#include "isr.h"
+#include "irq.h"
+#include "keyboard.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -40,6 +44,15 @@ void terminal_putchar(char c) {
         return;
     }
 
+    if (c == '\b') {
+        if (terminal_column > 0) {
+            terminal_column--;
+            const size_t index = terminal_row * VGA_WIDTH + terminal_column;
+            terminal_buffer[index] = vga_entry(' ', terminal_color);
+        }
+        return;
+    }
+
     const size_t index = terminal_row * VGA_WIDTH + terminal_column;
     terminal_buffer[index] = vga_entry(c, terminal_color);
 
@@ -63,7 +76,18 @@ void terminal_write(const char* data) {
 
 void kernel_main(void) {
     gdt_init();
+    idt_init();
+    isr_install();
+    irq_install();
 
     terminal_initialize();
-    terminal_write("GDT Loaded!");
+    keyboard_init();
+
+    terminal_write("Keyboard ready. Type something:\n");
+
+    asm volatile("sti");
+
+    while (1) {
+        asm volatile("hlt");
+    }
 }
