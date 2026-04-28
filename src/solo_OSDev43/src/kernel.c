@@ -3,6 +3,9 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned int size_t;
 #include "gdt.h"
+#include "idt.h"
+#include "isr.h"
+#include "irq.h"
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -25,6 +28,14 @@ void terminal_clear(void) {
 }
 
 void terminal_putchar(char c) {
+    if (c == '\b') {
+    if (terminal_column > 0) {
+        terminal_column--;
+        VGA_MEMORY[terminal_row * VGA_WIDTH + terminal_column] =
+            vga_entry(' ', terminal_color);
+    }
+    return;
+    }
     if (c == '\n') {
         terminal_column = 0;
         terminal_row++;
@@ -54,10 +65,14 @@ void terminal_write(const char* str) {
 
 void main(void) {
     gdt_init();
+    idt_init();
+    isr_install();
+    irq_install();
 
     terminal_clear();
-    terminal_write("Hello World\n");
+    terminal_write("Write what you want here:\n");
 
     while (1) {
+        asm volatile("hlt");
     }
 }
