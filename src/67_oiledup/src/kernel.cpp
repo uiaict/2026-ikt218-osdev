@@ -3,6 +3,7 @@ extern "C" int kernel_main(void);
 #include "song/song.h"
 #include "libc/stdio.h"
 #include "kernel/keyboard.h"
+#include "kernel/video.h"
 #include "kernel/pit.h"
 #include "kernel/terminal.h"
 
@@ -45,26 +46,6 @@ void show_logs() {
     printf("[INFO] PIT frequency set to 100Hz.\n");
     printf("[DEBUG] Allocation test passed.\n");
 }
-void show_video() {
-    terminal_clear();
-    printf("[VIDEO] Displaying video...\n");
-    // Simulate video playback with a simple animation
-    const char* frames[] = {
-        "Frame 1: [=     ]\n",
-        "Frame 2: [==    ]\n",
-        "Frame 3: [===   ]\n",
-        "Frame 4: [====  ]\n",
-        "Frame 5: [===== ]\n",
-        "Frame 6: [======]\n"
-    };
-    size_t n_frames = sizeof(frames) / sizeof(char*);
-
-    for(size_t i = 0; i < n_frames; i++) {
-        printf("%s", frames[i]);
-        sleep_busy(500); // Sleep for 500ms between frames
-    }
-    terminal_clear();
-}
 
 extern "C" int kernel_main(){
     //Allocation test
@@ -76,7 +57,7 @@ extern "C" int kernel_main(){
         printf("1. Play Music\n");
         printf("2. Show 67 Logo\n");
         printf("3. Show Logs\n");
-        printf("4. Show Video\n");
+        printf("4. Play Star Wars\n");
         printf("Select option (1-4): ");
 
         char choice = getchar();

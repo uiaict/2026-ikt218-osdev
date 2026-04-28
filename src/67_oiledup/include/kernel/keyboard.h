@@ -2,6 +2,7 @@
 #define KEYBOARD_H
 
 #include "idt.h"
+#include "libc/stdbool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +10,7 @@ extern "C" {
 
 void keyboard_handler(registers_t *regs);
 char getchar();
+bool keyboard_has_input();
 
 #ifdef __cplusplus
 }

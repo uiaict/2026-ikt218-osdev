@@ -8,6 +8,11 @@
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
 
+# Use the bundled cross toolchain when configuring from a clean environment.
+set(CMAKE_C_COMPILER i686-elf-gcc)
+set(CMAKE_CXX_COMPILER i686-elf-g++)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
 # Minimum required CMake version
 cmake_minimum_required(VERSION 3.22.1)
 
@@ -21,6 +26,11 @@ file(LOCK ${CMAKE_SOURCE_DIR} DIRECTORY GUARD FILE)
 # CMake: Import Plugins
 ########################################
 include(FetchContent)
+# Shit to make plaintex readable into a .h file
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/src/star_wars/starwars.txt" STARWARS_TEXT)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/starwars_data.h"
+	"#pragma once\n\nstatic const char STARWARS_TEXT[] = R\"STARWARS(\n${STARWARS_TEXT}\n)STARWARS\";\n"
+)
 
 ########################################
 # UiAOS: Variables
@@ -75,6 +85,7 @@ add_executable(uiaos-kernel
 	src/pit/pit.c
     src/kernel.c
     src/kernel.cpp
+	src/video/video.cpp
 	src/memory/new.cpp
 	src/terminal.c
 	src/speaker/speaker.c
@@ -83,7 +94,7 @@ add_executable(uiaos-kernel
 )
 
 # Include directories for the kernel target
-target_include_directories(uiaos-kernel PUBLIC include)
+target_include_directories(uiaos-kernel PUBLIC include ${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Specify compile options for C and C++

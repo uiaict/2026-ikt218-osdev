@@ -28,6 +28,10 @@ char getchar() {
     return c;
 }
 
+bool keyboard_has_input() {
+    return buffer_head != buffer_tail;
+}
+
 static const char scancode_to_ascii_lower[] = {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
     '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
