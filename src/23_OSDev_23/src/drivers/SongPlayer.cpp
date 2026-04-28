@@ -9,13 +9,16 @@ extern "C" {
 void enable_speaker() {
     // Pseudocode for enable_speaker:
     // 1. Read the current state from the PC speaker control port.
-    uint8_t tmp = inb(0x61);
+    uint8_t tmp;
+    tmp = inb(0x61);
     // 2. The control register bits are usually defined as follows:
     //    - Bit 0 (Speaker gate): Controls whether the speaker is on or off.
     //    - Bit 1 (Speaker data): Determines if data is being sent to the speaker.
     // 3. Set both Bit 0 and Bit 1 to enable the speaker.
     //    - Use bitwise OR operation to set these bits without altering others.
-    outb(0x61, tmp | 0x03);
+    if (tmp != (tmp | 3)) {
+ 		outb(0x61, tmp | 3);
+ 	}
 }
 
 void disable_speaker() {
@@ -48,11 +51,7 @@ void play_sound(uint32_t frequency) {
  	outb(0x42, (uint8_t) (Div >> 8));
 
     // 4. Enable the speaker (by setting the appropriate bits) to start sound generation.
-    uint8_t tmp;
-    tmp = inb(0x61);
-  	if (tmp != (tmp | 3)) {
- 		outb(0x61, tmp | 3);
- 	}
+    enable_speaker();
 }
 
 void stop_sound() {
