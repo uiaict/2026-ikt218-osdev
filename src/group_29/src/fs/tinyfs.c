@@ -2,6 +2,11 @@
 
 static bool tinyfs_ready;
 
+/** Fills a buffer with NULL
+ * 
+ * \param buffer This will be all 0 when this function is done
+ * \param size Size of the buffer
+ */
 static void buffer_clear(uint8_t* buffer, uint32_t size) {
     uint32_t index;
 
@@ -10,6 +15,13 @@ static void buffer_clear(uint8_t* buffer, uint32_t size) {
     }
 }
 
+/** Compares two strings
+ * 
+ * \returns 0 if they're equal, otherwise it's the difference between the two chars at the index where they diverge
+ * \param left String that is TINYFS_NAME_LENGTH.
+ * \param right Same as left
+ * \warning This assumes that the string is TINYFS_NAME_LENGTH, not less and not more
+ */
 static int16_t name_compare(const char left[], const char right[]) {
     uint32_t index;
 
@@ -26,6 +38,9 @@ static int16_t name_compare(const char left[], const char right[]) {
     return 0;
 }
 
+/** Check that strlen(name) fits inside TINYFS_NAME_LENGTH and that it's not NULL or starts with NULL
+ * \returns true if the check passes
+*/
 static bool name_is_valid(const char name[]) {
     int32_t length;
 
