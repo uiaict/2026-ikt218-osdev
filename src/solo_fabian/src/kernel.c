@@ -26,25 +26,34 @@ void main(void) {
     idt_init();
 
     init_kernel_memory(&end);
+    init_paging();
+
+    terminal_write("Before malloc:\n");
     print_memory_layout();
 
     void* memory1 = malloc(12345);
     void* memory2 = malloc(54321);
     void* memory3 = malloc(13331);
 
-    (void)memory1;
-    (void)memory2;
-    (void)memory3;
+    print_pointer("memory1: ", memory1);
+    print_pointer("memory2: ", memory2);
+    print_pointer("memory3: ", memory3);
 
+    terminal_write("After malloc:\n");
     print_memory_layout();
 
+    free(memory2);
+
+    void* memory4 = malloc(1000);
+    print_pointer("memory4: ", memory4);
+
     /* Trigger three software interrupts to show that the ISR path works. */
-    __asm__ volatile ("int $0x0");
-    __asm__ volatile ("int $0x1");
-    __asm__ volatile ("int $0x2");
+    // __asm__ volatile ("int $0x0");
+    // __asm__ volatile ("int $0x1");
+    // __asm__ volatile ("int $0x2");
 
     /* Enable maskable hardware interrupts, including timer and keyboard IRQs. */
-    __asm__ volatile ("sti");
+    // __asm__ volatile ("sti");
 
     /* Halt forever... Interrupts will wake the CPU when hardware events arrive. */
     for (;;) {

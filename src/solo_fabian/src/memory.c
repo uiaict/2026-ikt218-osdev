@@ -11,11 +11,20 @@ static uint32_t heap_start;
 static uint32_t heap_current;
 static uint32_t heap_end;
 
+struct memory_block {
+    size_t size;
+    struct memory_block* next;
+};
+
+static struct memory_block* free_list;
+
 void init_kernel_memory(uint32_t* kernel_end) 
 {
     heap_start = ALIGN4((uint32_t)kernel_end);
     heap_current = heap_start;
     heap_end = heap_start + HEAP_SIZE;
+
+    free_list = NULL;
 }
 
 /* tiny helper to print hex numbers. */
@@ -28,6 +37,13 @@ static void print_hex(uint32_t value)
     for (int i = 28; i >= 0; i -= 4) {
         terminal_putchar(hex[(value >> i) & 0xF]);
     }
+}
+
+void print_pointer(const char* label, void* pointer)
+{
+    terminal_write(label);
+    print_hex((uint32_t)pointer);
+    terminal_putchar('\n');
 }
 
 void print_memory_layout(void)
@@ -54,23 +70,63 @@ void print_memory_layout(void)
 
 void* malloc(size_t size)
 {
+
+    
     if (size == 0) {
         return NULL;
     }
 
     size = ALIGN4(size);
 
-    if (heap_current + size > heap_end) {
+    struct memory_block* previous = NULL;
+    struct memory_block* current = free_list;
+
+    while (current != NULL) {
+        if (current->size >= size) {
+            if (previous == NULL) {
+                free_list = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            
+            return (void*)((uint8_t*)current + sizeof(struct memory_block));
+        }
+
+        previous = current;
+        current = current->next;
+    }
+
+    uint32_t total_size = sizeof(struct memory_block) + size;
+
+    if (heap_current + total_size > heap_end) {
         return NULL;
     }
 
-    void* allocated_memory = (void*)heap_current;
-    heap_current += size;
+    struct memory_block* block = (struct memory_block*)heap_current;
+    block->size = size;
+    block->next = NULL;
 
-    return allocated_memory;
+    heap_current += total_size;
+
+    return (void*)((uint8_t*)block + sizeof(struct memory_block));
 }
 
 void free(void* pointer) 
-{
-    (void*)pointer;
+{    
+    if (pointer == NULL) {
+        return;
+    }
+
+    struct memory_block* block = 
+        (struct memory_block*)((uint8_t*)pointer - sizeof(struct memory_block));
+
+    block->next = free_list;
+    free_list = block;
+
 }
+
+void init_paging(void)
+{
+    terminal_write("TODO: Paging not implemented yet. \n");
+}
+
