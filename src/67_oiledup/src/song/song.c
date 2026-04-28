@@ -8,6 +8,7 @@ void play_song_impl(Song* song) {
 
     for (size_t i = 0; i < song->note_count; i++) {
         Note* note = &song->notes[i];
+        printf("Playing note %u\n", (unsigned int)(i + 1));
         if (note->frequency == 0) {
             stop_sound();
         } else {

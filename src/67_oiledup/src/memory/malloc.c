@@ -21,7 +21,6 @@ void init_kernel_memory(uint32_t* kernel_end)
     heap_end = pheap_begin;
     memset((char *)heap_begin, 0, heap_end - heap_begin);
     pheap_desc = (uint8_t *)malloc(MAX_PAGE_ALIGNED_ALLOCS);
-    printf("Kernel heap starts at 0x%x\n", last_alloc);
 }
 
 // Print the current memory layout

@@ -26,34 +26,13 @@ int main(uint32_t magic, struct multiboot_info* mb_info_addr) {
     (void)mb_info_addr;
 
     terminal_initialize();
-    
     gdt_install();
-    printf("[kernel] GDT installed\n");
-
     idt_init();
-    printf("IDT Starting");
-
     init_kernel_memory(&end);
-
     init_paging();
-
-    print_memory_layout();
-
     init_pit();
 
     asm volatile ("sti");
-    
-    char str[] = "Hello, world!";
-
-    print(str, strlen(str));
-    putchar('\n');
-    
-    printf("[kernel] Video+serial output written, calling kernel_main()\n");
-
-    // Allocation test
-    void* some_memory = malloc(1024);
-    printf("Allocated at: 0x%x\n", some_memory);
-
     // Call cpp kernel_main (defined in kernel.cpp)
     return kernel_main();
 }

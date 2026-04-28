@@ -4,6 +4,10 @@
 #include "libc/stdint.h"
 #include "libc/stdbool.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // PIT (Programmable Interval Timer) related macros
 #define PIT_CMD_PORT 0x43
 #define PIT_CHANNEL0_PORT 0x40
@@ -30,5 +34,10 @@ void init_pit();
 uint32_t get_current_tick();
 void sleep_interrupt(uint32_t milliseconds);
 void sleep_busy(uint32_t milliseconds);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 

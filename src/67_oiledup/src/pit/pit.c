@@ -24,7 +24,6 @@ void init_pit() {
     outb(PIT_CMD_PORT, 0x36);  // channel 0, lobyte/hibyte, square wave
     outb(PIT_CHANNEL0_PORT, (uint8_t)(divisor & 0xFF));
     outb(PIT_CHANNEL0_PORT, (uint8_t)((divisor >> 8) & 0xFF));
-    printf("PIT initialized at %d Hz\n", TARGET_FREQUENCY);
 }
 
 void sleep_busy(uint32_t milliseconds) {
