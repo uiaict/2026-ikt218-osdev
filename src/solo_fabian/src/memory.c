@@ -4,12 +4,20 @@
 
 #define HEAP_SIZE 1024 * 1024
 
+#define PAGE_SIZE 4096
+#define PAGE_TABLE_ENTRIES 1024
+#define PAGE_PRESENT 0x1
+#define PAGE_WRITABLE 0x2
+
 /* Align the heap start so allocations land on clean addresses */
 #define ALIGN4(value) (((value) + 3) & ~3)
 
 static uint32_t heap_start;
 static uint32_t heap_current;
 static uint32_t heap_end;
+
+static uint32_t page_directory[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
+static uint32_t first_page_table[PAGE_TABLE_ENTRIES] __attribute__ ((aligned(PAGE_SIZE)));
 
 struct memory_block {
     size_t size;
@@ -127,6 +135,23 @@ void free(void* pointer)
 
 void init_paging(void)
 {
-    terminal_write("TODO: Paging not implemented yet. \n");
+    for (size_t i = 0; i < PAGE_TABLE_ENTRIES; i++) {
+        first_page_table[i] = (i * PAGE_SIZE) | PAGE_PRESENT | PAGE_WRITABLE;
+    }
+
+    for (size_t i = 0; i < PAGE_TABLE_ENTRIES; i++) {
+        page_directory[i] = 0;
+    }
+
+    page_directory[0] = ((uint32_t)first_page_table) | PAGE_PRESENT | PAGE_WRITABLE;
+
+    __asm__ volatile ("mov %0, %%cr3" : : "r"(page_directory));
+
+    uint32_t cr0;
+    __asm__ volatile ("mov %%cr0, %0" : "=r"(cr0));
+    cr0 |= 0x80000000;
+    __asm__ volatile ("mov %0, %%cr0" : : "r"(cr0));
+
+    terminal_write("Paging enabled\n");
 }
 
