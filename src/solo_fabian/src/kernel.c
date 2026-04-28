@@ -51,8 +51,8 @@ void main(void) {
     void* memory4 = malloc(1000);
     print_pointer("memory4: ", memory4);
 
-     /* Enable maskable hardware interrupts, including timer and keyboard IRQs. */
-     __asm__ volatile ("sti");
+     /* Enable maskable hardware interripts so PIT sleep can use IRQ0. */
+    __asm__ volatile ("sti");
 
     terminal_write("Busy sleep start\n");
     sleep_busy(1000);
@@ -61,13 +61,6 @@ void main(void) {
     terminal_write("Interrupt sleep start\n");
     sleep_interrupt(1000);
     terminal_write("Interrupt sleep done\n");
-
-    /* Trigger three software interrupts to show that the ISR path works. */
-    // __asm__ volatile ("int $0x0");
-    // __asm__ volatile ("int $0x1");
-    // __asm__ volatile ("int $0x2");
-
-   
 
     /* Halt forever... Interrupts will wake the CPU when hardware events arrive. */
     for (;;) {
