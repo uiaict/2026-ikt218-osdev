@@ -20,6 +20,7 @@ build/*/cmake_install.cmake
 build/*/kernel.iso
 build/*/disk.iso
 build/*/iso/
+build/solo_fabian/*
 
 !build/*/kernel.bin
 !build/*/kernel.img
