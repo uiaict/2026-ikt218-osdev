@@ -12,6 +12,7 @@ extern uint32_t end;
 #include "isr.h"
 #include "irq.h"
 #include "keyboard.h"
+#include <song/song.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -111,6 +112,10 @@ void kernel_main(void) {
     printf("[PIT] Busy sleep OK. Testing interrupt sleep 250 ms...\n");
     sleep_interrupt(250);
     printf("[PIT] Interrupt sleep OK.\n");
+
+    printf("[MUSIC] Starting PC speaker music test...\n");
+    play_music();
+    printf("[MUSIC] Music test completed.\n");
     terminal_write("Keyboard ready. Type something:\n");
 
     asm volatile("sti");
