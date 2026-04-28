@@ -26,7 +26,7 @@ void main(void) {
     __asm__ volatile ("int $0x1");
     __asm__ volatile ("int $0x2");
 
-    /* Enable maskable hardware interrupts, including timer and keyboard IRQs. */
+    /* Enable maskable hardware interrupts, so unmasked IRQs can reach the CPU. */
     __asm__ volatile ("sti");
 
     /* Halt forever... Interrupts will wake the CPU when hardware events arrive. */

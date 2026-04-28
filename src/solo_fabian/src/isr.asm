@@ -3,7 +3,7 @@
 ; Make idt_load visible to C code in idt.c.
 global idt_load
 
-; Make the three software interrupt stubs visible to idt.c.
+; Make the three CPU exception stubs visible to idt.c.
 global isr0
 global isr1
 global isr2

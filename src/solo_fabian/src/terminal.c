@@ -1,6 +1,7 @@
 /* Use local freestanding integer and size types. */
 #include <libc/stdint.h>
 
+/* Public declarations for the terminal functions in this file. */
 #include <terminal.h>
 
 /* VGA text mode has 80 columns by 25 rows. */
