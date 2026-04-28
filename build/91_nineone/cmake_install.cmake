@@ -1,4 +1,4 @@
-# Install script for directory: /workspaces/2026-ikt218-osdev/src/91_solo_nineone
+# Install script for directory: /workspaces/2026-ikt218-osdev/src/91_nineone
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/workspaces/2026-ikt218-osdev/build/91_solo_nineone/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/workspaces/2026-ikt218-osdev/build/91_nineone/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
