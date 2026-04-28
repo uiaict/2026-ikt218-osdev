@@ -7,6 +7,10 @@
 /* Terminal output is shared by the kernel and interrupt handlers. */
 #include <terminal.h>
 
+#include <memory.h>
+
+extern uint32_t end;
+
 /* Kernel entry point called from multiboot2.asm. */
 void main(void) {
     /* Install the kernel's GDT before doing regular kernel work. */
@@ -20,6 +24,19 @@ void main(void) {
 
     /* Install the IDT and configure IRQ0..IRQ15 through the PIC. */
     idt_init();
+
+    init_kernel_memory(&end);
+    print_memory_layout();
+
+    void* memory1 = malloc(12345);
+    void* memory2 = malloc(54321);
+    void* memory3 = malloc(13331);
+
+    (void)memory1;
+    (void)memory2;
+    (void)memory3;
+
+    print_memory_layout();
 
     /* Trigger three software interrupts to show that the ISR path works. */
     __asm__ volatile ("int $0x0");
