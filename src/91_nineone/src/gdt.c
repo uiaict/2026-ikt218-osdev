@@ -1,19 +1,19 @@
 #include "types.h"
 
 struct gdt_entry_struct {
-    uint16 limit_low;           // De nederste 16 bitene av grensen
-    uint16 base_low;            // De nederste 16 bitene av basen
-    uint8  base_middle;         // De neste 8 bitene av basen
-    uint8  access;              // Tilgangsflagg (hva segmentet kan brukes til)
-    uint8  granularity;         // Flagg for størrelse og de øverste 4 bitene av limit
-    uint8  base_high;           // De siste 8 bitene av basen
+    uint16 limit_low;           // Limit (0-15)
+    uint16 base_low;            // Base (0-15)
+    uint8  base_middle;         // Base (16-23)
+    uint8  access;              // Access flags
+    uint8  granularity;         // Limit (16-19) + Granularity
+    uint8  base_high;           // Base (24-31)
 } __attribute__((packed));
 
 typedef struct gdt_entry_struct GdtEntry;
 
 // Denne strukturen sendes til CPU-en (instruksjonen LGDT)
 struct gdt_ptr_struct {
-    uint16 limit;               // Størrelsen på GDT minus 1
+    uint16 limit;               // GDT size
     uint32 base;                // Adressen til den første GDT-oppføringen
 } __attribute__((packed));
 
