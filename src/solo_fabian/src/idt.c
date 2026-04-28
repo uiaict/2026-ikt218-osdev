@@ -10,6 +10,9 @@
 /* Interrupt handlers print status and keyboard characters to the VGA terminal. */
 #include <terminal.h>
 
+/* PIT counts timer IRQs for sleep functions. */
+#include <pit.h>
+
 /* The IDT has one entry for each possible x86 interrupt vector. */
 #define IDT_ENTRY_COUNT 256
 
@@ -251,10 +254,10 @@ static void pic_remap(void)
 }
 
 /* Keep every IRQ masked except IRQ1, so keyboard input is readable on screen. */
-static void pic_enable_keyboard_irq(void)
+static void pic_enable_timer_and_keyboard_irq(void)
 {
-    /* 0xFD masks every master IRQ except bit 1, which is keyboard IRQ1. */
-    outb(PIC1_DATA, 0xFD);
+    /* 0xFC masks every master IRQ except bit 0 and bit 1. */
+    outb(PIC1_DATA, 0xFC);
 
     /* 0xFF masks all slave PIC IRQs, so IRQ8..IRQ15 stay quiet for now. */
     outb(PIC2_DATA, 0xFF);
@@ -318,7 +321,7 @@ void interrupt_handler(struct interrupt_frame* frame)
 
     /* Vector 32 is IRQ0, the programmable interval timer. */
     if (frame->interrupt_number == IRQ_BASE) {
-        terminal_write("IRQ0 timer\n");
+        pit_handle_tick();
     /* Vector 33 is IRQ1, the PS/2 keyboard. */
     } else if (frame->interrupt_number == IRQ_BASE + 1) {
         keyboard_handle_irq();
@@ -367,7 +370,7 @@ void idt_init(void)
     pic_remap();
 
     /* Let the keyboard IRQ through while keeping noisy timer and unused IRQs masked. */
-    pic_enable_keyboard_irq();
+    pic_enable_timer_and_keyboard_irq();
 
     /* Load the finished IDT into the CPU's IDTR register. */
     idt_load(&idt_ptr);

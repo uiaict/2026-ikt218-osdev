@@ -7,6 +7,8 @@
 /* Terminal output is shared by the kernel and interrupt handlers. */
 #include <terminal.h>
 
+#include <pit.h>
+
 #include <memory.h>
 
 extern uint32_t end;
@@ -24,6 +26,8 @@ void main(void) {
 
     /* Install the IDT and configure IRQ0..IRQ15 through the PIC. */
     idt_init();
+
+    init_pit();
 
     init_kernel_memory(&end);
     init_paging();
@@ -47,13 +51,23 @@ void main(void) {
     void* memory4 = malloc(1000);
     print_pointer("memory4: ", memory4);
 
+     /* Enable maskable hardware interrupts, including timer and keyboard IRQs. */
+     __asm__ volatile ("sti");
+
+    terminal_write("Busy sleep start\n");
+    sleep_busy(1000);
+    terminal_write("Busy sleep done\n");
+
+    terminal_write("Interrupt sleep start\n");
+    sleep_interrupt(1000);
+    terminal_write("Interrupt sleep done\n");
+
     /* Trigger three software interrupts to show that the ISR path works. */
     // __asm__ volatile ("int $0x0");
     // __asm__ volatile ("int $0x1");
     // __asm__ volatile ("int $0x2");
 
-    /* Enable maskable hardware interrupts, including timer and keyboard IRQs. */
-    // __asm__ volatile ("sti");
+   
 
     /* Halt forever... Interrupts will wake the CPU when hardware events arrive. */
     for (;;) {
