@@ -16,7 +16,7 @@ void main(void) {
     terminal_clear();
 
     /* Required visible startup message. */
-    terminal_write("Hello World");
+    terminal_write("Hello World\n");
 
     /* Install the IDT and configure IRQ0..IRQ15 through the PIC. */
     idt_init();
