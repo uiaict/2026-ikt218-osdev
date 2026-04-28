@@ -1,14 +1,98 @@
-typedef unsigned short uint16_t;
-typedef unsigned int size_t;
+/* GDT setup must happen before the kernel relies on its own segment layout. */
+#include <gdt.h>
 
-void main(void) {
-    volatile uint16_t* vga = (volatile uint16_t*)0xB8000;
-    const char* msg = "IKT218 kernel loaded";
+/* Use local freestanding integer and size types. */
+#include <libc/stdint.h>
 
-    for (size_t i = 0; msg[i] != '\0'; i++) {
-        vga[i] = (uint16_t)msg[i] | (uint16_t)(0x0F << 8);
+/* VGA text mode has 80 columns by 25 rows. */
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
+/* VGA text memory starts at physical address 0xB8000 in protected mode. */
+#define VGA_MEMORY ((volatile uint16_t*)0xB8000)
+
+/* White/light grey foreground on a black background. */
+#define VGA_COLOR_LIGHT_GREY_ON_BLACK 0x0F
+
+/* Current cursor row in the VGA text buffer. */
+static size_t terminal_row;
+
+/* Current cursor column in the VGA text buffer. */
+static size_t terminal_column;
+
+/* Combine an ASCII character and a VGA color byte into one 16-bit screen cell. */
+static uint16_t terminal_entry(char character, uint8_t color)
+{
+    return (uint16_t)character | (uint16_t)(color << 8);
+}
+
+/* Fill the whole VGA text screen with spaces and reset the cursor. */
+static void terminal_clear(void)
+{
+    /* Walk every row. */
+    for (size_t y = 0; y < VGA_HEIGHT; y++) {
+        /* Walk every column in the current row. */
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
+            /* Convert the 2D position into the 1D VGA memory index. */
+            VGA_MEMORY[y * VGA_WIDTH + x] = terminal_entry(' ', VGA_COLOR_LIGHT_GREY_ON_BLACK);
+        }
     }
 
+    /* The next character should be written at the top-left corner. */
+    terminal_row = 0;
+    terminal_column = 0;
+}
+
+/* Write one character at the current cursor position. */
+static void terminal_putchar(char character)
+{
+    /* A newline moves to the first column of the next row. */
+    if (character == '\n') {
+        terminal_column = 0;
+        terminal_row++;
+        return;
+    }
+
+    /* Store the character and color directly into VGA text memory. */
+    VGA_MEMORY[terminal_row * VGA_WIDTH + terminal_column] =
+        terminal_entry(character, VGA_COLOR_LIGHT_GREY_ON_BLACK);
+
+    /* Advance to the next column after writing a normal character. */
+    terminal_column++;
+
+    /* Wrap to the next row when reaching the right edge of the screen. */
+    if (terminal_column == VGA_WIDTH) {
+        terminal_column = 0;
+        terminal_row++;
+    }
+
+    /* This simple terminal wraps back to the top instead of scrolling. */
+    if (terminal_row == VGA_HEIGHT) {
+        terminal_row = 0;
+    }
+}
+
+/* Write a null-terminated string to the VGA terminal. */
+static void terminal_write(const char* text)
+{
+    /* Keep writing characters until the C string's null terminator. */
+    for (size_t i = 0; text[i] != '\0'; i++) {
+        terminal_putchar(text[i]);
+    }
+}
+
+/* Kernel entry point called from multiboot2.asm. */
+void main(void) {
+    /* Install the kernel's GDT before doing regular kernel work. */
+    gdt_init();
+
+    /* Start from a blank VGA text screen. */
+    terminal_clear();
+
+    /* Required visible startup message. */
+    terminal_write("Hello World");
+
+    /* Halt forever; interrupts are disabled, so this keeps the CPU quiet. */
     for (;;) {
         __asm__ volatile ("hlt");
     }
