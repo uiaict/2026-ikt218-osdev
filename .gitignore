@@ -1,6 +1,4 @@
 .vscode
-build/
-src/build_*/*
 venv
 !build_*/kernel.bin
 !build_*/kernel.img
