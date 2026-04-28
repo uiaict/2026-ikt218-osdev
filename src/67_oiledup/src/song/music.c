@@ -1,4 +1,4 @@
-#include "song.h"
+#include "song/song.h"
 
 Note music_1[] = {
     {E5, 250}, {R, 125}, {E5, 125}, {R, 125}, {E5, 125}, {R, 125},

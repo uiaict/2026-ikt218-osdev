@@ -66,7 +66,6 @@ add_executable(uiaos-kernel
 	src/idt/idt_handler.c
 	src/idt/idt_load.asm
 	src/idt/idt.c
-	src/idt/idt.h
 	src/idt/isr_wrapper.asm
 	src/keyboard/keyboard.c
 	src/memory/malloc.c

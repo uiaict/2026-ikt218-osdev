@@ -1,6 +1,6 @@
 #include "kernel/pit.h"
 #include "libc/stdio.h"
-#include "../idt/idt.h"
+#include "kernel/idt.h"
 
 static inline void outb(uint16_t port, uint8_t value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));

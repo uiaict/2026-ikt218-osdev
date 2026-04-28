@@ -1,7 +1,7 @@
 #ifndef GDT_H
 #define GDT_H
 
-#include <libc/stdint.h>
+#include "libc/stdint.h"
 
 // If this header is included in C++ code, tell it to use C linkage
 #ifdef __cplusplus

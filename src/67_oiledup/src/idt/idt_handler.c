@@ -1,7 +1,7 @@
-#include "idt.h"
+#include "kernel/idt.h"
 #include "libc/stdio.h"
 #include "libc/system.h"
-#include "../keyboard/keyboard.h"
+#include "kernel/keyboard.h"
 
 isr_t interrupt_handlers[256];
 

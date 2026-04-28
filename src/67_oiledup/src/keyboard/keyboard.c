@@ -1,4 +1,4 @@
-#include "keyboard.h"
+#include "kernel/keyboard.h"
 #include "libc/stdio.h"
 #include "libc/system.h"
 #include "libc/stdbool.h"

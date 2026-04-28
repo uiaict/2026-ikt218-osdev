@@ -2,7 +2,7 @@
 #include "libc/stdarg.h"
 #include "libc/stdint.h"
 #include "libc/string.h"
-#include "terminal.h"
+#include "kernel/terminal.h"
 
 static inline void outb(uint16_t port, uint8_t value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));

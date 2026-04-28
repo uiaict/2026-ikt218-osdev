@@ -1,15 +1,14 @@
-#include "gdt/gdt.h"
+#include "kernel/gdt.h"
+#include "kernel/idt.h"
+#include "kernel/memory.h"
+#include "kernel/pit.h"
+#include "kernel/terminal.h"
 #include "libc/stdint.h"
 #include "libc/stddef.h"
 #include "libc/stdbool.h"
 #include "libc/string.h"
 #include "libc/stdio.h"
-#include <multiboot2.h>
-#include "idt/idt.h"
-#include "terminal.h"
-#include "kernel/memory.h"
-#include "kernel/pit.h"
-#include "terminal.h"
+#include "multiboot2.h"
 
 struct multiboot_info {
     uint32_t size;

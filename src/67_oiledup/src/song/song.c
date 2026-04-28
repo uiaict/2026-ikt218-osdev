@@ -1,4 +1,4 @@
-#include "song.h"
+#include "song/song.h"
 #include "speaker/speaker.h"
 #include "libc/stdio.h"
 #include "kernel/pit.h"

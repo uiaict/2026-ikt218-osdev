@@ -11,6 +11,3 @@ void operator delete(void* p) noexcept {
 void operator delete(void* p, size_t) noexcept {
     free(p); 
     }
-void operator delete(void* p) noexcept {
-    free(p);
-}

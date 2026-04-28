@@ -1,6 +1,6 @@
-#include "idt.h"
+#include "kernel/idt.h"
 #include "libc/system.h"
-#include "../keyboard/keyboard.h"
+#include "kernel/keyboard.h"
 
 struct idt_entry idt[256];
 struct idtr idtr;
