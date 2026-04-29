@@ -6,7 +6,7 @@ gdt_flush:
                       ; It is then loaded into eax(a registry) for use in the lgdt instruction
     lgdt [eax]        ; A special instruction to load the GDT register with the address of our GDT pointer. This tells the CPU where our GDT is located in memory.
 
-    ; Set segment registers to 2nd entry (Data Segment) = 0x10 = 2 * 8 (size of each GDT entry) = 0x10
+    ; Set segment registers to 2nd entry (Data Segment) = 0x10 = 2 * 8 (size of each GDT entry)
     mov ax, 0x10      
     mov ds, ax ; Data Segment
     mov es, ax ; Extra Segment
