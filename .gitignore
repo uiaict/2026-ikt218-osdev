@@ -22,3 +22,5 @@ build/group_29/cmake_install.cmake
 build/group_29/compile_commands.json
 build/group_29/Makefile
 src/group_29/scripts/run_no_debug_host_arch.sh
+
+doxygen-out/
