@@ -1,3 +1,6 @@
+#include "terminal.h"
+#include "colors.h"
+
 void terminal_putchar(char c, uint8 color, int x, int y) {
     const int index = y*80 + x;
     uint16* vga_buffer = (uint16*)0xB8000;
