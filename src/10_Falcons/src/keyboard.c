@@ -1,3 +1,4 @@
+#include <kernel/piano.h>
 #include <libc/stdint.h>
 #include "keyboard.h"
 #include "io.h"
@@ -30,6 +31,7 @@ void keyboard_init(void) {
 
 void keyboard_handler(void) {
     uint8_t scancode = inb(KEYBOARD_DATA_PORT);
+    piano_handle_scancode(scancode);
 
     if (scancode == 0x2A || scancode == 0x36) {
         shift_pressed = 1;
