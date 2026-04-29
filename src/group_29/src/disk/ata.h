@@ -25,7 +25,7 @@
 #define ATA_CMD_WRITE_SECTORS 0x30U
 #define ATA_CMD_CACHE_FLUSH 0xE7U
 
-/** Read a disk sector
+/** \brief Read a disk sector
  * 
  * This is done over ATA PIO, which means that bytes are read over I/O ports uring inw.
  * \returns true on sucsess, otherwise: false
@@ -34,14 +34,14 @@
  */
 bool ata_read_sector(uint32_t lba, uint8_t buffer[ATA_SECTOR_SIZE]);
 
-/** Write to a disk sector
+/** \brief Write to a disk sector
  * \param lba Destination byte address on disk
  * \param buffer Data to be written
  * \returns false on error, otherwise: ata_poll(false)
  */
 bool ata_write_sector(uint32_t lba, const uint8_t buffer[ATA_SECTOR_SIZE]);
 
-/** Check if the drive is ready before disk read/write.
+/** \brief Check if the drive is ready before disk read/write.
  * This uses pooling so it is blocking.
  * \note This is blocking until the disk is ready
  * \returns true when done, false if there was an error.
@@ -50,13 +50,13 @@ bool ata_write_sector(uint32_t lba, const uint8_t buffer[ATA_SECTOR_SIZE]);
  */
 bool ata_poll(bool wait_for_drq);
 
-/** Just runs inb() against ATA disk 4 times
+/** \brief Just runs inb() against ATA disk 4 times
  * \see https://wiki.osdev.org/ATA_PIO_Mode#400ns_delays
  */
 void ata_delay_400ns(void);
 
-/** Select drive and/or head */
+/** \brief Select drive and/or head */
 void ata_select_drive(uint32_t lba);
 
-/** Move HDD head to the correct position on the disk for I/O */
+/** \brief Move HDD head to the correct position on the disk for I/O */
 void ata_program_lba(uint32_t lba);
