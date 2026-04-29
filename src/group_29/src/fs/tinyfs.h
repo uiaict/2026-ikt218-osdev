@@ -18,7 +18,8 @@
 #define TINYFS_FILE_TABLE_SECTORS 4U
 #define TINYFS_DATA_START (TINYFS_FILE_TABLE_START + TINYFS_FILE_TABLE_SECTORS)
 
-enum {
+/** \brief Status codes for some tinyfs related funtions */
+enum tinyfs_status_codes{
     TINYFS_STATUS_OK = 0,
     TINYFS_STATUS_FAILED_TO_WRITE_SECTOR_10 = -17,
     TINYFS_STATUS_DISKTEST_INVALID_USAGE = -18,
@@ -32,8 +33,11 @@ enum {
     TINYFS_STATUS_OUT_OF_MEMORY = -26
 };
 
+/** \brief First thing stored on the disk for the filesystem */
 typedef struct {
+    /** An 'ID' for the filesystem on the disk */
     uint32_t magic;
+    /** FS version */
     uint32_t version;
     uint32_t file_table_start;
     uint32_t file_table_sectors;
@@ -42,6 +46,10 @@ typedef struct {
     uint8_t reserved[ATA_SECTOR_SIZE - (6U * sizeof(uint32_t))];
 } TinyFsSuperblock;
 
+/** \brief On disk struct with file metadata 
+ * 
+ * The file table containes a list of these
+ */
 typedef struct {
     char name[TINYFS_NAME_LENGTH];
     uint32_t start_sector;

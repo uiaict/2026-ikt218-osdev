@@ -2,6 +2,10 @@
 
 static bool tinyfs_ready;
 
+/** \brief Fills a buffer with NULL
+ * \param buffer This will be all 0 when this function is done
+ * \param size Size of the buffer
+ */
 static void buffer_clear(uint8_t* buffer, uint32_t size) {
     uint32_t index;
 
@@ -10,6 +14,12 @@ static void buffer_clear(uint8_t* buffer, uint32_t size) {
     }
 }
 
+/** \brief Compares two strings
+ * \returns 0 if they're equal, otherwise it's the difference between the two chars at the index where they diverge
+ * \param left String that is TINYFS_NAME_LENGTH.
+ * \param right Same as left
+ * \warning This assumes that the string is TINYFS_NAME_LENGTH, not less and not more
+ */
 static int16_t name_compare(const char left[], const char right[]) {
     uint32_t index;
 
@@ -26,6 +36,9 @@ static int16_t name_compare(const char left[], const char right[]) {
     return 0;
 }
 
+/** \brief Check that strlen(name) fits inside TINYFS_NAME_LENGTH and that it's not NULL or starts with NULL
+ * \returns true if the check passes
+*/
 static bool name_is_valid(const char name[]) {
     int32_t length;
 
@@ -37,6 +50,13 @@ static bool name_is_valid(const char name[]) {
     return length > 0 && length < TINYFS_NAME_LENGTH;
 }
 
+/** \brief Copies source to destination so that destination is TINYFS_NAME_LENGTH
+ * 
+ * If source is longer than destinetion it will be cut off in detination.
+ * It will also be zero padded if it's shorter.
+ * \param destination A TINYFS_NAME_LENGTH string
+ * \param source The destination string
+ */
 static void name_copy(char destination[TINYFS_NAME_LENGTH], const char source[]) {
     uint32_t index = 0U;
 
@@ -51,6 +71,7 @@ static void name_copy(char destination[TINYFS_NAME_LENGTH], const char source[])
     }
 }
 
+/** \brief Calculate how many sectors size_bytes takes up */
 static uint32_t sectors_for_size(uint32_t size_bytes) {
     if (size_bytes == 0U) {
         return 1U;
@@ -59,6 +80,10 @@ static uint32_t sectors_for_size(uint32_t size_bytes) {
     return (size_bytes + ATA_SECTOR_SIZE - 1U) / ATA_SECTOR_SIZE;
 }
 
+/** \brief Reads the super block and checks validity
+ * \param superblock The destination the superblock will be read into
+ * \returns true if the superblock is valid, false if not
+ */
 static bool load_superblock(TinyFsSuperblock* superblock) {
     if (!ata_read_sector(TINYFS_SUPERBLOCK_SECTOR, (uint8_t*)superblock)) {
         return false;
@@ -78,16 +103,22 @@ static bool load_superblock(TinyFsSuperblock* superblock) {
     return true;
 }
 
+/** \brief Write superblock to disk */
 static bool save_superblock(const TinyFsSuperblock* superblock) {
     return ata_write_sector(TINYFS_SUPERBLOCK_SECTOR, (const uint8_t*)superblock);
 }
 
+/** \brief Reads the file table into entries
+ * \param entries the file entry destination
+ * \returns false if the read op failed, otherwise true.
+ */
 static bool load_file_table(TinyFsFileEntry entries[TINYFS_MAX_FILES]) {
     uint32_t sector;
 
     for (sector = 0U; sector < TINYFS_FILE_TABLE_SECTORS; ++sector) {
-        if (!ata_read_sector(TINYFS_FILE_TABLE_START + sector,
-                ((uint8_t*)entries) + (sector * ATA_SECTOR_SIZE))) {
+        if (
+            !ata_read_sector(TINYFS_FILE_TABLE_START + sector,((uint8_t*)entries) + (sector * ATA_SECTOR_SIZE))
+        ) {
             return false;
         }
     }
@@ -95,12 +126,17 @@ static bool load_file_table(TinyFsFileEntry entries[TINYFS_MAX_FILES]) {
     return true;
 }
 
+/** \brief Save the file table
+ * \param entries File table to save
+ * \returns false if save failed, otherwise: true
+ */
 static bool save_file_table(const TinyFsFileEntry entries[TINYFS_MAX_FILES]) {
     uint32_t sector;
 
     for (sector = 0U; sector < TINYFS_FILE_TABLE_SECTORS; ++sector) {
-        if (!ata_write_sector(TINYFS_FILE_TABLE_START + sector,
-                ((const uint8_t*)entries) + (sector * ATA_SECTOR_SIZE))) {
+        if (
+            !ata_write_sector(TINYFS_FILE_TABLE_START + sector, ((const uint8_t*)entries) + (sector * ATA_SECTOR_SIZE))
+        ) {
             return false;
         }
     }
@@ -108,6 +144,11 @@ static bool save_file_table(const TinyFsFileEntry entries[TINYFS_MAX_FILES]) {
     return true;
 }
 
+/** \brief Loop through the file table until the file with specified name is found
+ * \param entries the file table
+ * \param name The name to look for
+ * \returns The index of the file or -1 if it's not found
+ */
 static int32_t find_file_index(const TinyFsFileEntry entries[TINYFS_MAX_FILES], const char name[]) {
     uint32_t index;
 
@@ -120,6 +161,10 @@ static int32_t find_file_index(const TinyFsFileEntry entries[TINYFS_MAX_FILES], 
     return -1;
 }
 
+/** \brief Loop through the file table until it finds a free index
+ * \param entries The file table
+ * \returns The index of the free entry or -1 if none is found
+ */
 static int32_t find_free_file_index(const TinyFsFileEntry entries[TINYFS_MAX_FILES]) {
     uint32_t index;
 
@@ -132,15 +177,26 @@ static int32_t find_free_file_index(const TinyFsFileEntry entries[TINYFS_MAX_FIL
     return -1;
 }
 
+/** \brief Tries to load the superblock and stores if it's successfull in the tinyfs_ready
+ * 
+ * \ref tinyfs_is_ready(void)
+ */
 void tinyfs_init(void) {
     TinyFsSuperblock superblock;
     tinyfs_ready = load_superblock(&superblock);
 }
 
+/** \brief Check tinyfs_ready
+ * \returns tinyfs_ready
+*/
 bool tinyfs_is_ready(void) {
     return tinyfs_ready;
 }
 
+/** \brief Formats disk
+ * \returns 0 if it worked, or a negative number defined by an unnamed struct in tinyfs.h
+ * \see tinyfs_status_codes
+ */
 int8_t tinyfs_format(void) {
     TinyFsSuperblock superblock;
     TinyFsFileEntry entries[TINYFS_MAX_FILES];
@@ -176,6 +232,10 @@ int8_t tinyfs_format(void) {
     return TINYFS_STATUS_OK;
 }
 
+/** \brief Print listing of all files
+ * \note No struct that can be programatically accessed is returned, the function prints directly to console
+ * \returns tinyfs_status_codes
+ */
 int8_t tinyfs_list(void) {
     TinyFsSuperblock superblock;
     TinyFsFileEntry entries[TINYFS_MAX_FILES];
@@ -218,6 +278,13 @@ int8_t tinyfs_list(void) {
     return TINYFS_STATUS_OK;
 }
 
+/** \brief Write to a file
+ * 
+ * Creates a new file or overwrites an existing one
+ * \param name File name
+ * \param content Bytes to be written
+ * \returns tinyfs_status_codes
+ */
 int8_t tinyfs_write_file(const char name[], const char content[]) {
     TinyFsSuperblock superblock;
     TinyFsFileEntry entries[TINYFS_MAX_FILES];
@@ -289,6 +356,12 @@ int8_t tinyfs_write_file(const char name[], const char content[]) {
     return TINYFS_STATUS_OK;
 }
 
+/** \brief Read a file
+ * \param name The name of the file to read
+ * \param out_content Pointer to a pointer to the destination for the bytes from the file, will be written to
+ * \param out_size Pointer to a byte count, will be written to
+ * \returns tinyfs_status_codes
+ */
 int8_t tinyfs_read_file(const char name[], char** out_content, uint32_t* out_size) {
     TinyFsSuperblock superblock;
     TinyFsFileEntry entries[TINYFS_MAX_FILES];
