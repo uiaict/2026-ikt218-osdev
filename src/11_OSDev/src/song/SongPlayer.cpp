@@ -4,6 +4,7 @@ extern "C" {
     #include "io.h"
     #include "libc/stdio.h"
     #include "kernel/memory.h"
+    #include "isr.h"
 }
 
 static void enable_speaker(void)
@@ -45,6 +46,9 @@ extern "C" void play_song_impl(Song *song)
     enable_speaker();
 
     for (uint32_t i = 0; i < song->note_count; i++) {
+        char k = kb_peek();
+        if (k == 'q' || k == 'Q') { kb_consume(); break; }
+
         Note *note = &song->notes[i];
         printf("  note %u: %u Hz, %u ms\n", i, note->frequency, note->duration);
 
