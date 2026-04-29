@@ -2995,3 +2995,8 @@ MSCGEN_TOOL            =
 # command).
 
 MSCFILE_DIRS           =
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = __attribute__(x)=
