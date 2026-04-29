@@ -45,22 +45,71 @@ add_executable(uiaos-kernel
     src/ports.c
     src/screen.c
     src/keyboard.c
+    src/memory.c
+    src/paging.c
+    src/pit.c
     src/kernel.c
+    src/song_player.c
+    src/pong.c
 )
 
 target_include_directories(uiaos-kernel PUBLIC include)
 
 target_compile_options(uiaos-kernel PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
-    $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
+    $<$<COMPILE_LANGUAGE:C>:
+        -Wall
+        -Wextra
+        -nostdinc
+        -nostdlib
+        -fno-builtin
+        -fno-stack-protector
+        -fno-stack-check
+        -fno-lto
+        -fno-pie
+        -no-pie
+        -m32
+        -march=i386
+        -mno-mmx
+        -mno-sse
+        -mno-sse2
+        -mno-red-zone
+        -Wno-main
+        -Wno-unused-variable
+        -Wno-unused-parameter
+        -g
+    >
+    $<$<COMPILE_LANGUAGE:CXX>:
+        -Wall
+        -Wextra
+        -nostdinc
+        -nostdlib
+        -fno-builtin
+        -fno-stack-protector
+        -fno-stack-check
+        -fno-lto
+        -fno-pie
+        -no-pie
+        -fno-exceptions
+        -fno-rtti
+        -m32
+        -march=i386
+        -mno-mmx
+        -mno-sse
+        -mno-sse2
+        -mno-red-zone
+        -Wno-unused-variable
+        -Wno-unused-parameter
+        -g
+    >
 )
 
 target_link_options(uiaos-kernel PUBLIC
+    -m32
     -ffreestanding
     -nostdlib
     -static
-    -pie
+    -fno-pie
+    -no-pie
     -O0
     -T${OS_KERNEL_LINKER}
     -g

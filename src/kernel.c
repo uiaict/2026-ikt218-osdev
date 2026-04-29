@@ -4,6 +4,7 @@
 #include "irq.h"
 #include "keyboard.h"
 #include "screen.h"
+#include "libc/stdio.h"
 
 void kernel_main(void) {
     gdt_install();

@@ -395,6 +395,30 @@ src/pit.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pit.c.s
 .PHONY : src/pit.c.s
 
+src/pong.o: src/pong.c.o
+.PHONY : src/pong.o
+
+# target to build an object file
+src/pong.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pong.c.o
+.PHONY : src/pong.c.o
+
+src/pong.i: src/pong.c.i
+.PHONY : src/pong.i
+
+# target to preprocess a source file
+src/pong.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pong.c.i
+.PHONY : src/pong.c.i
+
+src/pong.s: src/pong.c.s
+.PHONY : src/pong.s
+
+# target to generate assembly for a file
+src/pong.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pong.c.s
+.PHONY : src/pong.c.s
+
 src/ports.o: src/ports.c.o
 .PHONY : src/ports.o
 
@@ -443,6 +467,30 @@ src/screen.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/screen.c.s
 .PHONY : src/screen.c.s
 
+src/song_player.o: src/song_player.c.o
+.PHONY : src/song_player.o
+
+# target to build an object file
+src/song_player.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song_player.c.o
+.PHONY : src/song_player.c.o
+
+src/song_player.i: src/song_player.c.i
+.PHONY : src/song_player.i
+
+# target to preprocess a source file
+src/song_player.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song_player.c.i
+.PHONY : src/song_player.c.i
+
+src/song_player.s: src/song_player.c.s
+.PHONY : src/song_player.s
+
+# target to generate assembly for a file
+src/song_player.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song_player.c.s
+.PHONY : src/song_player.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -484,12 +532,18 @@ help:
 	@echo "... src/pit.o"
 	@echo "... src/pit.i"
 	@echo "... src/pit.s"
+	@echo "... src/pong.o"
+	@echo "... src/pong.i"
+	@echo "... src/pong.s"
 	@echo "... src/ports.o"
 	@echo "... src/ports.i"
 	@echo "... src/ports.s"
 	@echo "... src/screen.o"
 	@echo "... src/screen.i"
 	@echo "... src/screen.s"
+	@echo "... src/song_player.o"
+	@echo "... src/song_player.i"
+	@echo "... src/song_player.s"
 .PHONY : help
 
 
