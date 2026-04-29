@@ -58,8 +58,11 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 
 # Add executable target for the kernel
 add_executable(uiaos-kernel 
-	# src/multiboot2.asm # TODO: Add multiboot2 support
+    src/multiboot2.asm # TODO: Add multiboot2 support
     src/kernel.c
+    src/gdt.asm
+    src/vga.c
+    src/libc/stdio.c
 )
 
 # Include directories for the kernel target
@@ -120,7 +123,7 @@ add_custom_target(
 	COMMAND rm -rf ${ISO_DIR}
 	COMMAND mkdir -p ${ISO_DIR}
 	COMMAND cp -v $<TARGET_FILE:uiaos-kernel> 
-	 	${LIMINE_CONFIG_DIR}/limine.cfg ${LIMINE_DIR}/limine-bios.sys ${LIMINE_DIR}/limine-bios-cd.bin
+	 	${LIMINE_CONFIG_DIR}/limine.conf ${LIMINE_DIR}/limine-bios.sys ${LIMINE_DIR}/limine-bios-cd.bin
 		${LIMINE_DIR}/limine-uefi-cd.bin ${ISO_DIR}/
 	COMMAND mkdir -p ${ISO_DIR}/EFI/BOOT
 	COMMAND cp -v ${LIMINE_DIR}/BOOTX64.EFI ${ISO_DIR}/EFI/BOOT/

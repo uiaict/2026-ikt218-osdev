@@ -1,4 +1,5 @@
 extern main
+extern reloadSegments
 
 global _start
 
@@ -38,6 +39,12 @@ _start:
 	push eax
 
     call main ; Jump main function
+
+    ; Halt the CPU
+    cli
+    hlt
+    jmp $       ; Infinite loop
+
 
 section .bss
 stack_bottom:
