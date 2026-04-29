@@ -187,6 +187,94 @@ gdt.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/gdt.c.s
 .PHONY : gdt.c.s
 
+idt.o: idt.asm.o
+.PHONY : idt.o
+
+# target to build an object file
+idt.asm.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/idt.asm.o
+.PHONY : idt.asm.o
+
+idt.o: idt.c.o
+.PHONY : idt.o
+
+# target to build an object file
+idt.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/idt.c.o
+.PHONY : idt.c.o
+
+idt.i: idt.c.i
+.PHONY : idt.i
+
+# target to preprocess a source file
+idt.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/idt.c.i
+.PHONY : idt.c.i
+
+idt.s: idt.c.s
+.PHONY : idt.s
+
+# target to generate assembly for a file
+idt.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/idt.c.s
+.PHONY : idt.c.s
+
+irq.o: irq.asm.o
+.PHONY : irq.o
+
+# target to build an object file
+irq.asm.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/irq.asm.o
+.PHONY : irq.asm.o
+
+irq.o: irq.c.o
+.PHONY : irq.o
+
+# target to build an object file
+irq.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/irq.c.o
+.PHONY : irq.c.o
+
+irq.i: irq.c.i
+.PHONY : irq.i
+
+# target to preprocess a source file
+irq.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/irq.c.i
+.PHONY : irq.c.i
+
+irq.s: irq.c.s
+.PHONY : irq.s
+
+# target to generate assembly for a file
+irq.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/irq.c.s
+.PHONY : irq.c.s
+
+keyboard.o: keyboard.c.o
+.PHONY : keyboard.o
+
+# target to build an object file
+keyboard.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/keyboard.c.o
+.PHONY : keyboard.c.o
+
+keyboard.i: keyboard.c.i
+.PHONY : keyboard.i
+
+# target to preprocess a source file
+keyboard.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/keyboard.c.i
+.PHONY : keyboard.c.i
+
+keyboard.s: keyboard.c.s
+.PHONY : keyboard.s
+
+# target to generate assembly for a file
+keyboard.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/keyboard.c.s
+.PHONY : keyboard.c.s
+
 src/kernel.o: src/kernel.c.o
 .PHONY : src/kernel.o
 
@@ -234,6 +322,17 @@ help:
 	@echo "... gdt.o"
 	@echo "... gdt.i"
 	@echo "... gdt.s"
+	@echo "... idt.o"
+	@echo "... idt.o"
+	@echo "... idt.i"
+	@echo "... idt.s"
+	@echo "... irq.o"
+	@echo "... irq.o"
+	@echo "... irq.i"
+	@echo "... irq.s"
+	@echo "... keyboard.o"
+	@echo "... keyboard.i"
+	@echo "... keyboard.s"
 	@echo "... src/kernel.o"
 	@echo "... src/kernel.i"
 	@echo "... src/kernel.s"
