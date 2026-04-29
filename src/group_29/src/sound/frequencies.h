@@ -2,7 +2,7 @@
 #ifndef UIAOS_FREQUENCIES_H
 #define UIAOS_FREQUENCIES_H
 
-// Note frequencies (in Hz)
+/// \file Note frequencies (in Hz)
 #define C0 16
 #define Cs0 17
 #define D0 18

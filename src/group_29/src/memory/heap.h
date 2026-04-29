@@ -18,14 +18,14 @@
  */
 
 /**
- * Metadata stored in front of every heap allocation.
+ * \brief Metadata stored in front of every heap allocation.
  */
 struct heap_block {
-    /** Number of usable bytes in this block. */
+    /** \brief Number of usable bytes in this block. */
     size_t size;
-    /** Whether the block is currently available for reuse. */
+    /** \brief Whether the block is currently available for reuse. */
     bool is_free;
-    /** Pointer to the next block in the heap list. */
+    /** \brief Pointer to the next block in the heap list. */
     struct heap_block* next;
 };
 
@@ -68,25 +68,25 @@ typedef struct {
     size_t avg_used_block_size;
 } HeapInformation;
 
-/** Initializes the kernel heap at the first aligned address after kernel_end. */
+/** \brief Initializes the kernel heap at the first aligned address after kernel_end. */
 void init_kernel_memory(uint32_t* kernel_end);
 
-/** Initializes a simple identity-mapped paging setup for the kernel. */
+/** \brief Initializes a simple identity-mapped paging setup for the kernel. */
 void init_paging(void);
 
-/** Maps a virtual page to a physical page inside the first 4 MiB. */
+/** \brief Maps a virtual page to a physical page inside the first 4 MiB. */
 void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys);
 
-/** Allocates memory and returns a page-aligned pointer. */
+/** \brief Allocates memory and returns a page-aligned pointer. */
 char* pmalloc(size_t size);
 
-/** Allocates at least size bytes from the kernel heap. */
+/** \brief Allocates at least size bytes from the kernel heap. */
 void* malloc(size_t size);
 
-/** Frees a block previously returned by malloc. */
+/** \brief Frees a block previously returned by malloc. */
 void free(void* ptr);
 
-/** Prints the kernel end, heap start, and heap end addresses to VGA. */
+/** \brief Prints the kernel end, heap start, and heap end addresses to VGA. */
 void print_memory_layout(void);
 
 MemoryDebugData get_memory_layout(void);

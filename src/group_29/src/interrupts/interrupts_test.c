@@ -1,3 +1,4 @@
+/** \file Unit tests for create_idt_attributes() and create_idt_gate()  */
 #include "unity.h"
 #include "interrupts.h"
 #include "stdint.h"

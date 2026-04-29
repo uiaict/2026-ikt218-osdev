@@ -36,7 +36,7 @@ void scroll_screen() {
     VgaTextModeCursorSyncHardware(&(main_interface.cursor));
 }
 
-/** Prints a string with specific VGA colors
+/** \brief Prints a string with specific VGA colors
  * \param string String to print
  * \param color_bitmap Can be created by the VgaColor() function.
  */
@@ -71,12 +71,12 @@ void print_color(const char string[], uint8_t color_bitmap) {
     VgaTextModeCursorSyncHardware(&(main_interface.cursor));
 }
 
-/** Just a simple print function */
+/** \brief Just a simple print function */
 void print(const char string[]) {
     print_color(string, VgaColor(vga_black, vga_white));
 }
 
-/** Write text to specific position
+/** \brief Write text to specific position
  * \todo Could this not use the VgaTextModeInterfaceCursor?
  */
 void write_text_at(uint8_t row, uint8_t column, const char string[], uint8_t color_bitmap) {
@@ -94,7 +94,7 @@ void clear_screen() {
     fill_screen(VgaColor(vga_black, vga_white));
 }
 
-/** Fill the screen
+/** \brief Fill the screen
  * \param color_bitmap Can be created by VgaColor()
  */
 void fill_screen(uint8_t color_bitmap) {
