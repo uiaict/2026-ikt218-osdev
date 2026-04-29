@@ -8,7 +8,7 @@ void terminal_putchar(char c, uint8 color, int x, int y) {
     vga_buffer[index] = (uint16)c | (uint16)color << 8;
 }
 
-void print(const char* str, uint8 color, int x, int y) {
+void terminal_write(const char* str, uint8 color, int x, int y) {
     while (*str) {
         terminal_putchar(*str++, color, x++, y);
         if (x >= 80) { // wrapping

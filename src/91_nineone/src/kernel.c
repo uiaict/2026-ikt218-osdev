@@ -1,5 +1,6 @@
 #include "terminal.c"
 #include "colors.h"
+#define terminal_write print
 
 int main() {
     char *video_memory = (char*) 0xB8000; // startadresse for VGA tekstmodus
