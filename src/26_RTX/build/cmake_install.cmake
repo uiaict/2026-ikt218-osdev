@@ -1,4 +1,4 @@
-# Install script for directory: /workspaces/IKT218-Assignment-3/src/26_RTX
+# Install script for directory: /workspaces/AdamAlmadi98-osdev/src/26_RTX
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/workspaces/IKT218-Assignment-3/src/26_RTX/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/workspaces/AdamAlmadi98-osdev/src/26_RTX/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
