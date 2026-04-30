@@ -81,7 +81,7 @@ void printf(const char* data) { // Simple implementation of printf that only sup
         terminal_putchar(data[i]);
 }
 
-void print_int(uint32_t num) { // Fuction to print an interger to the terminal 
+void print_int(uint32_t num) { // Function to print an integer to the terminal
     char buffer[32];
     char *ptr = buffer;
     
@@ -99,6 +99,25 @@ void print_int(uint32_t num) { // Fuction to print an interger to the terminal
     // Print in correct order
     while (ptr > buffer) {
         terminal_putchar(*--ptr);
+    }
+}
+
+void print_hex(uint32_t num) {
+    char hex_chars[] = "0123456789ABCDEF";
+    char buffer[10]; // "0x" + 8 chars for 32-bit + null
+    
+    terminal_putchar('0');
+    terminal_putchar('x');
+
+    if (num == 0) {
+        terminal_putchar('0');
+        return;
+    }
+
+    // Process from right to left (8 characters for a 32-bit uint32_t)
+    for (int i = 7; i >= 0; i--) {
+        int nibble = (num >> (i * 4)) & 0xF;
+        terminal_putchar(hex_chars[nibble]);
     }
 }
 
