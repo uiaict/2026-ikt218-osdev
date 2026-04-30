@@ -29,39 +29,21 @@ typedef struct {
 SongPlayer* create_song_player();
 void play_song_impl(Song* song);
 void play_song(Song* song);
-// Non-blocking playback using PIT ticks
+// Non-blocking playback using PIT ticks (for star wars)
 void start_song(Song* song);
 void stop_song(void);
 
 // Note arrays: declared as extern; definitions live in music.c
 extern Note music_1[];
 extern Note starwars_theme[];
-extern Note battlefield_1942_theme[];
-extern Note music_2[];
-extern Note music_3[];
-extern Note music_4[];
-extern Note music_5[];
-extern Note music_6[];
 
 // Array lengths
 extern const size_t music_1_len;
 extern const size_t starwars_theme_len;
-extern const size_t battlefield_1942_theme_len;
-extern const size_t music_2_len;
-extern const size_t music_3_len;
-extern const size_t music_4_len;
-extern const size_t music_5_len;
-extern const size_t music_6_len;
 
 // Macros for backward compatibility
 #define MUSIC_1_LEN music_1_len
 #define STARWARS_THEME_LEN starwars_theme_len
-#define BATTLEFIELD_1942_THEME_LEN battlefield_1942_theme_len
-#define MUSIC_2_LEN music_2_len
-#define MUSIC_3_LEN music_3_len
-#define MUSIC_4_LEN music_4_len
-#define MUSIC_5_LEN music_5_len
-#define MUSIC_6_LEN music_6_len
 
 #ifdef __cplusplus
 }
