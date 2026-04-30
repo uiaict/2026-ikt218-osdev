@@ -2,6 +2,7 @@
 
 #include "../../include/libc/stdbool.h"
 #include "../../include/libc/stdint.h"
+#include "../io/io.h"
 
 #define ATA_SECTOR_SIZE 512U
 

@@ -1,5 +1,4 @@
 #include "ata.h"
-#include "../io/io.h"
 
 void ata_delay_400ns(void) {
     inb(ATA_PRIMARY_CONTROL_BASE);
