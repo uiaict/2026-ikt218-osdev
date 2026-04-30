@@ -75,6 +75,8 @@ add_executable(uiaos-kernel
 	src/pit.c
 	src/new.cpp
 	src/test_new.cpp
+	src/pcspeaker.c
+	src/songplayer.c
 )
 
 # Include directories for the kernel target

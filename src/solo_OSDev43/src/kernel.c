@@ -9,6 +9,7 @@ typedef unsigned long size_t;
 #include "memory.h"
 #include "paging.h"
 #include "pit.h"
+#include "songplayer.h"
 
 
 extern uint32_t end;
@@ -108,45 +109,40 @@ void test_new(void);
 
 void main(void) {
     terminal_clear();
+
     gdt_init();
     idt_init();
     isr_install();
     irq_install();
 
-    
-
     init_kernel_memory(&end);
     init_paging();
-    print_memory_layout();  
+    print_memory_layout();
     init_pit();
 
-    // malloc tests
     void* a = malloc(12345);
     void* b = malloc(54321);
     void* c = malloc(13331);
+
     if (a && b && c) {
-    terminal_write("malloc works\n");
+        terminal_write("malloc works\n");
     }
+
     free(b);
 
     void* d = malloc(1000);
 
     if (d == b) {
-    terminal_write("free works\n");
+        terminal_write("free works\n");
     }
+
     test_new();
-    terminal_write("Write what you want here:\n");
 
+    terminal_write("Starting music player...\n");
 
-    // pit tests
-    int counter = 0;
+    play_music();
+
     while (1) {
-        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
-        sleep_busy(1000);
-        printf("[%d]: Slept using busy-waiting.\n", counter++);
-
-        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
-        sleep_interrupt(1000);
-        printf("[%d]: Slept using interrupts.\n", counter++);
+        asm volatile("hlt");
     }
 }
