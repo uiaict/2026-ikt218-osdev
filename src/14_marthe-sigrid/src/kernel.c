@@ -3,10 +3,12 @@
 #include "isr.h"
 #include "irq.h"
 #include "libc/stdint.h"
+#include "libc/stdio.h"
 
 void main(uint32_t magic, uint32_t mb_info_addr)
 {
     gdt_init();
+    printf("Hello World\n");
     idt_init();
     isr_init();
     irq_init();
