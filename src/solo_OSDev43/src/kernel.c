@@ -1,7 +1,7 @@
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
-typedef unsigned int size_t;
+typedef unsigned long size_t;
 #include "gdt.h"
 #include "idt.h"
 #include "isr.h"
@@ -126,6 +126,13 @@ void main(void) {
     void* c = malloc(13331);
     if (a && b && c) {
     terminal_write("malloc works\n");
+    }
+    free(b);
+
+    void* d = malloc(1000);
+
+    if (d == b) {
+    terminal_write("free works\n");
     }
     test_new();
     terminal_write("Write what you want here:\n");
