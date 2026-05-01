@@ -29,16 +29,16 @@ extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
 
-static void idt_memset(void* dest, uint8_t value, uint32_t length) {
-    uint8_t* ptr = (uint8_t*) dest;
+static void idt_memset(void* dest, uint8 value, uint32 length) {
+    uint8* ptr = (uint8*) dest;
 
-    for (uint32_t i = 0; i < length; i++) {
+    for (uint32 i = 0; i < length; i++) {
         ptr[i] = value;
     }
 }
 
 
-static inline void outb(uint16_t port, uint8_t value) {
+static inline void outb(uint16 port, uint8 value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));
 }
 
@@ -69,26 +69,26 @@ static void pic_remap(void) {
     outb(0xA1, 0x00);
 }
 
-void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
+void idt_set_descriptor(uint8 vector, void* isr, uint8 flags) {
     idt_entry_t* descriptor = &idt[vector];
 
-    descriptor->isr_low = (uint32_t)isr & 0xFFFF;
+    descriptor->isr_low = (uint32)isr & 0xFFFF;
     descriptor->kernel_cs = 0x08;
     descriptor->attributes = flags;
-    descriptor->isr_high = ((uint32_t)isr >> 16) & 0xFFFF;
+    descriptor->isr_high = ((uint32)isr >> 16) & 0xFFFF;
     descriptor->reserved = 0;
 }
 
 void idt_init(void) {
-    idtr.base = (uint32_t)&idt[0];
-    idtr.limit = (uint16_t)(sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1);
+    idtr.base = (uint32)&idt[0];
+    idtr.limit = (uint16)(sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1);
 
     idt_memset(&idt, 0, sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS);
 
     /*
      * Your current CPU exception ISRs.
      */
-    for (uint8_t vector = 0; vector < 4; vector++) {
+    for (uint8 vector = 0; vector < 4; vector++) {
         idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
     }
 

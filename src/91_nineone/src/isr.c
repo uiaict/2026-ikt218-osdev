@@ -7,11 +7,11 @@ static int isr_line = 0;
 
 static isr_t interrupt_handlers[256];
 
-static inline void outb(uint16_t port, uint8_t value) {
+static inline void outb(uint16 port, uint8 value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));
 }
 
-static void print_uint(uint32_t n, uint8_t color, int x, int y) {
+static void print_uint(uint32 n, uint8 color, int x, int y) {
     char buffer[11];
     int i = 0;
 
@@ -38,7 +38,7 @@ static void print_uint(uint32_t n, uint8_t color, int x, int y) {
 }
 
 
-void register_interrupt_handler(uint8_t n, isr_t handler) {
+void register_interrupt_handler(uint8 n, isr_t handler) {
     interrupt_handlers[n] = handler;
 }
 
@@ -81,15 +81,15 @@ void irq_handler(registers_t* regs) {
 
 
 
-static inline uint8_t inb(uint16_t port) {
-    uint8_t result;
+static inline uint8 inb(uint16 port) {
+    uint8 result;
     __asm__ volatile ("inb %1, %0" : "=a"(result) : "Nd"(port));
     return result;
 }
 #define KEYBOARD_BUFFER_SIZE 256
 
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
-static uint32_t keyboard_buffer_index = 0;
+static uint32 keyboard_buffer_index = 0;
 
 static int keyboard_x = 0;
 static int keyboard_y = 10;
@@ -145,7 +145,7 @@ static void keyboard_print_char(char c) {
 void keyboard_callback(registers_t* regs) {
     (void)regs;
 
-    uint8_t scancode = inb(0x60);
+    uint8 scancode = inb(0x60);
 
     /*
      * Ignore key release events.

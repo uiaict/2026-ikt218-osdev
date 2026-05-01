@@ -1,7 +1,7 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "types.h"
+#include "libc/stdint.h"
 
 
 
@@ -23,13 +23,13 @@
 #define IRQ15 47
 
 typedef struct {
-uint32_t ds;
+uint32 ds;
 
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    uint32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
 
-    uint32_t int_no, err_code;
+    uint32 int_no, err_code;
 
-    uint32_t eip, cs, eflags, useresp, ss;
+    uint32 eip, cs, eflags, useresp, ss;
 } registers_t;
 
 
@@ -41,7 +41,7 @@ void irq_handler(registers_t* regs);
 
 
 
-void register_interrupt_handler(uint8_t n, isr_t handler);
+void register_interrupt_handler(uint8 n, isr_t handler);
 
 
 //Reserved ISR's for exceptions
