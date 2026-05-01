@@ -25,6 +25,8 @@ typedef struct {
 // Function prototype for creating a new SongPlayer instance
 SongPlayer* create_song_player();
 void play_song_impl(Song *song);
+void play_sound(uint32_t frequency);
+void stop_sound();
 
 static Note music_1[] = {
     {E5, 250}, {R, 125}, {E5, 125}, {R, 125}, {E5, 125}, {R, 125},

@@ -1,5 +1,6 @@
 #include "isr.h"
 #include "idt.h"
+#include "ports.h"
 
 // Linking our custom printf function here
 extern void printf(const char* format, ...);

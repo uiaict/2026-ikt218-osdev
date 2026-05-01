@@ -14,6 +14,8 @@ volatile int command_ready = 0;
 volatile int matrix_running = 0; // Matrixin kapanma tusu (q) icin global degisken
 volatile int song_running = 0;   // Sarkiyi durdurma tusu (q) icin global degisken
 
+void execute_command();
+
 // Standart C kutuphanesi olmadigi icin kendi string kiyaslama fonksiyonumuzu (strcmp) yaziyoruz
 int strcmp(const char* s1, const char* s2) {
     while (*s1 && (*s1 == *s2)) {
@@ -21,6 +23,29 @@ int strcmp(const char* s1, const char* s2) {
         s2++;
     }
     return *(unsigned char*)s1 - *(unsigned char*)s2;
+}
+
+static int command_matches_prefix(const char* command) {
+    for (int i = 0; i < cmd_index; i++) {
+        if (command[i] == '\0' || command[i] != cmd_buffer[i]) return 0;
+    }
+    return 1;
+}
+
+static void clear_current_input() {
+    while (cmd_index > 0) {
+        printf("\b");
+        cmd_index--;
+    }
+}
+
+static void write_command_to_input(const char* command) {
+    clear_current_input();
+
+    for (int i = 0; command[i] != '\0' && cmd_index < CMD_BUFFER_SIZE - 1; i++) {
+        cmd_buffer[cmd_index++] = command[i];
+        printf("%c", command[i]);
+    }
 }
 
 void print_prompt() {
@@ -56,6 +81,8 @@ void execute_command() {
         printf("  clear  - Clear the screen\n");
         printf("  ls     - List files in virtual RamFS\n");
         printf("  run    - Run a program (e.g. 'run matrix')\n");
+        printf("  soundtest - Test PC speaker tones\n");
+        printf("  tone   - Hold a PC speaker tone until 'q'\n");
     } else if (strcmp(cmd_buffer, "clear") == 0) {
         for(int i=0; i<25; i++) printf("\n"); // Basit ekran temizleme hilesi
     } else if (strcmp(cmd_buffer, "ls") == 0) {
@@ -87,6 +114,30 @@ void execute_command() {
             if (i < n_songs - 1 && song_running) sleep_busy(2000); // Sarkilar arasi 2 saniye mola
         }
         song_running = 0;
+    } else if (strcmp(cmd_buffer, "soundtest") == 0 || strcmp(cmd_buffer, "beep") == 0) {
+        uint32_t tones[] = {C4, E4, G4, C5, G4, E4, C4};
+        uint32_t n_tones = sizeof(tones) / sizeof(uint32_t);
+
+        printf("Testing PC speaker...\n");
+        for (uint32_t i = 0; i < n_tones; i++) {
+            play_sound(tones[i]);
+            sleep_interrupt(350);
+            stop_sound();
+            sleep_interrupt(80);
+        }
+        printf("Sound test finished.\n");
+    } else if (strcmp(cmd_buffer, "tone") == 0 || strcmp(cmd_buffer, "run tone") == 0) {
+        printf("Playing C4 pulse tone. Press 'q' to stop.\n");
+        song_running = 1;
+
+        while (song_running) {
+            play_sound(C4);
+            sleep_interrupt(120);
+            stop_sound();
+            sleep_interrupt(380);
+        }
+
+        stop_sound();
     } else {
         printf("Unknown command: %s\n", cmd_buffer);
     }
@@ -113,23 +164,22 @@ void shell_handle_keypress(char c) {
         }
     } else if (c == '\t') { // TAB Tusu: Otomatik Tamamlama
         if (cmd_index > 0) {
-            char first_char = cmd_buffer[0];
-            char fifth_char = (cmd_index >= 5) ? cmd_buffer[4] : '\0';
-            
-            while(cmd_index > 0) { printf("\b"); cmd_index--; } // Ekrani temizle
-            
-            const char* comp = "";
-            if (first_char == 'r') {
-                if (fifth_char == 'p') comp = "run playlist.mp3";
-                else comp = "run matrix.exe";
-            } else if (first_char == 'l') comp = "ls";
-            else if (first_char == 'h') comp = "help";
-            else if (first_char == 'c') comp = "clear";
-            
-            // Tamamlanan komutu ekrana bas ve buffera kaydet
-            for(int i=0; comp[i] != '\0'; i++) {
-                cmd_buffer[cmd_index++] = comp[i];
-                printf("%c", comp[i]);
+            const char* commands[] = {
+                "help",
+                "clear",
+                "ls",
+                "run matrix.exe",
+                "run playlist.mp3",
+                "soundtest",
+                "tone"
+            };
+            uint32_t n_commands = sizeof(commands) / sizeof(commands[0]);
+
+            for (uint32_t i = 0; i < n_commands; i++) {
+                if (command_matches_prefix(commands[i])) {
+                    write_command_to_input(commands[i]);
+                    return;
+                }
             }
         }
     } else if (c == 17) { // YUKARI OK: Gecmis komutu getir
