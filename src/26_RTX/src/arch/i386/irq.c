@@ -1,4 +1,5 @@
 #include <irq.h>
+#include <piano/piano.h>
 #include <idt.h>
 #include <io.h>
 #include <libc/stdio.h>
@@ -26,13 +27,7 @@ static char     kb_buf[KB_BUF_SIZE];
 static uint32_t kb_buf_head = 0;
 static uint32_t kb_buf_tail = 0;
 
-static void kb_buf_push(char c) {
-    uint32_t next = (kb_buf_head + 1) % KB_BUF_SIZE;
-    if (next != kb_buf_tail) {
-        kb_buf[kb_buf_head] = c;
-        kb_buf_head = next;
-    }
-}
+
 
 char kb_getchar(void) {
     if (kb_buf_tail == kb_buf_head) return 0;
@@ -63,20 +58,9 @@ static void pic_remap(uint8_t offset1, uint8_t offset2) {
 static void keyboard_handler(registers_t *regs) {
     (void)regs;
     uint8_t scancode = inb(KB_DATA_PORT);
-
-    if (scancode & 0x80)
-        return;
-
-    if (scancode < sizeof(scancode_ascii)) {
-        char c = scancode_ascii[scancode];
-        if (c) {
-            kb_buf_push(c);
-            terminal_set_color(VGA_COLOR_LGREEN);
-            putchar(c);
-            terminal_set_color(VGA_COLOR_BWHITE);
-        }
-    }
+    piano_handle_scancode(scancode);
 }
+
 
 static uint32_t timer_ticks = 0;
 

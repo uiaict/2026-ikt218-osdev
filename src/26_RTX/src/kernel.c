@@ -5,6 +5,7 @@
 #include <kernel/memory.h>
 #include <kernel/pit.h>
 #include <kernel/common.h>
+#include <piano/piano.h>
 
 extern uint32_t end;
 
@@ -136,8 +137,8 @@ void main(uint32_t magic, uint32_t mb_addr)
     }
     printf("[MUSIC] Music test completed.\n");
 
-    // === Keyboard ready ===
-    printf("[KB] Keyboard ready. Type something:\n");
+    // === Assignment 6: Piano ===
+    piano_init();
 
     while (1) {
         __asm__ volatile ("sti\n\thlt");

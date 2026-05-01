@@ -81,12 +81,14 @@ add_executable(uiaos-kernel
 
     # Apps
     apps/song/src/song.cpp
+    apps/piano/src/piano.c
 )
 
 # Include directories for the kernel target
 target_include_directories(uiaos-kernel PUBLIC
     include
     apps/song/include/song
+    apps/piano/include
 )
 
 
