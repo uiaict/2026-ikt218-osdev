@@ -11,13 +11,16 @@ int main() {
     const char *str = "Velkommen til DaviDOS!";
     
     print("Velkommen til FreDDaviDOS!", COLOR(YELLOW, BLUE), 0, 0);
-
+    
     init_kernel_memory(&end);
+
+    init_paging();
 
     print_memory_layout();
 
-    
-
+    void* some_memory = malloc(12345); 
+    void* memory2 = malloc(54321); 
+    void* memory3 = malloc(13331);
 
     while (1) { // coming soon
     }

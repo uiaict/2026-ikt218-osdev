@@ -61,6 +61,10 @@ add_executable(uiaos-kernel
 	src/multiboot2.asm # TODO: Add multiboot2 support
     src/kernel.c
 	src/memory/malloc.c
+	src/libc/stdio.c
+	src/memory/memutils.c
+	src/kernel/system.c
+	src/memory/memory.c
 )
 
 # Include directories for the kernel target
