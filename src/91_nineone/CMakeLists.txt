@@ -62,6 +62,7 @@ add_executable(uiaos-kernel
     src/kernel.c
 	src/memory/malloc.c
 	src/libc/stdio.c
+	src/libc/string.c
 	src/memory/memutils.c
 	src/kernel/system.c
 	src/memory/memory.c
