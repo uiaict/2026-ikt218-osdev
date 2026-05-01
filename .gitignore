@@ -1,6 +1,4 @@
-.vscode/
-.devcontainer/devcontainer.json
-build/
+.vscode
 src/build_*/*
 venv
 !build_*/kernel.bin
