@@ -299,6 +299,78 @@ src/kernel.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/kernel.c.s
 .PHONY : src/kernel.c.s
 
+src/memory/malloc.o: src/memory/malloc.c.o
+.PHONY : src/memory/malloc.o
+
+# target to build an object file
+src/memory/malloc.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/malloc.c.o
+.PHONY : src/memory/malloc.c.o
+
+src/memory/malloc.i: src/memory/malloc.c.i
+.PHONY : src/memory/malloc.i
+
+# target to preprocess a source file
+src/memory/malloc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/malloc.c.i
+.PHONY : src/memory/malloc.c.i
+
+src/memory/malloc.s: src/memory/malloc.c.s
+.PHONY : src/memory/malloc.s
+
+# target to generate assembly for a file
+src/memory/malloc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/malloc.c.s
+.PHONY : src/memory/malloc.c.s
+
+src/memory/memory.o: src/memory/memory.c.o
+.PHONY : src/memory/memory.o
+
+# target to build an object file
+src/memory/memory.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memory.c.o
+.PHONY : src/memory/memory.c.o
+
+src/memory/memory.i: src/memory/memory.c.i
+.PHONY : src/memory/memory.i
+
+# target to preprocess a source file
+src/memory/memory.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memory.c.i
+.PHONY : src/memory/memory.c.i
+
+src/memory/memory.s: src/memory/memory.c.s
+.PHONY : src/memory/memory.s
+
+# target to generate assembly for a file
+src/memory/memory.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memory.c.s
+.PHONY : src/memory/memory.c.s
+
+src/memory/memutils.o: src/memory/memutils.c.o
+.PHONY : src/memory/memutils.o
+
+# target to build an object file
+src/memory/memutils.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memutils.c.o
+.PHONY : src/memory/memutils.c.o
+
+src/memory/memutils.i: src/memory/memutils.c.i
+.PHONY : src/memory/memutils.i
+
+# target to preprocess a source file
+src/memory/memutils.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memutils.c.i
+.PHONY : src/memory/memutils.c.i
+
+src/memory/memutils.s: src/memory/memutils.c.s
+.PHONY : src/memory/memutils.s
+
+# target to generate assembly for a file
+src/memory/memutils.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/memory/memutils.c.s
+.PHONY : src/memory/memutils.c.s
+
 src/multiboot2.o: src/multiboot2.asm.o
 .PHONY : src/multiboot2.o
 
@@ -306,6 +378,54 @@ src/multiboot2.o: src/multiboot2.asm.o
 src/multiboot2.asm.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/multiboot2.asm.o
 .PHONY : src/multiboot2.asm.o
+
+src/pit.o: src/pit.c.o
+.PHONY : src/pit.o
+
+# target to build an object file
+src/pit.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pit.c.o
+.PHONY : src/pit.c.o
+
+src/pit.i: src/pit.c.i
+.PHONY : src/pit.i
+
+# target to preprocess a source file
+src/pit.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pit.c.i
+.PHONY : src/pit.c.i
+
+src/pit.s: src/pit.c.s
+.PHONY : src/pit.s
+
+# target to generate assembly for a file
+src/pit.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pit.c.s
+.PHONY : src/pit.c.s
+
+src/stdio.o: src/stdio.c.o
+.PHONY : src/stdio.o
+
+# target to build an object file
+src/stdio.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/stdio.c.o
+.PHONY : src/stdio.c.o
+
+src/stdio.i: src/stdio.c.i
+.PHONY : src/stdio.i
+
+# target to preprocess a source file
+src/stdio.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/stdio.c.i
+.PHONY : src/stdio.c.i
+
+src/stdio.s: src/stdio.c.s
+.PHONY : src/stdio.s
+
+# target to generate assembly for a file
+src/stdio.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/stdio.c.s
+.PHONY : src/stdio.c.s
 
 # Help Target
 help:
@@ -336,7 +456,22 @@ help:
 	@echo "... src/kernel.o"
 	@echo "... src/kernel.i"
 	@echo "... src/kernel.s"
+	@echo "... src/memory/malloc.o"
+	@echo "... src/memory/malloc.i"
+	@echo "... src/memory/malloc.s"
+	@echo "... src/memory/memory.o"
+	@echo "... src/memory/memory.i"
+	@echo "... src/memory/memory.s"
+	@echo "... src/memory/memutils.o"
+	@echo "... src/memory/memutils.i"
+	@echo "... src/memory/memutils.s"
 	@echo "... src/multiboot2.o"
+	@echo "... src/pit.o"
+	@echo "... src/pit.i"
+	@echo "... src/pit.s"
+	@echo "... src/stdio.o"
+	@echo "... src/stdio.i"
+	@echo "... src/stdio.s"
 .PHONY : help
 
 

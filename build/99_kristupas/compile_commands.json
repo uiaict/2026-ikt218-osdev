@@ -1,27 +1,52 @@
 [
 {
   "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
-  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/kernel.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/kernel.c",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/kernel.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/kernel.c",
   "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/kernel.c"
 },
 {
   "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
-  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/gdt.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/gdt.c",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/gdt.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/gdt.c",
   "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/gdt.c"
 },
 {
   "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
-  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/idt.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/idt.c",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/idt.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/idt.c",
   "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/idt.c"
 },
 {
   "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
-  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/irq.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/irq.c",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/irq.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/irq.c",
   "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/irq.c"
 },
 {
   "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
-  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/keyboard.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/keyboard.c",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/keyboard.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/keyboard.c",
   "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/keyboard.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/stdio.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/stdio.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/stdio.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/malloc.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/malloc.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/malloc.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/memory.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/memory.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/memory.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/memutils.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/memutils.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/memory/memutils.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/99_kristupas",
+  "command": "/usr/local/bin/i686-elf-gcc  -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include -I/workspaces/2026-ikt218-osdev/src/99_kristupas/include/kernel -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/pit.c.o -c /workspaces/2026-ikt218-osdev/src/99_kristupas/src/pit.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/99_kristupas/src/pit.c"
 }
 ]

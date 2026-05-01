@@ -5,6 +5,13 @@
 #include "../include/print.h"
 #include <libc/stdint.h>
 
+#include "../keyboard.h"
+#include "kernel/memory.h"
+#include "kernel/pit.h"
+#include <libc/stdio.h>
+
+extern uint32_t end;
+
 #define VGA_TEXT_BUFFER 0xb8000u
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -62,12 +69,41 @@ void print_backspace() {
     update_cursor();
 }
 
-void main() {
+
+
+void kernel_main() {
     gdt_init();
     idt_init();   
     irq_init(); 
+    keyboard_init();
     asm("sti");  // enable interrupts
-    print_string("Hello World ", 0x07); 
-    print_newline();
 
+    init_kernel_memory(&end); // heap starts just after the kernel binary ends in memory
+    init_paging();            // map virtual addresses to physical - required for safe memory access
+    print_memory_layout();    // print heap bounds so we can verify memory is set up correctly
+    init_pit();               // start timer firing at 1000 Hz - each tick increments our counter by 1
+
+
+    // print_string("Hello World ", 0x07); outdated method pfffff
+    printf("Hello World!\n");
+
+    // Allocate three different sized blocks to verify malloc works
+    void* some_memory = malloc(12345);
+    void* memory2 = malloc(54321);
+    void* memory3 = malloc(13331);
+
+
+    int counter = 0;
+    while(1) {
+        // sleep_busy: keeps CPU in a loop checking the tick counter - wastes CPU cycles
+        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
+        sleep_busy(1000);
+        printf("[%d]: Slept using busy-waiting.\n", counter++);
+        printf("test");
+
+        // sleep_interrupt: halts CPU until next interrupt fires - CPU does nothing while waiting
+        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
+        sleep_interrupt(1000);
+        printf("[%d]: Slept using interrupts.\n", counter++);
+    }
 }

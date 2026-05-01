@@ -55,3 +55,9 @@ void keyboard_handler() {
         print_string(str, 0x07);
     }
 }
+
+void keyboard_init() {
+    // Register keyboard_handler for IRQ1 (PS/2 keyboard)
+    // Now irq_handler will call it automatically when IRQ1 fires
+    irq_install_handler(1, keyboard_handler);
+}
