@@ -1,5 +1,6 @@
 #ifndef SONG_H
 #define SONG_H
+#define NUM_SONGS 8
 
 #include "frequencies.h"
 #include "libc/system.h"
@@ -41,7 +42,7 @@ static Note music_1[] = {
     {R, 125}, {E5, 125}, {C5, 125}, {D5, 125}, {B4, 125}, {R, 125},
 };
 
-static Note starwars_theme[] = {
+static Note music_2[] = {
     // Opening phrase
     {A4, 500}, {A4, 500}, {A4, 500}, 
     {F4, 375}, {C5, 125}, 
@@ -60,7 +61,7 @@ static Note starwars_theme[] = {
 };
 
 
-static Note battlefield_1942_theme[] = {
+static Note music_3[] = {
     // Attempt at the opening part of the Battlefield 1942 theme
     {E4, 500}, {G4, 500}, {B4, 300}, {E5, 200}, 
     {D5, 200}, {B4, 300}, {G4, 500}, {B4, 300}, 
@@ -83,7 +84,7 @@ static Note battlefield_1942_theme[] = {
 };
 
 
-static Note music_2[] = {
+static Note music_4[] = {
     {A4, 200}, {E5, 200}, {A5, 200}, {R, 100}, {A5, 200}, {A5, 200}, {Gs5, 200}, {A5, 200},
     {R, 100}, {E5, 200}, {R, 100}, {E5, 200}, {R, 100}, {E5, 200}, {R, 100}, {E5, 200},
     {A4, 200}, {E5, 200}, {A5, 200}, {R, 100}, {A5, 200}, {A5, 200}, {Gs5, 200}, {A5, 200},
@@ -92,14 +93,14 @@ static Note music_2[] = {
     {R, 100}, {E5, 200}, {R, 100}, {E5, 200}, {R, 100}, {E5, 200}, {R, 100}, {E5, 200}
 };
 
-static Note music_3[] = {
+static Note music_5[] = {
     {E4, 200}, {E4, 200}, {F4, 200}, {G4, 200}, {G4, 200}, {F4, 200}, {E4, 200}, {D4, 200},
     {C4, 200}, {C4, 200}, {D4, 200}, {E4, 200}, {E4, 400}, {R, 200},
     {D4, 200}, {D4, 200}, {E4, 200}, {F4, 200}, {F4, 200}, {E4, 200}, {D4, 200}, {C4, 200},
     {A4, 200}, {A4, 200}, {A4, 200}, {G4, 400}
 };
 
-static Note music_4[] = {
+static Note music_6[] = {
     {C4, 500}, {D4, 500}, {E4, 500}, {C4, 500},
     {C4, 500}, {D4, 500}, {E4, 500}, {C4, 500},
     {E4, 500}, {F4, 500}, {G4, 1000},
@@ -110,18 +111,40 @@ static Note music_4[] = {
     {C4, 500}, {G3, 500}, {C4, 1000}
 };
 
-static Note music_5[] = {
+static Note music_7[] = {
     {E4, 375}, {C4, 375}, {D4, 375}, {A3, 375}, {B3, 375}, {D4, 375}, {C4, 375}, {A3, 375},
     {E4, 375}, {C4, 375}, {D4, 375}, {A3, 375}, {B3, 375}, {D4, 375}, {C4, 375}, {A3, 375},
 };
 
-static Note music_6[] = {
+static Note music_8[] = {
     {F4, 250}, {F4, 250}, {F4, 250}, {C5, 250}, {A_SHARP4, 250}, {G_SHARP4, 250}, {F4, 500},
     {F4, 250}, {F4, 250}, {F4, 250}, {C5, 250}, {A_SHARP4, 250}, {G_SHARP4, 250}, {F4, 500},
     {A_SHARP4, 250}, {A_SHARP4, 250}, {A_SHARP4, 250}, {F5, 250}, {D5, 250}, {C5, 250}, {A_SHARP4, 500},
     {A_SHARP4, 250}, {A_SHARP4, 250}, {A_SHARP4, 250}, {F5, 250}, {D5, 250}, {C5, 250}, {A_SHARP4, 500},
 };
 
+
+static Note* all_songs[] = {
+    music_1,
+    music_2,
+    music_3,
+    music_4,
+    music_5,
+    music_6,
+    music_7,
+    music_8
+};
+
+static uint32_t all_song_lengths[] = {
+    sizeof(music_1) / sizeof(Note),
+    sizeof(music_2) / sizeof(Note),
+    sizeof(music_3) / sizeof(Note),
+    sizeof(music_4) / sizeof(Note),
+    sizeof(music_5) / sizeof(Note),
+    sizeof(music_6) / sizeof(Note),
+    sizeof(music_7) / sizeof(Note),
+    sizeof(music_8) / sizeof(Note)
+};
 
 
 #endif

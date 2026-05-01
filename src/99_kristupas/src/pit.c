@@ -2,6 +2,8 @@
 #include "../include/io.h"
 #include <libc/stdio.h>
 #include "../irq.h"
+extern void music_tick();
+
 
 // Tracks how many milliseconds have passed since PIT was initialized.
 // volatile because it is modified inside an interrupt handler - without this
@@ -13,9 +15,10 @@ uint32_t get_current_tick() {
 }
 
 // Called automatically by the IRQ handler every millisecond.
-// We just increment the tick counter - the sleep functions read this.
+// We just increment the tick counter, the sleep functions read this.
 static void pit_handler() {
     tick++;
+    music_tick();
 }
 
 void init_pit() {

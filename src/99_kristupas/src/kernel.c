@@ -86,12 +86,12 @@ void kernel_main() {
 
 
     // print_string("Hello World ", 0x07); // outdated method pfffff
-    printf("Hello World!\n");
+ //   printf("Hello World!\n");
 
     // Allocate three different sized blocks to verify malloc works
-    void* some_memory = malloc(12345);
-    void* memory2 = malloc(54321);
-    void* memory3 = malloc(13331);
+    //void* some_memory = malloc(12345);
+    //void* memory2 = malloc(54321);
+    //void* memory3 = malloc(13331);
 
 //Commenting out assignment 4 interupts so they dont mess with anything
     //int counter = 0;
@@ -108,18 +108,87 @@ void kernel_main() {
         //printf("[%d]: Slept using interrupts.\n", counter++);
     //}
 
-    Song songs[] = {
-        {starwars_theme, sizeof(starwars_theme) / sizeof(Note)}
-    };
-    uint32_t n_songs = sizeof(songs) / sizeof(Song);
+//    Song songs[] = {
+//        {music_1, sizeof(starwars_theme) / sizeof(Note)}
+  //  };
+    //uint32_t n_songs = sizeof(songs) / sizeof(Song);
 
-    SongPlayer* player = create_song_player();
+    //SongPlayer* player = create_song_player();
 
-    while(1) {
-        for(uint32_t i = 0; i < n_songs; i++) {
-            printf("Song starting...\n");
-            player->play_song(&songs[i]);
-            printf("Song finished.\n");
+    //while(1) {
+    //    for(uint32_t i = 0; i < n_songs; i++) {
+    //        printf("Song starting...\n");
+    //        player->play_song(&songs[i]);
+    //        printf("Song finished.\n");
+    //   }
+    //}
+    // Startup screen - imporvisation
+    printf("----------------------------------------\n");
+    printf("  CryptOS - XOR Encryption Terminal\n");
+    printf("----------------------------------------\n");
+    printf("\n");
+    printf("XOR encryption works by combining each\n");
+    printf("character with a secret key using the\n");
+    printf("XOR operation. The same key decrypts it.\n");
+    printf("\n");
+    printf("Controls:\n");
+    printf("  Ctrl+M - Mute/unmute music\n");
+    printf("  Ctrl+N - Next song\n");
+    printf("  Ctrl+P - Previous song\n");
+    printf("  Please select a key before controlling music\n");
+    printf("\n");
+    printf("Music is playing. Type to encrypt!\n");
+    printf("--------------------------------------\n");
+    printf("\n");
+
+    // get encryption key from user
+    printf("Enter encryption key (one character): ");
+
+    // Wait for a single keypress - read directly from keyboard port
+    // spin until a valid ASCII key is pressed
+    uint8_t key = 0;
+    while (key == 0) {
+        asm volatile("sti; hlt");
+        // keyboard_handler prints the char - we need to also capture it
+        key = get_last_key();
+    }
+    printf("\n");
+
+    uint8_t xor_key = key;
+    printf("Key set to: %c (0x%x)\n", xor_key, xor_key);
+    printf("\n");
+    printf("Now type your message and press Enter:\n");
+    printf("\n");
+
+    // Main encryption loop
+    get_last_key(); //clear
+    while (1) {
+        printf("Plaintext : ");
+        // collect input
+        char buffer[80];
+        uint8_t len = 0;
+        uint8_t c = 0;
+
+        get_last_key(); //clear so it doesnt bug out
+        while (1) {
+            asm volatile("sti; hlt");
+            c = get_last_key();
+            if (c == 0) continue;
+            if (c == '\n') break;
+            if (c == '\b' && len > 0) { len--; continue; }
+            if (len < 79) buffer[len++] = c;
         }
+        buffer[len] = 0;
+        printf("\n");
+
+        // Print encrypted version
+        printf("Encrypted : ");
+        for (uint8_t i = 0; i < len; i++) {
+            uint8_t encrypted = buffer[i] ^ xor_key;
+            // Print as hex since result may not be printable ASCII
+            printf("%x ", encrypted);
+        }
+        printf("\n\n");
     }
 }
+

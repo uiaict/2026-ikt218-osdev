@@ -5,5 +5,6 @@
 
 void keyboard_init();
 void keyboard_handler();
+uint8_t get_last_key();
 
 #endif
