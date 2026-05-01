@@ -68,4 +68,10 @@ extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
 
+
+
+
+
+void keyboard_callback(registers_t* regs);
+
 #endif

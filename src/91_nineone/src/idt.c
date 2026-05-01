@@ -119,9 +119,9 @@ void idt_init(void) {
 
     __asm__ volatile ("lidt %0" : : "m"(idtr));
 
-    /*
-     * Enable hardware interrupts.
-     * Without this, IRQs will not fire.
-     */
+
+}
+
+void idt_enable_interrupts(void) {
     __asm__ volatile ("sti");
 }
