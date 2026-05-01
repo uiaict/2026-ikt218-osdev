@@ -70,8 +70,6 @@ void show_main_menu(void) {
         screen_write("5. Halt OS\n\n");
         screen_write("Press 1-5: ");
 
-        screen_write("Press 1-4: ");
-
         char key = keyboard_get_char();
 
         if (key == '1') {
