@@ -8,7 +8,7 @@
 void main(uint32_t magic, uint32_t mb_info_addr)
 {
     gdt_init();
-    printf("Hello World\n");
+    printf("Hello World\n"); //hello world test
     idt_init();
     isr_init();
     irq_init();
