@@ -9,6 +9,7 @@
 #include "kernel/memory.h"
 #include "kernel/pit.h"
 #include <libc/stdio.h>
+#include "song/song.h"
 
 extern uint32_t end;
 
@@ -69,7 +70,7 @@ void print_backspace() {
     update_cursor();
 }
 
-
+void play_song_impl(Song* song);
 
 void kernel_main() {
     gdt_init();
@@ -84,7 +85,7 @@ void kernel_main() {
     init_pit();               // start timer firing at 1000 Hz - each tick increments our counter by 1
 
 
-    // print_string("Hello World ", 0x07); outdated method pfffff
+    // print_string("Hello World ", 0x07); // outdated method pfffff
     printf("Hello World!\n");
 
     // Allocate three different sized blocks to verify malloc works
@@ -92,18 +93,33 @@ void kernel_main() {
     void* memory2 = malloc(54321);
     void* memory3 = malloc(13331);
 
-
-    int counter = 0;
-    while(1) {
+//Commenting out assignment 4 interupts so they dont mess with anything
+    //int counter = 0;
+    //while(1) {
         // sleep_busy: keeps CPU in a loop checking the tick counter - wastes CPU cycles
-        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
-        sleep_busy(1000);
-        printf("[%d]: Slept using busy-waiting.\n", counter++);
-        printf("test");
+    //    printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
+      //  sleep_busy(1000);
+        //printf("[%d]: Slept using busy-waiting.\n", counter++);
+        //printf("test");
 
         // sleep_interrupt: halts CPU until next interrupt fires - CPU does nothing while waiting
-        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
-        sleep_interrupt(1000);
-        printf("[%d]: Slept using interrupts.\n", counter++);
+    //    printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
+      //  sleep_interrupt(1000);
+        //printf("[%d]: Slept using interrupts.\n", counter++);
+    //}
+
+    Song songs[] = {
+        {starwars_theme, sizeof(starwars_theme) / sizeof(Note)}
+    };
+    uint32_t n_songs = sizeof(songs) / sizeof(Song);
+
+    SongPlayer* player = create_song_player();
+
+    while(1) {
+        for(uint32_t i = 0; i < n_songs; i++) {
+            printf("Song starting...\n");
+            player->play_song(&songs[i]);
+            printf("Song finished.\n");
+        }
     }
 }

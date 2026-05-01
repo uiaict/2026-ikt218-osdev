@@ -403,6 +403,30 @@ src/pit.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/pit.c.s
 .PHONY : src/pit.c.s
 
+src/song/song_player.o: src/song/song_player.cpp.o
+.PHONY : src/song/song_player.o
+
+# target to build an object file
+src/song/song_player.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song/song_player.cpp.o
+.PHONY : src/song/song_player.cpp.o
+
+src/song/song_player.i: src/song/song_player.cpp.i
+.PHONY : src/song/song_player.i
+
+# target to preprocess a source file
+src/song/song_player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song/song_player.cpp.i
+.PHONY : src/song/song_player.cpp.i
+
+src/song/song_player.s: src/song/song_player.cpp.s
+.PHONY : src/song/song_player.s
+
+# target to generate assembly for a file
+src/song/song_player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uiaos-kernel.dir/build.make CMakeFiles/uiaos-kernel.dir/src/song/song_player.cpp.s
+.PHONY : src/song/song_player.cpp.s
+
 src/stdio.o: src/stdio.c.o
 .PHONY : src/stdio.o
 
@@ -469,6 +493,9 @@ help:
 	@echo "... src/pit.o"
 	@echo "... src/pit.i"
 	@echo "... src/pit.s"
+	@echo "... src/song/song_player.o"
+	@echo "... src/song/song_player.i"
+	@echo "... src/song/song_player.s"
 	@echo "... src/stdio.o"
 	@echo "... src/stdio.i"
 	@echo "... src/stdio.s"
