@@ -1,5 +1,5 @@
 #include "libc/stdio.h"
-#include "../terminal.h"
+#include "terminal.h"
 
 #define print terminal_write
 

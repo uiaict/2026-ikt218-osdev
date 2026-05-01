@@ -1,4 +1,5 @@
 #pragma once
+#include "libc/stdint.h"
 
 
-uint64 strlen(const char* str);
+uint32 strlen(const char* str);

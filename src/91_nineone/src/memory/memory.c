@@ -1,8 +1,8 @@
 #include "kernel/system.h"
 #include "kernel/memory.h"
 #include "libc/stdint.h"
-#include "../colors.h"
-#include "../terminal.h"
+#include "colors.h"
+#include "terminal.h"
 
 #define print terminal_write
 

@@ -1,6 +1,6 @@
 #include "kernel/memory.h"
-#include "../src/terminal.h"
-#include "../src/colors.h"
+#include "terminal.h"
+#include "colors.h"
 #include "libc/stdint.h"
 #include "libc/stdio.h"
 #include "kernel/system.h"
@@ -19,8 +19,8 @@ uint32 memory_used = 0;
 // Initialize the kernel memory manager
 void init_kernel_memory(uint32* kernel_end)
 {
-    //print("init_kernel_memory:", COLOR(YELLOW, BLUE), 10, 0);
-    //panic("I AM PANICKING");
+    //print("init_kernel_memory:", COLOR(YELLOW, BLUE), 11, 0);
+    //panic("I AM PANICING");
        
     last_alloc = (uint32)kernel_end + 0x1000;
     heap_begin = last_alloc;
@@ -39,23 +39,23 @@ void print_memory_layout()
 {
     uint8 c = COLOR(YELLOW, BLUE);
 
-    print("Memory used:", COLOR(YELLOW, BLUE), 0, 1);
-    print_uint(memory_used, COLOR(YELLOW, BLUE), 13, 1);
+    print("Memory used:", COLOR(YELLOW, BLUE), 1, 1);
+    print_uint(memory_used, COLOR(YELLOW, BLUE), 14, 1);
 
 
-    print("Heap size (bytes):", c, 0, 2);
-    print_uint(heap_end - heap_begin, c, 18, 2);
+    print("Heap size (bytes):", c, 1, 2);
+    print_uint(heap_end - heap_begin, c, 19, 2);
 
-    print("Heap start: 0x", c, 0, 3);
-    print_uint(heap_begin, c, 16, 3);
+    print("Heap start: 0x", c, 1, 3);
+    print_uint(heap_begin, c, 17, 3);
 
-    print("Heap end: 0x", c, 0, 4);
+    print("Heap end: 0x", c, 1, 4);
     print_uint(heap_end, c, 14, 4);
 
-    print("PHeap start: 0x", c, 0, 5);
+    print("PHeap start: 0x", c, 1, 5);
     print_uint(pheap_begin, c, 18, 5);
 
-    print("PHeap end: 0x", c, 0, 6);
+    print("PHeap end: 0x", c, 1, 6);
     print_uint(pheap_end, c, 16, 6);
 
     /*

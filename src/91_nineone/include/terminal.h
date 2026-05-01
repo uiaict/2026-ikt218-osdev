@@ -13,7 +13,7 @@
  * @param x      Column position (0-79)
  * @param y      Row position (0-24)
  */
-void terminal_putchar(char c, uint8 color, int x, int y);
+void terminal_putchar(uint8 c, uint8 color, int x, int y);
 
 /**
  * @brief Prints a null-terminated string to the screen with automatic wrapping.
