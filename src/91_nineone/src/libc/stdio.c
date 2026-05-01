@@ -1,5 +1,7 @@
 #include "libc/stdio.h"
 #include "terminal.h"
+#include "libc/stdarg.h"
+#include "../colors.h"
 
 #define print terminal_write
 
@@ -29,3 +31,36 @@ void print_uint(uint32 n, uint8 color, int x, int y) {
 
     print(out, color, x, y);
 }
+
+
+int printf(const char* __restrict__ format, ...) 
+{
+    va_list args;
+    va_start(args, format);
+
+    while(*format)
+    {
+        if(*format == '%') 
+        {
+            format++;
+            
+            if(*format == 'd') 
+            {
+                int value = va_arg(args, int);
+
+            }
+        }
+        else 
+        {
+            terminal_putchar(*format, COLOR(WHITE, BLACK));
+        }
+    }
+
+
+    va_end(args);
+
+
+    return length;
+}
+
+
