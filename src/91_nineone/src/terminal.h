@@ -1,7 +1,7 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-#include "types.h"
+#include "libc/stdint.h"
 
 #define VGA_WIDTH  80
 #define VGA_HEIGHT 25
@@ -22,6 +22,6 @@ void terminal_putchar(char c, uint8 color, int x, int y);
  * @param x      Starting column
  * @param y      Starting row
  */
-void print(const char* str, uint8 color, int x, int y);
+void terminal_write(const char* str, uint8 color, int x, int y);
 
 #endif // TERMINAL_H

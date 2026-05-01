@@ -65,6 +65,12 @@ add_executable(uiaos-kernel
 	src/memory/memutils.c
 	src/kernel/system.c
 	src/memory/memory.c
+	src/gdt.c
+    src/gdt_flush.asm
+    src/terminal.c
+	src/idt.c
+	src/isr.c
+	src/isr.asm
 )
 
 # Include directories for the kernel target

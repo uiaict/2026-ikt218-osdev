@@ -1,7 +1,7 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include "types.h" // For å få tak i uint8
+#include "libc/stdint.h" // For å få tak i uint8
 
 // Vga colors (4b fg, 4b bg)
 #define BLACK         0

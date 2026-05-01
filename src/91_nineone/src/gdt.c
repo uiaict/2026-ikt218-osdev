@@ -1,20 +1,20 @@
-#include "types.h"
+#include "gdt.h"
+#include "libc/stdint.h"
 
-struct gdt_entry_struct {
-    uint16 limit_low;           // Limit (0-15)
-    uint16 base_low;            // Base (0-15)
-    uint8  base_middle;         // Base (16-23)
-    uint8  access;              // Access flags
-    uint8  granularity;         // Limit (16-19) + Granularity
-    uint8  base_high;           // Base (24-31)
+struct gdt_entry_struct {    // Must split fields up like this to support ancient 1970s Intel CPU architecture
+    uint16 limit_low;        // Limit (0-15)
+    uint16 base_low;         // Base (0-15)
+    uint8  base_middle;      // Base (16-23)
+    uint8  access;           // Access flags
+    uint8  granularity;      // Limit (16-19) + Granularity
+    uint8  base_high;        // Base (24-31)
 } __attribute__((packed));
 
 typedef struct gdt_entry_struct GdtEntry;
 
-// Denne strukturen sendes til CPU-en (instruksjonen LGDT)
 struct gdt_ptr_struct {
-    uint16 limit;               // GDT size
-    uint32 base;                // Where the GDT starts in memory
+    uint16 limit;            // GDT size
+    uint32 base;             // Where the GDT starts in memory
 } __attribute__((packed));
 
 typedef struct gdt_ptr_struct GdtPtr;

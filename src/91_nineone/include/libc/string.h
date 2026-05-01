@@ -1,4 +1,4 @@
 #pragma once
 
 
-size_t strlen(const char* str);
+uint64 strlen(const char* str);

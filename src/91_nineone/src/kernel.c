@@ -1,14 +1,33 @@
-#include "terminal.c"
+#include "terminal.h"
 #include "colors.h"
 #include "libc/stdint.h"
 #include "kernel/memory.h"
 
 extern uint32_t end;
+#include "gdt.h"
+#include "idt.h"
+#include "isr.h"
 
 int main() {
-    char *video_memory = (char*) 0xB8000; // startadresse for VGA tekstmodus
+    init_gdt();
+    terminal_write("Velkommen til FreDDaviDOS!", COLOR(YELLOW, BLUE), 0, 0);
 
-    const char *str = "Velkommen til DaviDOS!";
+
+    idt_init();
+
+    // Ass 3 
+    register_interrupt_handler(IRQ1, keyboard_callback);
+    idt_enable_interrupts();
+
+
+    terminal_write("IDT loaded", COLOR(WHITE, BLACK), 0, 1);
+
+    asm volatile("int $0x3");
+
+    terminal_write("After interrupt", COLOR(WHITE, BLACK), 0, 3);
+
+    terminal_write("Keyboard input:", COLOR(WHITE, BLACK), 0, 9);
+
     
     print("Velkommen til FreDDaviDOS!", COLOR(YELLOW, BLUE), 0, 0);
     
@@ -23,6 +42,8 @@ int main() {
     void* memory3 = malloc(13331);
 
     while (1) { // coming soon
+    while (1) { // coming soon 
+        __asm__ volatile("hlt");
     }
 
     return 0;
