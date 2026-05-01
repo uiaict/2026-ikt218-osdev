@@ -1,5 +1,5 @@
-#include "idt.h"
-#include "isr.h"
+#include "arch/i386/idt.h"
+#include "arch/i386/isr.h"
 
 
 

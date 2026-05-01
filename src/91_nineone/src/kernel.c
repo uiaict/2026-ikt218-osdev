@@ -4,9 +4,9 @@
 #include "kernel/memory.h"
 
 extern uint32_t end;
-#include "gdt.h"
-#include "idt.h"
-#include "isr.h"
+#include "arch/i386/gdt.h"
+#include "arch/i386/idt.h"
+#include "arch/i386/isr.h"
 
 int main() {
     init_gdt();
