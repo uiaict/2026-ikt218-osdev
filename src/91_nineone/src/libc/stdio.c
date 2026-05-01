@@ -4,7 +4,7 @@
 #define print terminal_write
 
 
-void print_uint(uint32_t n, uint8_t color, int x, int y) {
+void print_uint(uint32 n, uint8 color, int x, int y) {
     char buffer[11];
     int i = 0;
 

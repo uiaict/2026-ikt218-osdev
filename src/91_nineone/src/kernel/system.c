@@ -6,7 +6,7 @@
 
 void panic(const char* message)
 {
-    uint8_t c = COLOR(WHITE, RED);
+    uint8 c = COLOR(WHITE, RED);
 
     print("KERNEL PANIC: ", c, 40, 0);
     print(message, c, 54, 0);

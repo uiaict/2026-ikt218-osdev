@@ -29,9 +29,9 @@ void* memcpy(void* dest, const void* src, size_t count )
 }
 
 // Function to set a block of memory with a 16-bit value
-void* memset16 (void *ptr, uint16_t value, size_t num)
+void* memset16 (void *ptr, uint16 value, size_t num)
 {
-    uint16_t* p = ptr;        // Cast the pointer to uint16_t*
+    uint16* p = ptr;        // Cast the pointer to uint16_t*
     while(num--)
         *p++ = value;         // Set each 2-byte element to the given value
     return ptr;               // Return the pointer to the block of memory
