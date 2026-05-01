@@ -1,7 +1,7 @@
 #include "libc/stdio.h"
 #include "terminal.h"
 #include "libc/stdarg.h"
-#include "../colors.h"
+#include "colors.h"
 
 #define print terminal_write
 
@@ -32,7 +32,7 @@ void print_uint(uint32 n, uint8 color, int x, int y) {
     print(out, color, x, y);
 }
 
-
+/*
 int printf(const char* __restrict__ format, ...) 
 {
     va_list args;
@@ -62,5 +62,5 @@ int printf(const char* __restrict__ format, ...)
 
     return length;
 }
-
+*/
 
