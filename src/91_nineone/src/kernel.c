@@ -10,6 +10,11 @@ extern uint32_t end;
 #include "arch/i386/isr.h"
 #include "pit.h"
 
+#include "Music_Player/song.h"
+
+void play_music(void);
+void play_song_impl(Song* song);
+
 int main() {
     
     init_gdt();
@@ -54,9 +59,23 @@ int main() {
     void* memory3 = malloc(13331);
     draw();
 
-    while (1) { // coming soon 
-        
-    }
+    play_music();
 
+    while (1) {
+    }
     return 0;
+}
+
+void play_music(void) {
+    Song songs[] = {
+        {music_1, sizeof(music_1) / sizeof(Note)}
+    };
+
+    uint32_t n_songs = sizeof(songs) / sizeof(Song);
+
+    while (1) {
+        for (uint32_t i = 0; i < n_songs; i++) {
+            play_song_impl(&songs[i]);
+        }
+    }
 }

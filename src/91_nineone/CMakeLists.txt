@@ -74,6 +74,7 @@ add_executable(uiaos-kernel
 	src/arch/i386/isr.c
 	src/arch/i386/isr.asm
 	src/pit.c
+	src/Music_Player/SongPlayer.cpp
 )
 
 # Include directories for the kernel target
