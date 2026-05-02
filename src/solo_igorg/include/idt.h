@@ -10,4 +10,14 @@
  */
 void idt_initialize(void);
 
+/*
+ * Registers one interrupt gate in IDT.
+ *
+ * vector - interrupts vector number
+ * handler - address´ of assembly ISR/IRQ stub
+ * selector - code segment selector
+ * flags - gate flags
+ */
+void idt_set_gate(uint8_t vector, uint32_t handler, uint16_t selector, uint8_t flags);
+
 #endif

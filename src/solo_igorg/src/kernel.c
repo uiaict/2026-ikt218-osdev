@@ -3,6 +3,7 @@
 #include <gdt.h>
 #include <terminal.h>
 #include <idt.h>
+#include <irq.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -73,22 +74,23 @@ void main(void)
     gdt_initialize();
 
     terminal_initialize();
-    terminal_write("Interrupt test\n");
+    terminal_write("IRQ test\n");
 
     idt_initialize();
+    irq_initialize();
 
-    terminal_write("Triggering interrupt 0x00...\n");
-    __asm__ volatile ("int $0x00");
+    terminal_write("Triggering IRQ0 vector 0x20...\n");
+    __asm__ volatile ("int $0x20");
 
-    terminal_write("Triggering interrupt 0x03...\n");
-    __asm__ volatile ("int $0x03");
+    terminal_write("Triggering IRQ1 vector 0x21...\n");
+    __asm__ volatile ("int $0x21");
 
-    terminal_write("Triggering interrupt 0x04...\n");
-    __asm__ volatile ("int $0x04");
+    terminal_write("Triggering IRQ15 vector 0x2F...\n");
+    __asm__ volatile ("int $0x2F");
 
-    terminal_write("Interrupt test completed\n");
+    terminal_write("IRQ test completed\n");
 
     while (1) {
         __asm__ volatile ("hlt");
     }
-}
+}    
