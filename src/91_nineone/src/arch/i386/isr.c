@@ -91,8 +91,8 @@ static inline uint8 inb(uint16 port) {
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
 static uint32 keyboard_buffer_index = 0;
 
-static int keyboard_x = 0;
-static int keyboard_y = 10;
+static int keyboard_x = 1;
+static int keyboard_y = 14;
 
 static char scancode_ascii[] = {
     0,  27, '1', '2', '3', '4', '5', '6',
