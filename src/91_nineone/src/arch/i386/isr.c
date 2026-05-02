@@ -78,14 +78,6 @@ void irq_handler(registers_t* regs) {
 }
 
 
-
-
-
-static inline uint8 inb(uint16 port) {
-    uint8 result;
-    __asm__ volatile ("inb %1, %0" : "=a"(result) : "Nd"(port));
-    return result;
-}
 #define KEYBOARD_BUFFER_SIZE 256
 
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];

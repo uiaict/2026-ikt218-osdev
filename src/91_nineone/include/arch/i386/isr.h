@@ -69,7 +69,11 @@ extern void irq14(void);
 extern void irq15(void);
 
 
-
+static inline uint8 inb(uint16 port) {
+    uint8 result;
+    __asm__ volatile ("inb %1, %0" : "=a"(result) : "Nd"(port));
+    return result;
+}
 
 
 void keyboard_callback(registers_t* regs);
