@@ -73,9 +73,6 @@ add_executable(uiaos-kernel
 	src/arch/i386/idt.c
 	src/arch/i386/isr.c
 	src/arch/i386/isr.asm
-	src/idt.c
-	src/isr.c
-	src/isr.asm
 	src/pit.c
 )
 

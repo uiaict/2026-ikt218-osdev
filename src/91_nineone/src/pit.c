@@ -1,5 +1,5 @@
 #include "pit.h"
-#include "isr.h"
+#include "arch/i386/isr.h"
 
 static volatile uint32_t pit_ticks = 0;
 

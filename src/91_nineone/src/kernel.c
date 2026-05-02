@@ -8,9 +8,6 @@ extern uint32_t end;
 #include "arch/i386/gdt.h"
 #include "arch/i386/idt.h"
 #include "arch/i386/isr.h"
-#include "gdt.h"
-#include "idt.h"
-#include "isr.h"
 #include "pit.h"
 
 int main() {
@@ -27,24 +24,24 @@ int main() {
 
     init_pit();
 
-    terminal_write("Sleeping busy...", COLOR(WHITE, BLACK), 0, 4);
+    terminal_write("Sleeping busy...", COLOR(WHITE, BLACK), 1, 7);
     sleep_busy(10);
-    terminal_write("Done busy sleep", COLOR(WHITE, BLACK), 0, 5);
+    terminal_write("Done busy sleep", COLOR(WHITE, BLACK), 1, 8);
 
-    terminal_write("Sleeping interrupt...", COLOR(WHITE, BLACK), 0, 6);
+    terminal_write("Sleeping interrupt...", COLOR(WHITE, BLACK), 1, 9);
     sleep_interrupt(10);
 
-    terminal_write("Done interrupt sleep", COLOR(WHITE, BLACK), 0, 7);
+    terminal_write("Done interrupt sleep", COLOR(WHITE, BLACK), 1, 10);
 
 
 
-    terminal_write("IDT loaded", COLOR(WHITE, BLACK), 1, 2);
+    terminal_write("IDT loaded", COLOR(WHITE, BLACK), 1, 11);
 
     asm volatile("int $0x3");
 
-    terminal_write("After interrupt", COLOR(WHITE, BLACK), 1, 3);
+    terminal_write("After interrupt", COLOR(WHITE, BLACK), 1, 12);
 
-    terminal_write("Keyboard input:", COLOR(WHITE, BLACK), 1, 9);
+    terminal_write("Keyboard input:", COLOR(WHITE, BLACK), 1, 13);
     
     init_kernel_memory(&end);
 

@@ -1,7 +1,7 @@
 #ifndef PIT_H
 #define PIT_H
 
-#include "types.h"
+#include "libc/stdint.h"
 
 #define PIT_BASE_FREQUENCY 1193180
 #define PIT_TARGET_FREQUENCY 1000

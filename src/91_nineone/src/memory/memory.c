@@ -42,7 +42,7 @@ void paging_enable()
 void init_paging()
 {
     //printf("Setting up paging\n");
-    print("SETTING UP PAGING", COLOR(RED, WHITE), 0, 10);
+    print("SETTING UP PAGING", COLOR(RED, WHITE), 50, 1);
     page_directory = (uint32*)0x400000;      // Set the page directory to start at 4 MB
     page_dir_loc = (uint32)page_directory;  // Set the physical address of the page directory
     last_page = (uint32 *)0x404000;         // Set the last page to start at 4 MB + 4 KB
@@ -53,5 +53,5 @@ void init_paging()
     paging_map_virtual_to_phys(0, 0);         // Map the first 4 MB of virtual memory to the first 4 MB of physical memory
     paging_map_virtual_to_phys(0x400000, 0x400000); // Map the next 4 MB of virtual memory to the next 4 MB of physical memory
     paging_enable();                          // Enable paging
-    print("PAGING SUCCESSFULLY ENABLED", COLOR(BLUE, YELLOW), 0, 10);
+    print("PAGING SUCCESSFULLY ENABLED", COLOR(BLUE, YELLOW), 50, 2);
 }
