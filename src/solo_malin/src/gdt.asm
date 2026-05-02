@@ -15,7 +15,7 @@ gdt_flush:
     mov es, ax          ; Set Extra Segment 
     mov fs, ax          ; Set FS segment
     mov gs, ax          ; Set GS segment
-    mov ss, ax          ; Set stack segment
+    mov ss, ax          ; Set stack
     
     jmp 0x08:return
 

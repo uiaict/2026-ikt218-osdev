@@ -1,6 +1,6 @@
 #include "gdt.h"
 
-#define GDT_ENTRIES 5   // Number of entires in the GDT
+//#define GDT_ENTRIES 5   // Number of entires in the GDT
 
 struct gdt_entry gdt[GDT_ENTRIES];  // Array holding all GDT entires
 struct gdt_ptr gdt_ptr;     // Pointer structure used to load the GDT
