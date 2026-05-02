@@ -37,8 +37,9 @@ void init_kernel_memory(uint32* kernel_end)
 // Print the current memory layout
 void print_memory_layout()
 {
-    uint8 c = COLOR(YELLOW, BLUE);
+    //uint8 c = COLOR(YELLOW, BLUE);
 
+    /*
     print("Memory used:", COLOR(YELLOW, BLUE), 1, 1);
     print_uint(memory_used, COLOR(YELLOW, BLUE), 13, 1);
 
@@ -57,15 +58,16 @@ void print_memory_layout()
 
     print("PHeap end:   0x", c, 1, 6);
     print_uint(pheap_end, c, 16, 6);
-
-    /*
-    printf("Memory used: %d bytes\n", memory_used);
-    printf("Memory free: %d bytes\n", heap_end - heap_begin - memory_used);
-    printf("Heap size: %d bytes\n", heap_end - heap_begin);
-    printf("Heap start: 0x%x\n", heap_begin);
-    printf("Heap end: 0x%x\n", heap_end);
-    printf("PHeap start: 0x%x\nPHeap end: 0x%x\n", pheap_begin, pheap_end);
     */
+
+    
+    printf("Memory used: %u bytes", memory_used);
+    printf("Memory free: %u bytes", heap_end - heap_begin - memory_used);
+    printf("Heap size: %u bytes", heap_end - heap_begin);
+    printf("Heap start: 0x%u", heap_begin); // change u with x (hexadecimal) later
+    printf("Heap end: 0x%u", heap_end);
+    printf("PHeap start: 0x%uPHeap end: 0x%u", pheap_begin, pheap_end);
+    
 }
 
 
