@@ -1,6 +1,8 @@
 #include "arch/i386/gdt.h"
 #include "stdint.h"
 
+#define GDT_ENTRIES 3
+
 /*
 * Global Descriptor Table (GDT)
 *
@@ -10,52 +12,42 @@
 */
 
 // GDT descriptor stores the base, limit, and access information as one 8-byte segment.
-struct gdt_entry {
+typedef struct {
     uint16_t limit_low;
     uint16_t base_low;
     uint8_t base_middle;
     uint8_t access;
     uint8_t granularity;
     uint8_t base_high;
-} __attribute__((packed));
+} __attribute__((packed)) gdt_t;
 
 // GDT pointer stores the table limit and base memory address
 // It tells the CPU where the GDT is stored and its size
-struct gdt_ptr {
+typedef struct {
     uint16_t limit; // Last byte in the descriptor table (size)
-    uint32_t base; // The memory address of the first gdt_entry
-} __attribute__((packed));
+    uint32_t base; // The memory address of the first gdt_t
+} __attribute__((packed)) gdt_ptr_t;
 
-static struct gdt_entry gdt[3];
-static struct gdt_ptr gdt_descriptor;
+static gdt_t gdt[GDT_ENTRIES];
+static gdt_ptr_t gdt_descriptor;
 
 // Encodes a GDT descriptor
-static void gdt_set_entry(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity) {
-    gdt[index].base_low = (uint16_t) (base & 0xFFFF);
-    gdt[index].base_middle = (uint8_t) (base >> 16 & 0xFF);
-    gdt[index].base_high = (uint8_t) (base >> 24 & 0xFF);
+static void set_gdt_descriptor(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity) {
+    gdt_t *descriptor = &gdt[index];
 
-    gdt[index].limit_low = (uint16_t) (limit & 0xFFFF);
-    gdt[index].granularity = (uint8_t) (limit >> 16 & 0x0F);
+    descriptor->base_low = (uint16_t) (base & 0xFFFF);
+    descriptor->base_middle = (uint8_t) (base >> 16 & 0xFF);
+    descriptor->base_high = (uint8_t) (base >> 24 & 0xFF);
 
-    gdt[index].granularity |= (uint8_t) (granularity & 0xF0);
+    descriptor->limit_low = (uint16_t) (limit & 0xFFFF);
+    descriptor->granularity = (uint8_t) (limit >> 16 & 0x0F);
 
-    gdt[index].access = access;
+    descriptor->granularity |= (uint8_t) (granularity & 0xF0);
+
+    descriptor->access = access;
 }
 
-void gdt_init(void) {
-    gdt_descriptor.limit = (uint16_t) (sizeof(gdt) - 1);
-    gdt_descriptor.base = (uint32_t) &gdt;
-
-    // NULL descriptor
-    gdt_set_entry(0, 0, 0, 0, 0);
-
-    // Kernel Mode Code Segment
-    gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-
-    // Kernel Mode Data Segment
-    gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
-
+void load_gdt() {
     // Loads the gdt_descriptor into the GDT register
     __asm__ volatile ("lgdt %0" : : "m"(gdt_descriptor));
 
@@ -73,4 +65,20 @@ void gdt_init(void) {
         :
         : "ax", "memory"
     );
+}
+
+void init_gdt() {
+    gdt_descriptor.limit = (uint16_t) (sizeof(gdt) - 1);
+    gdt_descriptor.base = (uint32_t) &gdt;
+
+    // NULL descriptor
+    set_gdt_descriptor(0, 0, 0, 0, 0);
+
+    // Kernel Mode Code Segment
+    set_gdt_descriptor(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+
+    // Kernel Mode Data Segment
+    set_gdt_descriptor(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+
+    load_gdt();
 }
