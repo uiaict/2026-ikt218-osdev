@@ -7,6 +7,7 @@
 #include <memory.h>
 #include <paging.h>
 #include <pit.h>
+#include <song_player.h>
 
 /*
  * The end of kernel image in memory.
@@ -117,7 +118,7 @@ void main(void)
     terminal_initialize();
 
     terminal_write("UiA OS\n");
-    terminal_write("Memory and PIT test\n\n");
+    terminal_write("PC speaker music player\n\n");
 
     idt_initialize();
     irq_initialize();
@@ -128,63 +129,21 @@ void main(void)
     terminal_write("Initializing paging...\n");
     init_paging();
 
-    terminal_write("\nMemory layout before malloc:\n");
-    print_memory_layout();
-
-    terminal_write("\nTesting malloc:\n");
-
-    void* memory1 = malloc(12345);
-    void* memory2 = malloc(54321);
-    void* memory3 = malloc(13331);
-
-    terminal_write("  malloc(12345): ");
-    terminal_write_hex((uint32_t)memory1);
-    terminal_putchar('\n');
-
-    terminal_write("  malloc(54321): ");
-    terminal_write_hex((uint32_t)memory2);
-    terminal_putchar('\n');
-
-    terminal_write("  malloc(13331): ");
-    terminal_write_hex((uint32_t)memory3);
-    terminal_putchar('\n');
-
-    terminal_write("\nMemory layout after malloc:\n");
-    print_memory_layout();
-
-    terminal_write("\nInitializing PIT...\n");
+    terminal_write("Initializing PIT...\n");
     init_pit();
 
     /*
-     * Enables hardware interrupts so IRQ0 from PIT can update ticks.
+     * Enables hardware interrupts.
+     * PIT IRQ0 must be active because play_song_impl() uses sleep_interrupt().
      */
     __asm__ volatile ("sti");
 
-    terminal_write("\nTesting PIT sleep functions:\n");
+    terminal_write("\nStarting music player...\n");
+    play_music();
 
-    uint32_t counter = 0;
+    terminal_write("\nMusic player test completed.\n");
 
     while (1) {
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Sleeping with busy-waiting...\n");
-
-        sleep_busy(1000);
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Slept using busy-waiting.\n");
-        counter++;
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Sleeping with interrupts...\n");
-
-        sleep_interrupt(1000);
-
-        terminal_write("[");
-        terminal_write_dec(counter);
-        terminal_write("] Slept using interrupts.\n");
-        counter++;
+        __asm__ volatile ("hlt");
     }
 }
