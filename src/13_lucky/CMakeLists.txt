@@ -65,6 +65,7 @@ add_executable(lucky13-kernel
         src/kernel/malloc.c
         src/kernel/memutils.c
         src/kernel/memory.cpp
+        src/kernel/pit.c
 
         src/arch/i386/gdt.c
         src/arch/i386/idt.c

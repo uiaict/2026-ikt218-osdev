@@ -1,8 +1,10 @@
+#include "stdbool.h"
 #include "stdio.h"
 #include "arch/i386/gdt.h"
 #include "arch/i386/idt.h"
 #include "arch/i386/isr.h"
 #include "kernel/memory.h"
+#include "kernel/pit.h"
 
 // This symbol comes from linker.ld and it marks where the kernel ends in memory
 extern uint32_t end;
@@ -13,9 +15,10 @@ void kernel_main(unsigned long magic, unsigned long multiboot_info) {
     init_gdt();
     init_idt();
     init_isr();
+    init_pit();
     enable_interrupts();
 
-    // Initialize the kernel memory
+    // Initialize the kernel memory and paging
     init_kernel_memory(&end);
     init_paging();
     print_memory_layout();
@@ -38,7 +41,15 @@ void kernel_main(unsigned long magic, unsigned long multiboot_info) {
     __asm__ volatile ("int $0x1");
     __asm__ volatile ("int $0x2");
 
-    for (;;) {
-        __asm__ volatile ("hlt");
+    uint32_t counter = 0;
+    while (true) {
+        // Assignment 4 PIT demo: compare active spinning with interrupt-driven sleeping.
+        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
+        sleep_busy(1000);
+        printf("[%d]: Slept using busy-waiting.\n", counter++);
+
+        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
+        sleep_interrupt(1000);
+        printf("[%d]: Slept using interrupts.\n", counter++);
     }
 }

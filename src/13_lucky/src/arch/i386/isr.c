@@ -1,4 +1,5 @@
 #include "arch/i386/idt.h"
+#include "kernel/pit.h"
 #include "stdio.h"
 #include "stdint.h"
 
@@ -7,6 +8,7 @@
 #define PIC2_COMMAND 0xA0
 #define PIC2_DATA 0xA1
 #define PIC_EOI 0x20
+#define PIT_IRQ 32
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_IRQ 33
 #define KEYBOARD_BUFFER_SIZE 256
@@ -103,13 +105,14 @@ void init_isr(void) {
 
 void isr_handler(uint32_t interrupt_number) {
     printf("Interrupt %i triggered\n", (int) interrupt_number);
-
-    // for (;;) {
-    // __asm__ volatile ("hlt");
-    // }
 }
 
 void irq_handler(uint32_t interrupt_number) {
+    // IRQ0 is the PIT and each timer interrupt advances the sleep tick counter
+    if (interrupt_number == PIT_IRQ) {
+        pit_tick();
+    }
+
     if (interrupt_number == KEYBOARD_IRQ) {
         keyboard_logger();
     }
