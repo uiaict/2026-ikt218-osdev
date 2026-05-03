@@ -144,9 +144,9 @@ static void stdio_putchar(char c, uint8 color, int* x, int* y)
 
     (*x)++;
 
-    if(*x >= 80) 
+    if(*x >= 79) 
     {
-        *x= 0;
+        *x= 1;
         (*y)++;
     }
 }
@@ -190,6 +190,11 @@ static int vprintf_color(uint8 color, const char* format, va_list args)
     currentRowNumber++;
 
     return length;
+}
+
+void resetRowNumber() 
+{
+    currentRowNumber = 1;
 }
 
 

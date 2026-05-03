@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "colors.h"
+#include "libc/stdio.h"
 
 void terminal_putchar(uint8 c, uint8 color, int x, int y) {
     const int index = y*80 + x;
@@ -70,4 +71,9 @@ void terminal_clear(uint8 color)
             vga_buffer[y * VGA_WIDTH-1 + x] = empty;
         }
     }
+
+    resetRowNumber();
 }
+
+    
+

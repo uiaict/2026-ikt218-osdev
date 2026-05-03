@@ -78,6 +78,7 @@ add_executable(uiaos-kernel
 	src/pit.c
 	src/Music_Player/SongPlayer.cpp
 	src/keyboard.c
+	src/apps/typegame/typegame.c
 )
 
 # Include directories for the kernel target
