@@ -9,13 +9,13 @@ DISK_PATH="${2:-$PROJECT_DIR/build/13_lucky/disk.iso}"
 
 if [[ ! -f "$KERNEL_PATH" ]]; then
     echo "Missing kernel image: $KERNEL_PATH"
-    echo "Build the uiaos-create-image target first."
+    echo "Build the lucky13-create-image target first."
     exit 1
 fi
 
 if [[ ! -f "$DISK_PATH" ]]; then
     echo "Missing disk image: $DISK_PATH"
-    echo "Build the uiaos-create-image target first."
+    echo "Build the lucky13-create-image target first."
     exit 1
 fi
 

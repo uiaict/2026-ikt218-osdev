@@ -45,7 +45,7 @@ void idt_set_gate(uint8_t index, uint32_t base, uint8_t attributes) {
     descriptor->base_high = (uint16_t) (base >> 16 & 0xFFFF);
 }
 
-static void load_idt(void) {
+void load_idt(void) {
     __asm__ volatile ("lidt %0" : : "m"(idt_descriptor));
 }
 

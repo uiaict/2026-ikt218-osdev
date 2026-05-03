@@ -6,6 +6,7 @@
 static volatile uint16_t *const VGA_MEMORY = (volatile uint16_t *) 0xB8000;
 static const uint8_t VGA_COLOR = 0x0F;
 static const size_t VGA_WIDTH = 80;
+static const char HEX_DIGITS[] = "0123456789abcdef";
 static size_t terminal_row;
 static size_t terminal_column;
 
@@ -45,6 +46,27 @@ static int print_int(int value) {
     return count + (value < 0 ? 1 : 0);
 }
 
+static int print_hex(unsigned int value) {
+    char digits[8];
+    int count = 0;
+
+    if (value == 0) {
+        putchar('0');
+        return 1;
+    }
+
+    while (value > 0) {
+        digits[count++] = HEX_DIGITS[value & 0xF];
+        value >>= 4;
+    }
+
+    while (count > 0) {
+        putchar(digits[--count]);
+    }
+
+    return count;
+}
+
 int putchar(int c) {
     if (c == '\b') {
         if (terminal_column > 0) {
@@ -72,6 +94,10 @@ int putchar(int c) {
     return c;
 }
 
+// Prints to terminal with supported formatting:
+// %s for strings
+// %d, %i for signed decimal
+// %x for lowercase hexadecimal
 int printf(const char *__restrict__ format, ...) {
     va_list args;
     int written = 0;
@@ -89,6 +115,9 @@ int printf(const char *__restrict__ format, ...) {
             i++;
         } else if (format[i] == '%' && (format[i + 1] == 'i' || format[i + 1] == 'd')) {
             written += print_int(va_arg(args, int));
+            i++;
+        } else if (format[i] == '%' && format[i + 1] == 'x') {
+            written += print_hex(va_arg(args, unsigned int));
             i++;
         } else {
             putchar(format[i]);
