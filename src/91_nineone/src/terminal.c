@@ -12,8 +12,8 @@ void terminal_write(const char* str, uint8 color, int x, int y) {
     const uint8* u_str = (const uint8*)str;
     while (*u_str) {
         terminal_putchar(*u_str++, color, x++, y);
-        if (x >= 80) { // wrapping
-            x = 0;
+        if (x >= 79) { // wrapping
+            x = 1;
             y++;
         }
     }
