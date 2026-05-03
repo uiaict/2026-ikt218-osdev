@@ -2,7 +2,7 @@
 #include "isr.h"
 #include "irq.h"
 #include "util.h"
-
+#include "memory.h"
 
 struct idt_entry idt[IDT_ENTRIES];
 struct idt_ptr idt_ptr;
