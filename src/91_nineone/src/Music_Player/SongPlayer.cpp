@@ -19,6 +19,7 @@ static inline uint8_t inb(uint16_t port) {
 #define PIT_COMMAND_PORT 0x43
 #define PIT_CHANNEL_2_PORT 0x42
 #define PIT_FREQUENCY 1193182
+
 static void enable_speaker() {
     uint8_t tmp = inb(PC_SPEAKER_PORT);
     outb(PC_SPEAKER_PORT, tmp | 0x03);
@@ -29,12 +30,18 @@ static void disable_speaker() {
     outb(PC_SPEAKER_PORT, tmp & ~0x03);
 }
 
+static void stop_sound() {
+    uint8_t tmp = inb(PC_SPEAKER_PORT);
+    outb(PC_SPEAKER_PORT, tmp & ~0x03);
+}
+
 static void play_sound(uint32_t frequency) {
     if (frequency == 0) {
+        stop_sound();
         return;
     }
 
-    uint32_t divisor = PIT_FREQUENCY / frequency;
+    uint16_t divisor = (uint16_t)(PIT_FREQUENCY / frequency);
 
     outb(PIT_COMMAND_PORT, 0xB6);
     outb(PIT_CHANNEL_2_PORT, divisor & 0xFF);
@@ -43,25 +50,14 @@ static void play_sound(uint32_t frequency) {
     enable_speaker();
 }
 
-static void stop_sound() {
-    uint8_t tmp = inb(PC_SPEAKER_PORT);
-    outb(PC_SPEAKER_PORT, tmp & ~0x03);
-}
-
 extern "C" void play_song_impl(Song* song) {
     for (size_t i = 0; i < song->note_count; i++) {
-        if (song->notes[i].frequency == 0) {
-            stop_sound();
-            sleep_interrupt(song->notes[i].duration);
-            continue;
-        }
+        Note* note = &song->notes[i];
 
-        play_sound(song->notes[i].frequency);
-        sleep_interrupt(song->notes[i].duration);
-
-        stop_sound();
-        sleep_interrupt(30);
+        play_sound(note->frequency);
+        sleep_interrupt(note->duration);
     }
 
     stop_sound();
+    disable_speaker();
 }
