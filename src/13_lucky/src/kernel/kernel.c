@@ -7,6 +7,8 @@
 // This symbol comes from linker.ld and it marks where the kernel ends in memory
 extern uint32_t end;
 
+extern void test_new_operator(void);
+
 void kernel_main(unsigned long magic, unsigned long multiboot_info) {
     init_gdt();
     init_idt();
@@ -26,6 +28,10 @@ void kernel_main(unsigned long magic, unsigned long multiboot_info) {
     void *b = malloc(54321);
     void *c = malloc(13331);
     printf("malloc test: 0x%x 0x%x 0x%x\n", a, b, c);
+    free(b);
+    printf("free test: released 0x%x\n", b);
+
+    test_new_operator();
 
     // Interrupt test
     __asm__ volatile ("int $0x0");

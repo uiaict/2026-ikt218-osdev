@@ -64,6 +64,7 @@ add_executable(lucky13-kernel
         src/kernel/memory.c
         src/kernel/malloc.c
         src/kernel/memutils.c
+        src/kernel/memory.cpp
 
         src/arch/i386/gdt.c
         src/arch/i386/idt.c
@@ -80,7 +81,7 @@ target_include_directories(lucky13-kernel PUBLIC include include/libc)
 # Specify compile options for C and C++
 target_compile_options(lucky13-kernel PRIVATE
         $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-        $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -fno-exceptions -fno-rtti -g>
         $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
 )
 

@@ -1,6 +1,9 @@
 #pragma once
+#include "cdefs.h"
 #include "stddef.h"
 #include "stdint.h"
+
+EXTERN_C_BEGIN
 
 typedef struct {
     uint8_t status;
@@ -28,3 +31,5 @@ void init_paging();
 void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys);
 
 void print_memory_layout();
+
+EXTERN_C_END
