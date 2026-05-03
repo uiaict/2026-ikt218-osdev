@@ -14,6 +14,7 @@ extern int current_menu;
 
 void init_menu();
 void draw_window(const char* title);
+void draw_vertical_line(int x);
 void print_button(struct button* btn, bool is_selected, int x, int y);
 
 
