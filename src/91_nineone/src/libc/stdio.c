@@ -7,7 +7,9 @@
 
 static void stdio_putchar(char c, uint8 color, int* x, int* y);
 static int vprintf_color(uint8 color, const char* format, va_list args);
+static int print_hex(uint32 n, uint8 color, int* x, int* y);
 int print_uint2(uint32 n, uint8 color, int* x, int* y);
+static int print_int(int n, uint8 color, int* x, int* y);
 
 
 static int currentRowNumber = 1;
@@ -36,6 +38,36 @@ void print_uint(uint32 n, uint8 color, int x, int y) {
     out[j] = '\0';
 
     print(out, color, x, y);
+}
+
+static int print_hex(uint32 n, uint8 color, int* x, int* y)
+{
+    char buffer[9];
+    int i = 0;
+    int count = 0;
+
+    if (n == 0) {
+        stdio_putchar('0', color, x, y);
+        return 1;
+    }
+
+    while (n > 0) {
+        uint32 digit = n % 16;
+
+        if (digit < 10)
+            buffer[i++] = '0' + digit;
+        else
+            buffer[i++] = 'a' + (digit - 10);
+
+        n /= 16;
+    }
+
+    while (i > 0) {
+        stdio_putchar(buffer[--i], color, x, y);
+        count++;
+    }
+
+    return count;
 }
 
  // heart-aching
@@ -91,6 +123,21 @@ int print_uint2(uint32 n, uint8 color, int* x, int* y)
     return count;
 }
 
+static int print_int(int n, uint8 color, int* x, int* y)
+{
+    int count = 0;
+
+    if (n < 0)
+    {
+        stdio_putchar('-', color, x, y);
+        count++;
+        n = -n;
+    }
+
+    count += print_uint2((uint32)n, color, x, y);
+    return count;
+}
+
 static void stdio_putchar(char c, uint8 color, int* x, int* y) 
 {
     terminal_putchar(c, color, *x, *y);
@@ -119,6 +166,16 @@ static int vprintf_color(uint8 color, const char* format, va_list args)
             {
                 int value = va_arg(args, int);
                 length += print_uint2(value, color, &currentX, &currentRowNumber);
+            }
+            else if(*format == 'x') 
+            {
+                uint32 value = va_arg(args, uint32);
+                length += print_hex(value, color, &currentX, &currentRowNumber);
+            }
+            else if(*format == 'd') 
+            {
+                int value = va_arg(args, int);
+                length += print_int(value, color, &currentX, &currentRowNumber);
             }
         }
         else 
