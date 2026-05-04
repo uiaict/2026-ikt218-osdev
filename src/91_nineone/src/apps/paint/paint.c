@@ -40,24 +40,26 @@ static int selected_item = 0;
 static int mode = MODE_MENU;
 static int x, y = 10;
 static int v_x, v_y = 0;
-static int brush = BRUSH_PAINT;
+static int brush = BRUSH_PAINT; // if the brush is painting or erasing
 static uint8 current_color = WHITE;
+
+// color position in the color picker grid (0-3 for both x and y)
 static int color_x = WHITE % 4;
 static int color_y = WHITE / 4;
 
 static uint8* saved_painting = NULL; // Store the color of each cell in the paint area for saving/loading
 
 void save_changes() {
-    terminal_write("Saving", COLOR(YELLOW, BLACK), 72, 14);
+    terminal_write("Saving", COLOR(YELLOW, BLACK), 72, 15);
     for (size_t i = 0; i < CANVAS_HEIGHT; i++){
         for (size_t j = 0; j < CANVAS_WIDTH; j++){
             int x_pos = CANVAS_START_X + j; // Calculate the top-left corner of the cell
             int y_pos = CANVAS_START_Y + i;
-            uint8 color = terminal_getbgcolor(x_pos, y_pos); // Get the color of the cell (assuming the entire cell is the same color)
+            uint8 color = terminal_getbgcolor(x_pos, y_pos); // Get the color of the cell (bgcolor)
             saved_painting[i*CANVAS_WIDTH + j] = color; // Save the color in the array
         }
     }
-    terminal_write("Saved ", COLOR(GREEN, BLACK), 72, 14);
+    terminal_write("Saved ", COLOR(GREEN, BLACK), 72, 15);
 }
 
 void load_saved_painting() {
@@ -70,20 +72,20 @@ void load_saved_painting() {
             terminal_setbgcolor(color, x_pos, y_pos); // Set the cell to the saved color
         }
     }
-    terminal_write("Loaded", COLOR(GREEN, BLACK), 72, 17);
+    terminal_write("Loaded", COLOR(GREEN, BLACK), 72, 18);
 }
 
-void attempt_setchar(char c, int x, int y) {
+void attempt_setchar(char c, int x, int y) { // set the character at the given coordinates if they are within the paint area (used for drawing the crosshair, so it doesnt draw outside the paint area)
     if (x < CANVAS_START_X || x > CANVAS_START_X + CANVAS_WIDTH - 1 || y < CANVAS_START_Y || y > CANVAS_START_Y + CANVAS_HEIGHT - 1) return; // Outside paint area
     terminal_setchar(c, x, y); // Full block
 }
 
-void attempt_setcharfg(char c, uint8 color_fg, int x, int y) {
+void attempt_setcharfg(char c, uint8 color_fg, int x, int y) { // same as attempt_setchar but includes setting foreground color
     if (x < CANVAS_START_X || x > CANVAS_START_X + CANVAS_WIDTH - 1 || y < CANVAS_START_Y || y > CANVAS_START_Y + CANVAS_HEIGHT - 1) return; // Outside paint area
     terminal_setcharfg(c, color_fg, x, y); // Full block
 }
 
-void draw_cross() {
+void draw_cross() { // crosshair showing where the brush is
     int x_pos = x / POS_MUL;
     int y_pos = y / POS_MUL;
     uint8 color = brush == BRUSH_PAINT ? WHITE : RED;
@@ -94,13 +96,9 @@ void draw_cross() {
     attempt_setcharfg(0xC5, color, x_pos, y_pos); // ┼
 }
 
-void enter_paint_mode() {
+void enter_paint_mode() { // switching from erase to paint, should redraw the crosshair (white crosshair for paint, red crosshair for erase)
     mode = MODE_PAINT;
     draw_cross();
-
-    if (saved_painting == NULL) {
-        saved_painting = (uint8*)malloc(sizeof(uint8) * CANVAS_HEIGHT * CANVAS_WIDTH);
-    }
 }
 
 struct button paint_menu[] = {
@@ -121,9 +119,9 @@ static void draw_buttons() {
 }
 
 void handle_paint_menu_keyboard(char c) {
-    terminal_write("      ", COLOR(GREEN, BLACK), 72, 14); // Clear "Saved"/"Loaded" message when navigating menu
-    terminal_write("      ", COLOR(GREEN, BLACK), 72, 17);
-    switch (c) {
+    terminal_write("      ", COLOR(GREEN, BLACK), 72, 15); // Clear "Saved"/"Loaded" message when navigating menu
+    terminal_write("      ", COLOR(GREEN, BLACK), 72, 18);
+    switch (c) { // button navigation with W and S, click them with Enter
         case 'w':
             selected_item = (selected_item - 1 + NUM_OPTIONS) % NUM_OPTIONS;
             break;
@@ -137,18 +135,18 @@ void handle_paint_menu_keyboard(char c) {
     draw_buttons();
 }
 
-void draw_x(int x, int y) { // Draws an X over the color in the color picker
-    int8 color = (y < 1) ? WHITE : BLACK; // Make sure the X is visible on top row (where all colors are dark)
+void draw_x(int x, int y) { // Draws an x ( >< ) over the color in the color picker
+    int8 color = (y < 1) ? WHITE : BLACK; // Make sure the x is visible on top row (where all colors are dark)
     terminal_setcharfg(0x3E, color, COLOR_PICKER_START_X + x*2, COLOR_PICKER_START_Y + y); // >
     terminal_setcharfg(0x3C, color, COLOR_PICKER_START_X + x*2 + 1, COLOR_PICKER_START_Y + y); // <
 }
 
-void undraw_x(int x, int y) { // Clears the X over the color in the color picker (since the user has moved it to a different color)
+void undraw_x(int x, int y) { // Clears the x over the color in the color picker (since the user has moved it to a different color)
     terminal_setchar(' ', COLOR_PICKER_START_X + x*2, COLOR_PICKER_START_Y + y);
     terminal_setchar(' ', COLOR_PICKER_START_X + x*2 + 1, COLOR_PICKER_START_Y + y);
 }
 
-void move_color_picker_cross(int new_x, int new_y) {
+void move_color_picker_cross(int new_x, int new_y) { // color picker navigation with WASD, moves an x over the currently selected color in the color picker
     undraw_x(color_x, color_y);
     color_x = new_x;
     color_y = new_y;
@@ -168,13 +166,14 @@ void hide_color_picker() {
             terminal_putchar(' ', COLOR(BLACK, BLACK), COLOR_PICKER_START_X + j*2 + 1, COLOR_PICKER_START_Y + i);
         }
     }
-    terminal_write("Enter: paint", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 1);
+    terminal_write("WASD: move", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y);
+    terminal_write("Enter: paint", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 1); // redraw instructions next to color picker after hiding it
     terminal_write("C: set color", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 2);
     terminal_write("E: togl erase", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 3);
     terminal_write("Esc: menu", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 4);
 }
 
-void handle_color_picker_menu_keyboard(char c) {
+void handle_color_picker_menu_keyboard(char c) { // keyboard input for navigating the color picker
     switch(c) {
         case 'w':
             move_color_picker_cross(color_x, color_y - 1);
@@ -206,10 +205,10 @@ void show_color_picker() {
             terminal_putchar(' ', COLOR(WHITE, 4*i + j), COLOR_PICKER_START_X + j*2 + 1, COLOR_PICKER_START_Y + i);
         }
     }
-    draw_x(color_x, color_y); // Startposisjon for X
+    draw_x(color_x, color_y);
 }
 
-void undraw_cross() {
+void undraw_cross() { // undraws the crosshair, this happens when it moves to a new location, then the old location will be cleared
     int x_pos = x / POS_MUL;
     int y_pos = y / POS_MUL;
     attempt_setchar(' ', x_pos, y_pos+1); // │
@@ -219,7 +218,7 @@ void undraw_cross() {
     attempt_setchar(' ', x_pos, y_pos); // ┼
 }
 
-void move_cross(float new_x, float new_y) {
+void move_cross(float new_x, float new_y) { // move crosshair, and cleck bounds
     undraw_cross();
     x = new_x;  
     y = new_y;
@@ -231,31 +230,34 @@ void move_cross(float new_x, float new_y) {
 }
 
 void tick_brush() {
+    // the paint brush is moved by a small physics simulation where holding down WASD will accelerate the brush in that direction,
+    // and the brush will also have some velocity decay so it will eventually stop if you stop pressing keys.
+    // This allows for smoother movement of the brush when holding down keys, and you can make curves by accelerating it in one direction and then another.
     if (mode != MODE_PAINT) return;
-    if (keys[0x11]) v_y -= 2; // W er nede
-    if (keys[0x1F]) v_y += 2; // S er nede
-    if (keys[0x1E]) v_x -= 3; // A er nede
-    if (keys[0x20]) v_x += 3; // D er nede
-    if (v_x | v_y) {
+    if (keys[0x11]) v_y -= 2; // W is pressed
+    if (keys[0x1F]) v_y += 2; // S is pressed
+    if (keys[0x1E]) v_x -= 3; // A is pressed
+    if (keys[0x20]) v_x += 3; // D is pressed
+    if (v_x | v_y) { // move crosshair if there is any velocity, and apply velocity decay
         move_cross(x + v_x, y + v_y);
         if (v_x != 0) v_x = (v_x > 3*VEL_LIM ? 3*VEL_LIM : v_x < -3*VEL_LIM ? -3*VEL_LIM : v_x) - ((v_x > 0) - (v_x < 0));
         if (v_y != 0) v_y = (v_y > 2*VEL_LIM ? 2*VEL_LIM : v_y < -2*VEL_LIM ? -2*VEL_LIM : v_y) - ((v_y > 0) - (v_y < 0));
     }
-    int color = (brush == BRUSH_PAINT) ? current_color : BLACK;
+    int color = (brush == BRUSH_PAINT) ? current_color : BLACK; // Paint with the current color if in paint mode, otherwise paint with black to erase
     
     if (keys[0x1C]) {terminal_setbgcolor(color, x/POS_MUL, y/POS_MUL);} // Enter: paint/erase current cell
-    printf("X: %d Y: %d  ", x, y); // Debug info for current position of the brush
-    printf("vX: %d vY: %d  ", v_x, v_y); // Debug info for current position of the brush
-    resetRowNumber(); // Reset row number after printf to avoid messing with paint area
+    //printf("X: %d Y: %d  ", x, y); // Debug info for current position of the brush
+    //printf("vX: %d vY: %d  ", v_x, v_y); // Debug info for current velocity of the brush
+    //resetRowNumber(); // Reset row number after printf to avoid messing with paint area
 }
 
-void handle_paint_mode_keyboard(char c) {
+void handle_paint_mode_keyboard(char c) { // keyboard input when in paint mode
     switch (c) {
         case 27: // Esc: Go back to menu
             mode = MODE_MENU;
             draw_buttons();
             return;
-        case 'e': // E: Toggle Erase
+        case 'e': // E: Toggle erase
             brush = (brush == BRUSH_PAINT) ? BRUSH_ERASE : BRUSH_PAINT;
             draw_cross(); // Redraw cross with new color
             terminal_write(brush == BRUSH_PAINT ? "Mode: PAINT " : "Mode: ERASE ", COLOR(YELLOW, BLACK), 66, 3);
@@ -269,12 +271,12 @@ void handle_paint_mode_keyboard(char c) {
 
 void handle_paint_keyboard(uint8 scancode) {
     if (scancode & 0x80) {
-        keys[scancode & 0x7F] = false; // Tast sluppe
+        keys[scancode & 0x7F] = false; // key released
     } else {
-        keys[scancode] = true; // Tast trykt
+        keys[scancode] = true; // key pressed
     }
     char c = keyboard_scancode_to_ascii(scancode);
-    switch (mode){
+    switch (mode) { // delegate keyboard handling based on current mode (menu, paint, color picker)
         case MODE_MENU:
             handle_paint_menu_keyboard(c);
             break;
@@ -287,10 +289,14 @@ void handle_paint_keyboard(uint8 scancode) {
     }
 }
 
-void enter_paint_program() {
+void enter_paint_program() { // called to enter the paint program, initializes everything
+    if (saved_painting == NULL) { // Allocate memory for saved painting if it hasnt been allocated yet
+        saved_painting = (uint8*)malloc(sizeof(uint8) * CANVAS_HEIGHT * CANVAS_WIDTH);
+    }
+
     terminal_clear(COLOR(WHITE, BLACK));
     draw_window("Paint Program");
-    draw_vertical_line(64);
+    draw_vertical_line(64); // Draw a line separating the paint area and the menu area
     draw_buttons();
     terminal_write(brush == BRUSH_PAINT ? "Mode: PAINT " : "Mode: ERASE ", COLOR(YELLOW, BLACK), 66, 3);
     hide_color_picker();
