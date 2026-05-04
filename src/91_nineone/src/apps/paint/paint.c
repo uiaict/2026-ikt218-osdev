@@ -57,36 +57,36 @@ static void draw_buttons() {
     }
 }
 
-void handle_paint_menu_keyboard(uint8 scancode) {
-    switch (scancode) {
-        case 0x11: // W
+void handle_paint_menu_keyboard(char c) {
+    switch (c) {
+        case 'w':
             selected_item = (selected_item - 1 + NUM_OPTIONS) % NUM_OPTIONS;
             break;
-        case 0x1F: // S
+        case 's':
             selected_item = (selected_item + 1) % NUM_OPTIONS;
             break;
-        case 0x1C: // Enter
+        case '\r': // Enter
             paint_menu[selected_item].action();
             return;
     }
     draw_buttons();
 }
 
-void handle_color_picker_menu_keyboard(uint8 scancode) {
-    switch(scancode) {
-        case 0x11: // W
+void handle_color_picker_menu_keyboard(char c) {
+    switch(c) {
+        case 'w':
             move_color_picker_cross(color_x, color_y - 1);
             break;
-        case 0x1F: // S
+        case 's':
             move_color_picker_cross(color_x, color_y + 1);
             break;
-        case 0x1E: // A
+        case 'a':
             move_color_picker_cross(color_x - 1, color_y);
             break;
-        case 0x20: // D
+        case 'd':
             move_color_picker_cross(color_x + 1, color_y);
             break;
-        case 0x1C: // Enter
+        case '\r': // Enter
             mode = MODE_PAINT;
             brush = BRUSH_PAINT;
             current_color = 4 * color_y + color_x;
@@ -210,15 +210,16 @@ void handle_paint_keyboard(uint8 scancode) {
     } else {
         keys[scancode] = true; // Tast trykt
     }
+    char c = keyboard_scancode_to_ascii(scancode & 0x7F);
     switch (mode){
         case MODE_MENU:
-            handle_paint_menu_keyboard(scancode);
+            handle_paint_menu_keyboard(c);
             break;
         case MODE_PAINT:
             handle_paint_mouse_keyboard(scancode);
             break;
         case MODE_COLOR_PICKER:
-            handle_color_picker_menu_keyboard(scancode);
+            handle_color_picker_menu_keyboard(c);
             break;
     }
 }
