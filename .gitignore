@@ -1,17 +1,30 @@
-.vscode
-src/build_*/*
-venv
-!build_*/kernel.bin
-!build_*/kernel.img
-*.lock
-*.egg-info*
-.cmake
-CMakeCache*
-CMakeFiles
-iso
-.env
+# VS Code
+.vscode/
+
+# Build folders (top-level)
+build/
+
+# Just in case (old builds inside src)
+src/group32/build/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+*.cmake
 build.ninja
 .ninja*
 
-00_per_arne
-src/group_name/src/kernel.c
+# Generated OS files
+*.iso
+*.bin
+disk.iso
+
+# Python / misc
+venv/
+*.lock
+*.egg-info*
+.env
+
+# Temp files
+*.tmp
+*.swp

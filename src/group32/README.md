@@ -85,18 +85,16 @@ These components are combined through a menu-driven interface, enabling interact
 ### Build (VS Code / Dev Container)
 
 ```bash
-cd /workspaces/2026-ikt218-osdev/src/group32
 rm -rf build
-mkdir build
-cd build
-cmake ..
+mkdir -p build/group32
+cd build/group32
+cmake ../../src/group32
 cmake --build .
 cmake --build . --target uiaos-create-image
 
 ## Run:
-cd ~/2026-ikt218-osdev/src/group32/build
-../scripts/start_qemu.sh kernel.iso
-
+cd ~/2026-ikt218-osdev/build/group32
+../../src/group32/scripts/start_qemu.sh kernel.iso
 ## Authors
 
 Camilla H. Smith-Tønnessen  

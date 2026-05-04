@@ -1,5 +1,7 @@
 #include "memory.h"
 #include "screen.h"
+#include "libc/stdint.h"
+#include "libc/stddef.h"
 
 typedef struct block_header {
     size_t size;
