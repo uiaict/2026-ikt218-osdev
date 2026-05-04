@@ -1,0 +1,49 @@
+title Brahms Op. 38 opening theme excerpt
+identifier brahms_op38_opening
+tempo 86
+
+# Public-domain score source: IMSLP #112439, first movement opening.
+# Durations are written as note values and converted to quarter-note beats.
+
+measure 1
+E2 half
+G2 quarter dotted
+B2 sixteenth
+
+measure 2
+C3 half
+B2 half
+
+measure 3
+A2 eighth
+B2 sixteenth
+A2 sixteenth
+G2 sixteenth
+A2 eighth
+B2 quarter dotted
+G2 eighth
+
+measure 4
+E2 half
+Fs2 half plus eighth
+
+measure 5 but started with the last plus eighth
+Ds2 eighth
+Fs2 eighth
+B2 eighth
+Ds3 quarter dotted
+Fs3 eighth
+
+measure 6
+Fs3 half
+Fs2 half
+
+measure 7
+G3 half
+Fs2 half dotted
+Gs2 sixteenth
+As2 sixteenth
+
+measure 8
+B2 half
+pause half
