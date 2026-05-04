@@ -4,6 +4,14 @@
 #include <libc/stdint.h>
 #include "frequencies.h"
 
+// ==============================
+// Song system
+//
+// Defines structures and data
+// for representing and playing
+// simple melodies.
+// ==============================
+
 // Define a struct to represent a single musical note
 typedef struct {
     uint32_t frequency; // The frequency of the note in Hz (e.g., A4 = 440 Hz)
@@ -25,6 +33,10 @@ typedef struct {
 // Returns a pointer to a newly created SongPlayer object
 SongPlayer* create_song_player();
 
+
+// ==============================
+// Predefined songs (note arrays)
+// ==============================
 
 static Note music_1[] = {
     {E5, 250}, {R, 125}, {E5, 125}, {R, 125}, {E5, 125}, {R, 125},
@@ -80,7 +92,7 @@ static Note music_6[] = {
     {A_SHARP4, 250}, {A_SHARP4, 250}, {A_SHARP4, 250}, {F5, 250}, {D5, 250}, {C5, 250}, {A_SHARP4, 500},
 };
 
-void play_music();
-void play_song(Song* song);
+void play_music();              // Play default music
+void play_song(Song* song);     // Play a given song
 
 #endif

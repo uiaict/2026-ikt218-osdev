@@ -2,6 +2,14 @@
 
 [GLOBAL gdt_flush]      ; Make function visible to linker 
 
+; ==============================
+; Load Global Descriptor Table
+;
+; Loads the GDT (GDTR) from the
+; pointer passed from C and then
+; reloads segment registers to use
+; the new descriptors.
+; ==============================
 
 gdt_flush:
 
@@ -17,6 +25,7 @@ gdt_flush:
     mov gs, ax          ; Set GS segment
     mov ss, ax          ; Set stack
     
+    ; Far jump to reload CS with new code segment selector (0x08)
     jmp 0x08:return
 
 return

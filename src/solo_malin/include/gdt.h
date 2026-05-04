@@ -3,6 +3,18 @@
 
 #include <libc/stdint.h>    // Standard integer types
 
+// ==============================
+// Global Descriptor Table (GDT)
+//
+// Defines the structures and
+// functions used to set up and
+// load the GDT for memory segmentation.
+//
+// The GDT contains entries that
+// describe memory segments (base,
+// size, and access permissions).
+// ==============================
+
 // Number of entries in the Global Descriptor Tabe, GDT
 #define GDT_ENTRIES 5
 

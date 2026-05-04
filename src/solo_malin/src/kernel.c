@@ -2,34 +2,44 @@
 #include "idt.h"
 #include "screen.h"
 #include "keyboard.h"
-#include <libc/stdint.h>
 #include "memory.h"
 #include "pit.h"
 #include "song.h"
+#include "menu.h"
+#include <libc/stdint.h>
 
 extern uint32_t end;
+
+static void show_startup_info(void) {
+    clearTerminal();
+    write_string("GDT OK\n");
+    write_string("IDT OK\n");
+    write_string("Kernel memory initialized\n");
+    write_string("Paging initialized\n");
+    print_memory_layout();
+    write_string("keyboard initialized\n");
+    write_string("PIT ready\n");
+    write_string("\nPress any key to continue to menu...\n");
+
+    while (!keyboard_has_char()) {
+        __asm__ __volatile__("hlt");
+    }
+    keyboard_get_char();
+}
 
 // Kernel entry point
 void main(uint32_t magic, void* mb_info_addr)
 {
+    (void)magic;
+    (void)mb_info_addr;
 
     gdt_init();     // Initialize and load GDT 
-    write_string("GDT OK\n");       // Pint a test message to the VGA text buffer.
-
-    idt_init();
-    write_string("IDT OK\n");
-
-
+    idt_init();     // Initialize and load IDT
     init_kernel_memory(&end);
-    write_string("Kernel memory initialized\n");
-
     init_paging();
-    write_string("Paging initialized\n");
-
     print_memory_layout();
-
     keyboard_init();
-    write_string("keyboard initialized\n");
+    init_pit();
 
     /*
     void* some_memory = malloc(12345);
@@ -41,11 +51,11 @@ void main(uint32_t magic, void* mb_info_addr)
     }
     */
 
-    init_pit();
-    write_string("PIT ready\n");
-
     __asm__ __volatile__("sti");
-    write_string("Type on the keyboard: \n");
+    write_string("Starting menu... \n");
+
+    show_startup_info();
+    run_main_menu();
 
     // Test loop for PIT sleeps (replaces the old hlt loop)
     /*
@@ -60,9 +70,6 @@ void main(uint32_t magic, void* mb_info_addr)
         kprintf("[%d]: Slept using interrupts.\n", counter++);
     }
     */
-
-    play_music();
-    write_string("Starting music player...\n");
 
     //Halt the CPU in an infinite loop to keep the kernel running
     for (;;) {

@@ -2,9 +2,15 @@
 #ifndef UIAOS_FREQUENCIES_H
 #define UIAOS_FREQUENCIES_H
 
+// ==============================
+// This code defines constants for musical notes across multiple octaves
+// Each of the constant maps to its frequency in Hertz(Hz)
+// ==============================
+
 // Note frequencies (in Hz)
-#define C0 16
-#define Cs0 17
+// ---------- Octave 0 ----------
+#define C0 16       // C in octave 0 -> 16 Hz
+#define Cs0 17      // C sharp (C#) -> 17 Hz
 #define D0 18
 #define Ds0 19
 #define E0 21
@@ -16,6 +22,7 @@
 #define As0 29
 #define B0 31
 
+// ---------- Octave 1 ----------
 #define C1 33
 #define Cs1 35
 #define D1 37
@@ -29,6 +36,7 @@
 #define As1 58
 #define B1 62
 
+// ---------- Octave 2 ----------
 #define C2 65
 #define Cs2 69
 #define D2 73
@@ -42,6 +50,7 @@
 #define As2 117
 #define B2 123
 
+// ---------- Octave 3 ----------
 #define C3 131
 #define Cs3 139
 #define D3 147
@@ -55,6 +64,7 @@
 #define As3 233
 #define B3 247
 
+// ---------- Octave 4 ----------
 #define C4 262
 #define Cs4 277
 #define D4 294
@@ -68,6 +78,7 @@
 #define As4 466
 #define B4 494
 
+// ---------- Octave 5 ----------
 #define C5 523
 #define Cs5 554
 #define D5 587
@@ -81,6 +92,7 @@
 #define As5 932
 #define B5 988
 
+// ---------- Octave 6 ----------
 #define C6 1047
 #define Cs6 1109
 #define D6 1175
@@ -95,6 +107,7 @@
 #define As6 1865
 #define B6 1976
 
+// ---------- Octave 7 ----------
 #define C7 2093
 #define Cs7 2217
 #define D7 2349
@@ -108,6 +121,7 @@
 #define As7 3729
 #define B7 3951
 
+// ---------- Octave 8 ----------
 #define C8 4186
 #define Cs8 4435
 #define D8 4699
@@ -120,6 +134,8 @@
 #define A8 7040
 #define As8 7459
 #define B8 7902
+
+// ---------- Octave 9 ----------
 #define C9 8372
 #define Cs9 8870
 #define D9 9397
@@ -133,8 +149,10 @@
 #define As9 14917
 #define B9 15804
 
-#define A_SHARP4 466
-#define G_SHARP4 415
+// ---------- Alternative naming (readability helpers) ----------
+#define A_SHARP4 466        // Same as As4 (A#4)
+#define G_SHARP4 415        // Same as Gs4 (G#4)
+// ---------- Special value ----------
 #define R 0 // R (no sound)
 
 #endif //UIAOS_FREQUENCIES_H

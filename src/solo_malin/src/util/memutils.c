@@ -1,32 +1,29 @@
 #include "memory.h"
 #include <libc/stdint.h>
 
+// ==============================
+// Memory utility functions
+//
+// Basic implementations of memcpy,
+// memset16, and memset.
+// ==============================
+
+// Copy 'count' bytes from src to dest
 void* memcpy(void* dest, const void* src, size_t count){
 
     uint8_t* dst8 = (uint8_t*)dest;
     const uint8_t* src8 = (const uint8_t*)src;
 
-    //if (count & 1){
-    //
-    //    dst8[0] = src8[0];
-    //    dst8++:
-    //    src8++;
-    //    count--;
-    //}
-
-    //count /= 2;
+    // Copy byte by byte
     while (count--){
 
         *dst8++ = *src8++;
-        //dst8[0] = src8[0];
-        //dst8[1] = src8[1];
-        //dst8 += 2;
-        //src8 += 2;
     }
 
     return dest;
 }
 
+// Set 'num' 16-bit values at ptr to 'value'
 void* memset16(void* ptr, uint16_t value, size_t num)
 {
     uint16_t* p = (uint16_t*)ptr;
@@ -38,6 +35,7 @@ void* memset16(void* ptr, uint16_t value, size_t num)
     return ptr;
 }
 
+// Set 'num' bytes at ptr to the given byte value
 void* memset(void* ptr, int value, size_t num){
     
     unsigned char* p = (unsigned char*)ptr;

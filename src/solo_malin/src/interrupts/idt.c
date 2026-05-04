@@ -4,42 +4,59 @@
 #include "util.h"
 #include "memory.h"
 
+
+// Global IDT table and pointer
 struct idt_entry idt[IDT_ENTRIES];
 struct idt_ptr idt_ptr;
 
+// Assembly function to load the IDT (defined in idt.asm)
 extern void idt_flush(uint32_t);
 
+// Set a single IDT entry (gate)
 void setIdtGate(uint32_t num, uint32_t base, uint16_t sel, uint8_t flags) {
-    idt[num].base_low = base & 0xFFFF;
-    idt[num].base_high = (base >> 16) & 0xFFFF;
-    idt[num].sel = sel;
-    idt[num].always0 = 0;
-    idt[num].flags = flags;
+    idt[num].base_low = base & 0xFFFF;              // Handler address (low 16 bits)
+    idt[num].base_high = (base >> 16) & 0xFFFF;     // Handler address (high 16 bits)
+    idt[num].sel = sel;                             // Code segment selector
+    idt[num].always0 = 0;                           // Must be zero
+    idt[num].flags = flags;                         // Type and attributes (e.g., 0x8E = 32‑bit interrupt gate)
 }
 
+// Initialize and load the IDT
 void idt_init(void) {
+
+    // Set IDT pointer (size and base address)
     idt_ptr.limit = sizeof(idt) -1;
     idt_ptr.base = (uint32_t)&idt;
 
+    // Clear the entire IDT
     memset(&idt, 0, sizeof(idt));
 
-    outPortB(0x20, 0x11);
-    outPortB(0xA0, 0x11);
+    // -------------------------------
+    // Remap the PIC (Programmable Interrupt Controller)
+    // -------------------------------
 
-    outPortB(0x21, 0x20);
-    outPortB(0xA1, 0x28);
+    outPortB(0x20, 0x11); // Start initialization of master PIC
+    outPortB(0xA0, 0x11); // Start initialization of slave PIC
 
-    outPortB(0x21, 0x04);
-    outPortB(0xA1, 0x02);
+    outPortB(0x21, 0x20); // Set master PIC vector offset to 32 (0x20)
+    outPortB(0xA1, 0x28); // Set slave PIC vector offset to 40 (0x28)
 
-    outPortB(0x21, 0x01);
+    outPortB(0x21, 0x04); // Tell master PIC that slave is at IRQ2
+    outPortB(0xA1, 0x02); // Tell slave PIC its cascade identity
+
+    outPortB(0x21, 0x01); // Set PIC to 8086/88 mode (MCS-80/85 mode)
     outPortB(0xA1, 0x01);
 
-    outPortB(0x21, 0x0);
+    outPortB(0x21, 0x0);  // Clear interrupt masks (enable all IRQs)
     outPortB(0xA1, 0x0);
 
-    //0x8E -> 1000 1110
-    //0x08 -> 0000 1000 (selector)
+
+    // -------------------------------
+    // Set CPU exception handlers (ISRs 0–31)
+    // -------------------------------
+    // 0x8E = present, ring 0, 32-bit interrupt gate
+    // 0x08 = kernel code segment selector
+
     setIdtGate(0, (uint32_t)isr0, 0x08, 0x8E);
     setIdtGate(1, (uint32_t)isr1, 0x08, 0x8E);
     setIdtGate(2, (uint32_t)isr2, 0x08, 0x8E);
@@ -73,6 +90,11 @@ void idt_init(void) {
     setIdtGate(30, (uint32_t)isr30, 0x08, 0x8E);
     setIdtGate(31, (uint32_t)isr31, 0x08, 0x8E);
     
+
+    // -------------------------------
+    // Set hardware interrupt handlers (IRQs 32–47)
+    // -------------------------------
+
     setIdtGate(32, (uint32_t)irq0, 0x08, 0x8E);
     setIdtGate(33, (uint32_t)irq1, 0x08, 0x8E);
     setIdtGate(34, (uint32_t)irq2, 0x08, 0x8E);
@@ -90,9 +112,14 @@ void idt_init(void) {
     setIdtGate(46, (uint32_t)irq14, 0x08, 0x8E);
     setIdtGate(47, (uint32_t)irq15, 0x08, 0x8E);
 
-    // system calls
+
+    // -------------------------------
+    // System call interrupts
+    // -------------------------------
+
     setIdtGate(128, (uint32_t)isr128, 0x08, 0x8E);
     setIdtGate(177, (uint32_t)isr177, 0x08, 0x8E);
 
+       // Load the IDT into the CPU (using assembly instruction lidt)
     idt_flush((uint32_t)&idt_ptr);
 }

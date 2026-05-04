@@ -6,7 +6,14 @@
 #include "memory.h"
 #include "libc/stdio.h"
 
+// ==============================
+// PC speaker song player
+//
+// Uses PIT channel 2 + speaker
+// port to play simple melodies.
+// ==============================
 
+// Enable PC speaker (connect to PIT channel 2)
 void enable_speaker() {
     // Pseudocode for enable_speaker:
     // 1. Read the current state from the PC speaker control port.
@@ -17,9 +24,11 @@ void enable_speaker() {
     //    - Use bitwise OR operation to set these bits without altering others.
 
     uint8_t current_state = inPortB(PC_SPEAKER_PORT);
+    // Set bits 0 and 1 to enable speaker + data
     outPortB(PC_SPEAKER_PORT, current_state | 3);
 }
 
+// Disable PC speaker
 void disable_speaker() {
     // Pseudocode for disable_speaker:
     // 1. Read the current state from the PC speaker control port.
@@ -27,9 +36,11 @@ void disable_speaker() {
     //    - Use bitwise AND with the complement of 3 (0b11) to clear these bits.
     
     uint8_t current_state = inPortB(PC_SPEAKER_PORT);
+    // Clear bits 0 and 1 (speaker off)
     outPortB(PC_SPEAKER_PORT, current_state & 0xFC);
 }
 
+// Set PIT channel 2 to given frequency and start sound
 void play_sound(uint32_t frequency) {
     // Pseudocode for play_sound:
     // 1. Check if the frequency is 0. If so, exit the function as this indicates no sound.
@@ -44,8 +55,10 @@ void play_sound(uint32_t frequency) {
 
     if(frequency == 0) return;
 
+    // Divisor for PIT base frequency
     uint16_t divisor = PIT_BASE_FREQUENCY / frequency;
 
+    // 0xB6: ch2, lobyte/hibyte, mode 3, binary
     outPortB(PIT_CMD_PORT, 0XB6);
     outPortB(PIT_CHANNEL2_PORT, (uint8_t)(divisor & 0xFF));
     outPortB(PIT_CHANNEL2_PORT, (uint8_t)((divisor >> 8) & 0xFF));
@@ -54,6 +67,7 @@ void play_sound(uint32_t frequency) {
 
 }
 
+// Stop currently playing sound
 void stop_sound() {
     // Pseudocode for stop_sound:
     // 1. Read the current state from the PC speaker control port.
@@ -61,10 +75,11 @@ void stop_sound() {
     //    - Use bitwise AND with the complement of the bit responsible for enabling the speaker data.
 
     uint8_t current_state = inPortB(PC_SPEAKER_PORT);
-
+    // Clear bits 0 and 1 (disconnect speaker / stop tone)
     outPortB(PC_SPEAKER_PORT, current_state & ~0xFC);
 }
 
+// Core implementation: play all notes in a Song
 void play_song_impl(Song *song) {
     // Pseudocode for play_song_impl:
     // 1. Enable the speaker before starting the song.
@@ -87,6 +102,7 @@ void play_song_impl(Song *song) {
             stop_sound();
             sleep_interrupt(duration);
         } else {
+            // Play tone for the note duration
             play_sound(frequency);
 
             sleep_interrupt(duration);
@@ -97,6 +113,7 @@ void play_song_impl(Song *song) {
     disable_speaker();
 }
 
+// Public wrapper for playing a song
 void play_song(Song *song) {
     // Pseudocode for play_song:
     // 1. Call play_song_impl with the given song.
@@ -105,12 +122,14 @@ void play_song(Song *song) {
     play_song_impl(song);
 }
 
+// Create a SongPlayer object with function pointer set
 SongPlayer* create_song_player(){
     SongPlayer* player = (SongPlayer*)malloc(sizeof(SongPlayer));
     player->play_song = play_song_impl;
     return player;
 }
 
+// Loop playing predefined music forever
 void play_music(){
     Song songs[] = {
         {music_1, (uint32_t)(sizeof(music_1) / sizeof(Note))}

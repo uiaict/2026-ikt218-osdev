@@ -4,16 +4,29 @@
 #include <libc/stdint.h>
 #include "util.h"
 
+// ==============================
+// Interrupt Service Routines (ISR)
+//
+// Defines CPU exception handlers
+// and the register state passed
+// during an interrupt.
+//
+// ISRs handle software interrupts
+// and CPU-generated exceptions.
+// ==============================
 
+// Structure holding CPU register state during an interrupt
 struct InterruptRegisters{
-    uint32_t ds;
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
-    uint32_t int_no, err_code;
-    uint32_t eip, cs, eflags, useresp, ss; 
+    uint32_t ds;                                        // Data segment selector
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;    // General purpose registers
+    uint32_t int_no, err_code;                          // Interrupt number and error code
+    uint32_t eip, cs, eflags, useresp, ss;              // CPU state pushed automatically
 };
 
+// Main ISR handler called from assembly
 void isr_handler(struct InterruptRegisters *r);
 
+// Assembly stubs for CPU exceptions (ISRs 0–31)
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -47,7 +60,7 @@ extern void isr29();
 extern void isr30();
 extern void isr31();
 
-//System calls
+//System call interrupts
 extern void isr128();
 extern void isr177();
 

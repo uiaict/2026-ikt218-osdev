@@ -3,10 +3,27 @@
 
 #include "isr.h"
 
+// ==============================
+// Interrupt Requests (IRQ)
+//
+// Defines functions and handlers
+// for hardware interrupts.
+//
+// IRQs are signals from hardware
+// devices (e.g., keyboard, timer)
+// that require CPU attention.
+// ==============================
+
+// Main IRQ handler called from assembly
 void irq_handler(struct InterruptRegisters *r);
+
+// Install a custom handler for a specific IRQ
 void irq_install_handler(int irq, void (*handler)(struct InterruptRegisters *r));
+
+// Remove a handler for a specific IRQ
 void irq_uninstall_handler(int irq);
 
+// Assembly interrupt stubs for IRQs 0–15
 extern void irq0();
 extern void irq1();
 extern void irq2();

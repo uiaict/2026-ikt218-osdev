@@ -1,21 +1,34 @@
 extern isr_handler
+
+; ==============================
+; ISR stubs (CPU exceptions)
+;
+; Creates interrupt handler stubs
+; for CPU exceptions and software
+; interrupts before jumping to a
+; shared common handler.
+; ==============================
+
+; ISR without CPU-provided error code
 %macro ISR_NOERRCODE 1
     global isr%1
     isr%1:
-        CLI
-        PUSH LONG 0
-        PUSH LONG %1
-        JMP isr_common_stub
+        CLI                 ; Disable interrupts
+        PUSH LONG 0         ; Push dummy error code
+        PUSH LONG %1        ; Push interrupt number
+        JMP isr_common_stub ; Jump to shared handler
 %endmacro
 
+; ISR with CPU-provided error code
 %macro ISR_ERRCODE 1
     global isr%1
     isr%1:
-        CLI
-        PUSH LONG %1
-        JMP isr_common_stub
+        CLI                 ; Disable interrupts
+        PUSH LONG %1        ; Push interrupt number
+        JMP isr_common_stub ; Jump to shared handler
 %endmacro
 
+; CPU exception handlers (0–31)
 ISR_NOERRCODE 0
 ISR_NOERRCODE 1
 ISR_NOERRCODE 2
@@ -48,31 +61,43 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
+
+; Software interrupts / system calls
 ISR_NOERRCODE 128
 ISR_NOERRCODE 177
 
-isr_common_stub:
-    pusha
-    mov ax, ds
-    PUSH eax
 
-    MOV ax, 0x10
+; ==============================
+; Common ISR handler stub
+;
+; Saves CPU state, switches to
+; kernel data segments, calls
+; C-level isr_handler(), then
+; restores state and returns.
+; ==============================
+
+isr_common_stub:
+    pusha               ; Save all general-purpose registers
+    mov ax, ds
+    PUSH eax            ; Save current data segment
+
+    MOV ax, 0x10        ; Load kernel data segment selector
     MOV ds, ax
     MOV es, ax
     MOV fs, ax
     MOV gs, ax
 
-    PUSH esp
+    PUSH esp            ; Pass pointer to interrupt register state
     CALL isr_handler
 
-    ADD esp, 4
-    POP ebx
+    ADD esp, 4          ; Remove function argument from stack
+    POP ebx             ; Restore original data segment
     MOV ds, bx
     MOV es, bx
     MOV fs, bx
     MOV gs, bx
 
-    POPA
-    ADD esp, 8
-    STI
-    IRETD
+    POPA                ; Restore general-purpose registers
+    ADD esp, 8          ; Remove interrupt number and error code
+    STI                 ; Re-enable interrupts
+    IRETD               ; Return from interrupt
