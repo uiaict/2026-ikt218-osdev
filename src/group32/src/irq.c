@@ -3,6 +3,7 @@
 #include "ports.h"
 #include "screen.h"
 
+// IRQ assembly stubs
 extern void irq0(void);
 extern void irq1(void);
 extern void irq2(void);
@@ -20,7 +21,7 @@ extern void irq13(void);
 extern void irq14(void);
 extern void irq15(void);
 
-static irq_handler_t irq_routines[16] = {0};
+static irq_handler_t irq_routines[16] = {0}; // Stores custom IRQ handlers
 
 static void irq_remap(void) {
     outb(0x20, 0x11);

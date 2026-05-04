@@ -1,7 +1,7 @@
 #include "isr.h"
 #include "idt.h"
 #include "screen.h"
-
+// ISR assembly stubs
 extern void isr0(void);
 extern void isr1(void);
 extern void isr2(void);
@@ -35,6 +35,7 @@ extern void isr29(void);
 extern void isr30(void);
 extern void isr31(void);
 
+// Text messages for CPU exceptions
 static const char* exception_messages[] = {
     "Division By Zero",
     "Debug",
@@ -70,7 +71,9 @@ static const char* exception_messages[] = {
     "Reserved"
 };
 
+// Installs CPU exception handlers
 void isr_install(void) {
+    // Set IDT gates for exceptions 0-31
     idt_set_gate(0,  (unsigned)isr0,  0x08, 0x8E);
     idt_set_gate(1,  (unsigned)isr1,  0x08, 0x8E);
     idt_set_gate(2,  (unsigned)isr2,  0x08, 0x8E);
@@ -104,8 +107,9 @@ void isr_install(void) {
     idt_set_gate(30, (unsigned)isr30, 0x08, 0x8E);
     idt_set_gate(31, (unsigned)isr31, 0x08, 0x8E);
 }
-
+// Handles CPU exceptions
 void isr_handler(struct registers* regs) {
+    // Print interrupt number
     screen_write("\n[ISR] Interrupt ");
     screen_write_dec(regs->int_no);
     screen_write(": ");

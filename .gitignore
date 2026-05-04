@@ -1,20 +1,17 @@
-.vscode/
-venv/
+.vscode
+src/build_*/*
+venv
+!build_*/kernel.bin
+!build_*/kernel.img
 *.lock
 *.egg-info*
+.cmake
+CMakeCache*
+CMakeFiles
+iso
 .env
-*.tmp
-*.swp
+build.ninja
+.ninja*
 
-# Ignore old/template folders
-src/group_name/
-
-# Ignore source-tree builds
-src/group32/build/
-
-# Ignore most build files
-build/*
-!build/group32/
-build/group32/*
-!build/group32/kernel.bin
-!build/group32/kernel.iso
+00_per_arne
+src/group_name/src/kernel.c

@@ -5,36 +5,37 @@ extern isr_handler
 extern irq_handler
 
 idt_load:
-    mov eax, [esp + 4]
-    lidt [eax]
-    ret
+    mov eax, [esp + 4] ; Get IDT pointer argument
+    lidt [eax] ; Load the IDT
+    ret ; Return to C code
 
-%macro ISR_NOERR 1
+%macro ISR_NOERR 1 
 global isr%1
 isr%1:
-    cli
-    push dword 0
-    push dword %1
+    cli ; Disable interrupts
+    push dword 0  ; Push dummy error code
+    push dword %1 ; Push interrupt number
     jmp isr_common_stub
 %endmacro
 
 %macro ISR_ERR 1
 global isr%1
 isr%1:
-    cli
-    push dword %1
+    cli ; Disable interrupts
+    push dword %1 ; Push interrupt number
     jmp isr_common_stub
 %endmacro
 
 %macro IRQ 2
 global irq%1
 irq%1:
-    cli
-    push dword 0
-    push dword %2
+    cli ; Disable interrupts
+    push dword 0 ; Push dummy error code
+    push dword %2 ; Push IRQ interrupt number
     jmp irq_common_stub
 %endmacro
 
+; CPU exception handlers
 ISR_NOERR 0
 ISR_NOERR 1
 ISR_NOERR 2
@@ -68,6 +69,7 @@ ISR_NOERR 29
 ISR_ERR   30
 ISR_NOERR 31
 
+; Hardware IRQ handlers
 IRQ 0, 32
 IRQ 1, 33
 IRQ 2, 34
@@ -86,45 +88,45 @@ IRQ 14, 46
 IRQ 15, 47
 
 isr_common_stub:
-    pusha
-    mov ax, ds
+    pusha ; Save general-purpose registers
+    mov ax, ds ; Save old data segment
     push eax
-    mov ax, 0x10
+    mov ax, 0x10   ; Load kernel data segment
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    push esp
-    call isr_handler
-    add esp, 4
-    pop eax
+    push esp  ; Pass register state to C handler
+    call isr_handler ; Call C ISR handler
+    add esp, 4 ; Remove argument from stack
+    pop eax ; Restore old data segment
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    popa
-    add esp, 8
-    sti
-    iretd
+    popa ; Restore registers
+    add esp, 8 ; Remove interrupt number and error code
+    sti ; Enable interrupts
+    iretd  ; Return from interrupt
 
 irq_common_stub:
-    pusha
-    mov ax, ds
+    pusha ; Save general-purpose registers
+    mov ax, ds; Save old data segment
     push eax
-    mov ax, 0x10
+    mov ax, 0x10  ; Load kernel data segment
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    push esp
-    call irq_handler
-    add esp, 4
-    pop eax
+    push esp ; Pass register state to C handler
+    call irq_handler; Call C IRQ handler
+    add esp, 4  ; Remove argument from stack
+    pop eax ; Restore old data segment
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    popa
-    add esp, 8
-    sti
-    iretd
+    popa ; Restore registers
+    add esp, 8 ; Remove IRQ number and error code
+    sti; Enable interrupts
+    iretd ; Return from interrupt
