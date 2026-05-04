@@ -12,7 +12,7 @@
 #include "apps/typegame/typegame.h"
 
 static int selected_item = 0;
-static volatile int pending_action = -1;
+static volatile int pending_action = -1; // -1 no action, < -1 pending action 
 static volatile int action_running = 0;
 static bool enter_down = false;
 #define NUM_OPTIONS 4
@@ -96,10 +96,11 @@ void play_music(void) {
 struct button start_menu[] = {
     {"Print info", test_action},
     {"Paint program", enter_paint_program},
-    {"Play game", typegame_start},
+    {"Play typegame", typegame_start},
     {"Play music", play_music}
 };
 
+// handles realtime updates. Like UI
 void main_menu_update(void) {
     if (pending_action < 0) {
         return;
@@ -123,6 +124,7 @@ static void draw_buttons() {
     }
 }
 
+// handles inputs in main menu
 void handle_main_menu_keyboard(uint8 scancode) {
     switch (scancode) {
         case 0x11: // W
