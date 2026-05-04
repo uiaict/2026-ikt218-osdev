@@ -8,8 +8,9 @@
 #include "libc/stdbool.h"
 #include "arch/i386/isr.h"
 #include "colors.h"
+#include "kernel/memory.h"
 
-#define NUM_OPTIONS 3
+#define NUM_OPTIONS 4
 
 #define MODE_MENU 0
 #define MODE_PAINT 1
@@ -21,10 +22,17 @@
 #define COLOR_PICKER_START_X 66
 #define COLOR_PICKER_START_Y 6
 
-#define POS_MUL 200 // Each cell in the paint area is 50x50 pixels
+// The position of the brush is stored as an integer that is POS_MUL times the actual position to allow for smoother movement with velocity
+// (since velocity can be less than 1 cell per tick, which would not move the brush at all if we only stored the actual cell position)
+#define POS_MUL 200
 #define VEL_LIM 20
 
-static bool keys[128] = {false}; // Index is scancode, value is whether it's currently pressed.
+#define CANVAS_WIDTH 61
+#define CANVAS_HEIGHT 21
+#define CANVAS_START_X 2
+#define CANVAS_START_Y 2
+
+static bool keys[128] = {false}; // Index is scancode, value is whether its currently pressed
 // This makes it possible to check multiple keys at once (for smoother movement of the brush when holding down multiple keys)
 // and to check if a key is being held down in the tick function for the brush.
 
@@ -37,17 +45,41 @@ static uint8 current_color = WHITE;
 static int color_x = WHITE % 4;
 static int color_y = WHITE / 4;
 
+static uint8* saved_painting = NULL; // Store the color of each cell in the paint area for saving/loading
+
 void save_changes() {
-    terminal_write("Saving changes...", COLOR(BLUE, WHITE), 45, 16);
+    terminal_write("Saving", COLOR(YELLOW, BLACK), 72, 14);
+    for (size_t i = 0; i < CANVAS_HEIGHT; i++){
+        for (size_t j = 0; j < CANVAS_WIDTH; j++){
+            int x_pos = CANVAS_START_X + j; // Calculate the top-left corner of the cell
+            int y_pos = CANVAS_START_Y + i;
+            uint8 color = terminal_getbgcolor(x_pos, y_pos); // Get the color of the cell (assuming the entire cell is the same color)
+            saved_painting[i*CANVAS_WIDTH + j] = color; // Save the color in the array
+        }
+    }
+    terminal_write("Saved ", COLOR(GREEN, BLACK), 72, 14);
+}
+
+void load_saved_painting() {
+    if (saved_painting == NULL) return; // No saved painting to load
+    for (size_t i = 0; i < CANVAS_HEIGHT; i++){
+        for (size_t j = 0; j < CANVAS_WIDTH; j++){
+            int x_pos = CANVAS_START_X + j; // Calculate the top-left corner of the cell
+            int y_pos = CANVAS_START_Y + i;
+            uint8 color = saved_painting[i*CANVAS_WIDTH + j]; // Get the saved color from the array
+            terminal_setbgcolor(color, x_pos, y_pos); // Set the cell to the saved color
+        }
+    }
+    terminal_write("Loaded", COLOR(GREEN, BLACK), 72, 17);
 }
 
 void attempt_setchar(char c, int x, int y) {
-    if (x < 2 || x > 62 || y < 2 || y > 22) return; // Outside paint area
+    if (x < CANVAS_START_X || x > CANVAS_START_X + CANVAS_WIDTH - 1 || y < CANVAS_START_Y || y > CANVAS_START_Y + CANVAS_HEIGHT - 1) return; // Outside paint area
     terminal_setchar(c, x, y); // Full block
 }
 
 void attempt_setcharfg(char c, uint8 color_fg, int x, int y) {
-    if (x < 2 || x > 62 || y < 2 || y > 22) return; // Outside paint area
+    if (x < CANVAS_START_X || x > CANVAS_START_X + CANVAS_WIDTH - 1 || y < CANVAS_START_Y || y > CANVAS_START_Y + CANVAS_HEIGHT - 1) return; // Outside paint area
     terminal_setcharfg(c, color_fg, x, y); // Full block
 }
 
@@ -65,17 +97,22 @@ void draw_cross() {
 void enter_paint_mode() {
     mode = MODE_PAINT;
     draw_cross();
+
+    if (saved_painting == NULL) {
+        saved_painting = (uint8*)malloc(sizeof(uint8) * CANVAS_HEIGHT * CANVAS_WIDTH);
+    }
 }
 
 struct button paint_menu[] = {
     {"Paint", enter_paint_mode},
     {"Save", save_changes},
+    {"Load", load_saved_painting},
     {"Exit", enter_main_menu}
 };
 
 static void draw_buttons() {
     int start_x = 66;
-    int start_y = 10;
+    int start_y = 11;
 
     for (int i = 0; i < NUM_OPTIONS; i++) {
         bool is_selected = (i == selected_item);
@@ -84,6 +121,8 @@ static void draw_buttons() {
 }
 
 void handle_paint_menu_keyboard(char c) {
+    terminal_write("      ", COLOR(GREEN, BLACK), 72, 14); // Clear "Saved"/"Loaded" message when navigating menu
+    terminal_write("      ", COLOR(GREEN, BLACK), 72, 17);
     switch (c) {
         case 'w':
             selected_item = (selected_item - 1 + NUM_OPTIONS) % NUM_OPTIONS;
@@ -121,13 +160,18 @@ void move_color_picker_cross(int new_x, int new_y) {
 }
 
 void hide_color_picker() {
-    terminal_write("                ", COLOR(YELLOW, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y - 1);
+    terminal_write("Color:           ", COLOR(YELLOW, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y - 1);
+    terminal_write("  ", COLOR(current_color, current_color), COLOR_PICKER_START_X + 6, COLOR_PICKER_START_Y - 1);
     for (size_t i = 0; i < 4; i++) {
         for (size_t j = 0; j < 4; j++) {
             terminal_putchar(' ', COLOR(BLACK, BLACK), COLOR_PICKER_START_X + j*2, COLOR_PICKER_START_Y + i);
             terminal_putchar(' ', COLOR(BLACK, BLACK), COLOR_PICKER_START_X + j*2 + 1, COLOR_PICKER_START_Y + i);
         }
     }
+    terminal_write("Enter: paint", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 1);
+    terminal_write("C: set color", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 2);
+    terminal_write("E: togl erase", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 3);
+    terminal_write("Esc: menu", COLOR(BROWN, BLACK), COLOR_PICKER_START_X, COLOR_PICKER_START_Y + 4);
 }
 
 void handle_color_picker_menu_keyboard(char c) {
@@ -249,5 +293,6 @@ void enter_paint_program() {
     draw_vertical_line(64);
     draw_buttons();
     terminal_write(brush == BRUSH_PAINT ? "Mode: PAINT " : "Mode: ERASE ", COLOR(YELLOW, BLACK), 66, 3);
+    hide_color_picker();
     current_menu = PAINT_MENU;
 }

@@ -49,6 +49,15 @@ void terminal_setbgcolor(uint8 color, int x, int y) {
     vga_buffer[index] = (current & 0x0FFF) | ((uint16)color << 12);
 }
 
+uint8 terminal_getbgcolor(int x, int y) {
+    const int index = y * 80 + x;
+    uint16* vga_buffer = (uint16*)0xB8000;
+    
+    uint16 current = vga_buffer[index];
+    
+    return (current >> 12) & 0x0F; // Returnerer bare de øverste 4 bits som representerer bakgrunnsfargen
+}
+
 void terminal_write(const char* str, uint8 color, int x, int y) {
     const uint8* u_str = (const uint8*)str;
     while (*u_str) {
