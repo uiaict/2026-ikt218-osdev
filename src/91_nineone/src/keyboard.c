@@ -2,14 +2,18 @@
 #include "terminal.h"
 #include "libc/stdbool.h"
 
+// Simple text buffer
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
 static uint32 keyboard_buffer_index = 0;
 
+//print position
 static int keyboard_x = 1;
 static int keyboard_y = 14;
 
+// Handler used by menus or apps that want to receive keyboard events.
 static keyboard_event_handler_t current_handler = 0;
 
+// Lookup table for normal PS/2 scancodes.
 static const char scancode_ascii[] = {
     0,  27, '1', '2', '3', '4', '5', '6',
     '7', '8', '9', '0', '-', '=', '\b', '\t',
@@ -21,6 +25,7 @@ static const char scancode_ascii[] = {
     0, ' '
 };
 
+// Read the latest keyboard scancode from the PS/2 data port.
 static uint8 keyboard_read_scancode(void) {
     uint8 scancode;
 
@@ -29,7 +34,9 @@ static uint8 keyboard_read_scancode(void) {
     return scancode;
 }
 
+// Convert a scancode into an ASCII
 char keyboard_scancode_to_ascii(uint8 scancode) {
+    // Ignore scancodes outside the table
     if (scancode >= sizeof(scancode_ascii)) {
         return 0;
     }
@@ -37,6 +44,7 @@ char keyboard_scancode_to_ascii(uint8 scancode) {
     return scancode_ascii[scancode];
 }
 
+// Store the typed character 
 static void keyboard_store_char(char c) {
     if (keyboard_buffer_index < KEYBOARD_BUFFER_SIZE - 1) {
         keyboard_buffer[keyboard_buffer_index++] = c;
@@ -44,6 +52,8 @@ static void keyboard_store_char(char c) {
     }
 }
 
+
+ // Erase one character by moving back and writing a blank
 static void keyboard_remove_last_char(void) {
     if (keyboard_buffer_index > 0) {
         keyboard_buffer_index--;
@@ -51,6 +61,8 @@ static void keyboard_remove_last_char(void) {
     }
 }
 
+
+// Print keyboard input directly to the screen when no app is handling it.
 static void keyboard_print_char(char c) {
     char str[2] = { c, '\0' };
 
@@ -81,6 +93,7 @@ static void keyboard_print_char(char c) {
     }
 }
 
+// IRQ1 handler. runs every keyboard scancode.
 static void keyboard_callback(registers_t* regs) {
     (void)regs;
 
@@ -89,18 +102,13 @@ static void keyboard_callback(registers_t* regs) {
     bool is_release = (scancode & 0x80) != 0;
     char c = 0;
 
-    /*
-     * Only translate key press events to ASCII.
-     * Release events are still sent to apps, but not stored as text.
-     */
+    // Only translate key press events to ASCII.
+    // Release events are still sent to apps, but not stored as text.
     if (!is_release) {
         c = keyboard_scancode_to_ascii(scancode);
     }
 
-    /*
-     * Store typed characters in the keyboard buffer.
-     * This satisfies the keyboard logger requirement.
-     */
+    // Store typed characters in the keyboard buffer.
     if (!is_release && c != 0) {
         if (c == '\b') {
             keyboard_remove_last_char();
@@ -109,18 +117,13 @@ static void keyboard_callback(registers_t* regs) {
         }
     }
 
-    /*
-     * Send ALL scancodes to the current app/menu handler, including release events.
-     * Paint needs release events so movement does not get stuck.
-     */
+    // Send ALL scancodes to the current app/menu handler, including release events.
     if (current_handler != 0) {
         current_handler(c, scancode);
         return;
     }
 
-    /*
-     * If no app/menu handler exists, print normal typed characters.
-     */
+    // If no app/menu handler exists, print normal typed characters.
     if (!is_release && c != 0) {
         keyboard_print_char(c);
     }
@@ -130,14 +133,17 @@ void init_keyboard(void) {
     register_interrupt_handler(IRQ1, keyboard_callback);
 }
 
+// Let an app or menu take over keyboard input temporarily.
 void keyboard_set_event_handler(keyboard_event_handler_t handler) {
     current_handler = handler;
 }
 
+// Return keyboard input back to the default terminal behavior.
 void keyboard_clear_event_handler(void) {
     current_handler = 0;
 }
 
+// Give other code read-only access to the typed text buffer.
 const char* keyboard_get_buffer(void) {
     return keyboard_buffer;
 }
