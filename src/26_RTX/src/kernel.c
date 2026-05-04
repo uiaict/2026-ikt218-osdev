@@ -2,8 +2,13 @@
 #include <libc/stdint.h>
 #include <libc/stdio.h>
 #include <idt.h>
+#include <kernel/memory.h>
+#include <kernel/pit.h>
 
-void main(uint32_t magic, uint32_t mb_addr) {
+extern uint32_t end;
+
+void main(uint32_t magic, uint32_t mb_addr)
+{
     (void)mb_addr;
 
     terminal_clear();
@@ -40,15 +45,32 @@ void main(uint32_t magic, uint32_t mb_addr) {
 
     printf("\n[OK]   All test ISRs returned normally.\n\n");
 
+    init_kernel_memory(&end);
+    init_paging();
+    print_memory_layout();
+
+    printf("[INIT] Initializing PIT (1000 Hz)...\n");
+    init_pit();
+    printf("[OK]   PIT ready.\n\n");
+
     printf("[INIT] Enabling hardware interrupts (STI)...\n");
     __asm__ volatile ("sti");
     printf("[OK]   IRQ0 (timer) and IRQ1 (keyboard) are now active.\n\n");
 
-    terminal_set_color(VGA_COLOR_LCYAN);
-    printf("Keyboard ready - type something!\n");
-    printf("(Characters appear in green as you type.)\n\n");
-    terminal_set_color(VGA_COLOR_BWHITE);
+    printf("Hello World!\n");
+    void *some_memory = malloc(12345);
+    void *memory2     = malloc(54321);
+    void *memory3     = malloc(13331);
+    (void)some_memory; (void)memory2; (void)memory3;
 
-    for (;;)
-        __asm__ volatile ("hlt");
+    int counter = 0;
+    while (true) {
+        printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
+        sleep_busy(1000);
+        printf("[%d]: Slept using busy-waiting.\n", counter++);
+
+        printf("[%d]: Sleeping with interrupts (LOW CPU).\n", counter);
+        sleep_interrupt(1000);
+        printf("[%d]: Slept using interrupts.\n", counter++);
+    }
 }

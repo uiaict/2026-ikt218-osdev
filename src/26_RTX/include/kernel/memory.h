@@ -1,0 +1,28 @@
+#ifndef MEMORY_H
+#define MEMORY_H
+
+#include <libc/stdint.h>
+#include <libc/stddef.h>
+
+// header for each allocated block in the heap
+typedef struct {
+    uint8_t  status; // 0 = free, 1 = used
+    uint32_t size;
+} alloc_t;
+
+void init_kernel_memory(uint32_t *kernel_end);
+
+extern void init_paging(void);
+extern void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys);
+
+extern char *pmalloc(size_t size);
+extern void *malloc(size_t size);
+extern void  free(void *mem);
+
+extern void *memcpy(void *dest, const void *src, size_t num);
+extern void *memset(void *ptr, int value, size_t num);
+extern void *memset16(void *ptr, uint16_t value, size_t num);
+
+void print_memory_layout(void);
+
+#endif

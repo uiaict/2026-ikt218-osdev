@@ -61,26 +61,39 @@ add_executable(uiaos-kernel
     src/multiboot2.asm
 
     src/kernel.c
+    src/pit.c
+
+    # Memory management
+    src/memory/malloc.c
+    src/memory/memory.c
+    src/memory/memutils.c
 
     # libc
     src/libc/stdio.c
     src/libc/string.c
+    src/libc/new.cpp
 
     # Architecture: i386
     src/arch/i386/idt.asm
     src/arch/i386/idt.c
     src/arch/i386/isr.c
     src/arch/i386/irq.c
+
+    # Apps
+    apps/song/src/song.cpp
 )
 
 # Include directories for the kernel target
-target_include_directories(uiaos-kernel PUBLIC include)
+target_include_directories(uiaos-kernel PUBLIC
+    include
+    apps/song/include/song
+)
 
 
 # Specify compile options for C and C++
 target_compile_options(uiaos-kernel PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -fno-exceptions -fno-rtti -g>
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
 )
 
@@ -97,6 +110,7 @@ target_link_options(
 	PUBLIC "-nostdlib"
 	PUBLIC "-static"
 	PUBLIC "-no-pie"
+	PUBLIC "-m32"
 	PUBLIC "-T${OS_KERNEL_LINKER}"
 )
 

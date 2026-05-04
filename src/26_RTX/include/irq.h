@@ -4,9 +4,10 @@
 
 typedef void (*irq_handler_t)(registers_t *regs);
 
-void irq_init(uint16_t cs);
-void irq_install_handler(int irq, irq_handler_t handler);
-void irq_uninstall_handler(int irq);
+void     irq_init(uint16_t cs);
+void     irq_install_handler(int irq, irq_handler_t handler);
+void     irq_uninstall_handler(int irq);
+uint32_t timer_get_ticks(void);
 
 extern void irq0(void);  extern void irq1(void);  extern void irq2(void);
 extern void irq3(void);  extern void irq4(void);  extern void irq5(void);

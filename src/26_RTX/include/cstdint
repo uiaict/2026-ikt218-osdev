@@ -1,0 +1,3 @@
+#pragma once
+// Freestanding cstdint — exposes our stdint types to C++ code
+#include <libc/stdint.h>
