@@ -39,6 +39,10 @@ _start:
 
     call main ; Jump main function
 
+.halt:
+    hlt
+    jmp .halt
+
 section .bss
 stack_bottom:
     resb 4096 * 16

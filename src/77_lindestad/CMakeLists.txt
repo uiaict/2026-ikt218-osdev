@@ -58,8 +58,13 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 
 # Add executable target for the kernel
 add_executable(uiaos-kernel 
-	# src/multiboot2.asm # TODO: Add multiboot2 support
+	src/multiboot2.asm
+    src/gdt.c
     src/kernel.c
+    src/libc/stdio.c
+    src/libc/string.c
+    src/terminal.c
+    src/arch/i386/gdt_flush.asm
 )
 
 # Include directories for the kernel target
@@ -68,25 +73,24 @@ target_include_directories(uiaos-kernel PUBLIC include)
 
 # Specify compile options for C and C++
 target_compile_options(uiaos-kernel PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
+    $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -ffreestanding -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pic -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -ffreestanding -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pic -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
 )
 
 
 # Specify link options for C and C++
 target_link_options(uiaos-kernel PUBLIC
-    $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-ffreestanding -nostdlib -fno-builtin -static -pie -O0 -T${OS_KERNEL_LINKER} -g>
-)
-
-
-target_link_options(
-	uiaos-kernel
-	PUBLIC "-ffreestanding"
-	PUBLIC "-nostdlib"
-	PUBLIC "-static"
-	PUBLIC "-pie"
-	PUBLIC "-T${OS_KERNEL_LINKER}"
+    -m32
+    -march=i386
+    -ffreestanding
+    -nostdlib
+    -fno-builtin
+    -static
+    -no-pie
+    -O0
+    -T${OS_KERNEL_LINKER}
+    -g
 )
 
 
@@ -122,6 +126,7 @@ add_custom_target(
 	COMMAND cp -v $<TARGET_FILE:uiaos-kernel> 
 	 	${LIMINE_CONFIG_DIR}/limine.cfg ${LIMINE_DIR}/limine-bios.sys ${LIMINE_DIR}/limine-bios-cd.bin
 		${LIMINE_DIR}/limine-uefi-cd.bin ${ISO_DIR}/
+	COMMAND cp -v ${LIMINE_CONFIG_DIR}/limine.cfg ${ISO_DIR}/limine.conf
 	COMMAND mkdir -p ${ISO_DIR}/EFI/BOOT
 	COMMAND cp -v ${LIMINE_DIR}/BOOTX64.EFI ${ISO_DIR}/EFI/BOOT/
 	COMMAND cp -v ${LIMINE_DIR}/BOOTIA32.EFI ${ISO_DIR}/EFI/BOOT/
