@@ -3,135 +3,133 @@
 #include "../include/libc/stddef.h"
 #include "../include/libc/stdint.h"
 
-// VGA text mode is an 80x25 grid of 16-bit cells (char + color)
-#define VGA_WIDTH  80
-#define VGA_HEIGHT 25
-// the cells live at this fixed physical address
-#define VGA_MEMORY 0xB8000
+// the screen is just memory at 0xB8000. it's an 80x25 grid where each
+// slot is 2 bytes: the character + a colour byte stuck on top of it.
+#define COLS 80
+#define ROWS 25
+#define CELLS (COLS * ROWS)
 
-static uint16_t *terminal_buffer = (uint16_t *)VGA_MEMORY;
-static int terminal_row = 0;
-static int terminal_col = 0;
-// default color attribute: light gray on black
-static uint8_t terminal_color = 0x07;
+static volatile uint16_t *const vga = (uint16_t *)0xB8000;
 
-// shift everything up one row and blank the bottom row.
-// used when we'd otherwise write past the bottom of the screen.
-static void terminal_scroll(void) {
-    for (int row = 1; row < VGA_HEIGHT; row++) {
-        for (int col = 0; col < VGA_WIDTH; col++) {
-            terminal_buffer[(row - 1) * VGA_WIDTH + col] =
-                terminal_buffer[row * VGA_WIDTH + col];
-        }
+// instead of tracking a row and a column, we just keep one number that
+// counts cells from the top-left. less stuff to keep in sync.
+static unsigned cursor = 0;
+static uint8_t  default_attr = 0x07;  // boring grey-on-black
+
+// glue a character and its colour together into the 16-bit format the VGA wants.
+static inline uint16_t cell_of(char c, uint8_t attr) {
+    return ((uint16_t)attr << 8) | (uint8_t)c;
+}
+
+// cursor went past the bottom — slide everything up one row and start
+// over on the now-empty bottom line.
+static void roll_up(void) {
+    // copy each row onto the row above it
+    for (unsigned i = COLS; i < CELLS; i++) {
+        vga[i - COLS] = vga[i];
     }
-    // wipe the freshly-revealed bottom row
-    for (int col = 0; col < VGA_WIDTH; col++) {
-        terminal_buffer[(VGA_HEIGHT - 1) * VGA_WIDTH + col] =
-            (terminal_color << 8) | ' ';
+    // wipe the bottom row clean
+    uint16_t blank = cell_of(' ', default_attr);
+    for (unsigned i = CELLS - COLS; i < CELLS; i++) {
+        vga[i] = blank;
     }
-    terminal_row = VGA_HEIGHT - 1;
-}
-void printf_color(const char* str, uint8_t color) {
-    for (int i = 0; str[i]; i++)
-        terminal_putchar(str[i], color);
+    cursor = CELLS - COLS;  // park at the start of that empty row
 }
 
-void terminal_clear(void) {
-    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-        terminal_buffer[i] = (terminal_color << 8) | ' ';
-    terminal_row = 0;
-    terminal_col = 0;
-}
-
-// drop one character at the current cursor spot. handles \n and wrapping.
-void terminal_putchar(char c, uint8_t color) {
+// drop one character onto the screen. '\n' just jumps to the next row,
+// everything else gets written and we shuffle the cursor forward.
+static void emit(char c, uint8_t attr) {
     if (c == '\n') {
-        terminal_col = 0;
-        terminal_row++;
+        // round the cursor up to the start of the next row
+        cursor = (cursor / COLS + 1) * COLS;
     } else {
-        terminal_buffer[terminal_row * VGA_WIDTH + terminal_col] =
-            (color << 8) | c;
-        terminal_col++;
-        if (terminal_col >= VGA_WIDTH) {
-            terminal_col = 0;
-            terminal_row++;
+        vga[cursor++] = cell_of(c, attr);
+    }
+    if (cursor >= CELLS) {
+        roll_up();
+    }
+}
+
+// just spam emit() down a string until the null terminator.
+static void emit_str(const char *s, uint8_t attr) {
+    while (*s) emit(*s++, attr);
+}
+
+// blank the whole screen and send the cursor back home.
+void terminal_clear(void) {
+    uint16_t blank = cell_of(' ', default_attr);
+    for (unsigned i = 0; i < CELLS; i++) {
+        vga[i] = blank;
+    }
+    cursor = 0;
+}
+
+// no format specifiers, just print this string in the colour you picked.
+// used by the menu so we can paint each line in a different colour.
+void printf_color(const char *str, uint8_t color) {
+    emit_str(str, color);
+}
+
+// turn an unsigned integer into a string, but built from the *back* of the
+// buffer instead of the front. that way the digits come out in the right
+// order on the first try — no separate reverse-print step needed.
+// returns a pointer to wherever the first digit ended up.
+static const char *u_to_str(uint32_t n, unsigned base, char *buf, size_t cap) {
+    static const char digits[] = "0123456789abcdef";
+    char *p = buf + cap;
+    *--p = '\0';                // null terminator at the very end
+    if (n == 0) {
+        *--p = '0';             // 0 doesn't enter the loop, handle it explicitly
+        return p;
+    }
+    while (n > 0) {
+        *--p = digits[n % base]; // last digit first, then walk leftwards
+        n /= base;
+    }
+    return p;
+}
+
+// %d handler. negatives print a '-' first and then the magnitude. the
+// goofy `(uint32_t)(-(v+1))+1u` is just so INT_MIN doesn't blow up — you
+// can't negate INT_MIN as a signed int.
+static void emit_int(int v, uint8_t attr) {
+    char buf[16];
+    uint32_t mag = (v < 0) ? (uint32_t)(-(v + 1)) + 1u : (uint32_t)v;
+    if (v < 0) emit('-', attr);
+    emit_str(u_to_str(mag, 10, buf, sizeof(buf)), attr);
+}
+
+// %x handler. always prefix with "0x" so it's obvious what base it is.
+static void emit_hex(uint32_t v, uint8_t attr) {
+    char buf[16];
+    emit_str("0x", attr);
+    emit_str(u_to_str(v, 16, buf, sizeof(buf)), attr);
+}
+
+// the actual printf brains. walk the format string char by char, and
+// when we hit a %, peek at what comes after and call the right handler.
+// anything weird (like %z) just gets printed literally so we can spot bugs.
+static void format_into(const char *fmt, va_list args, uint8_t attr) {
+    while (*fmt) {
+        if (*fmt != '%' || fmt[1] == '\0') {
+            emit(*fmt++, attr);
+            continue;
         }
-    }
-    if (terminal_row >= VGA_HEIGHT) {
-        terminal_scroll();
-    }
-}
-
-// loop a string into terminal_putchar, that's it
-static void terminal_write(const char *str) {
-    for (int i = 0; str[i] != '\0'; i++) {
-        terminal_putchar(str[i], terminal_color);
+        char spec = *++fmt;
+        fmt++;
+        if      (spec == 's') emit_str(va_arg(args, const char *), attr);
+        else if (spec == 'd') emit_int(va_arg(args, int), attr);
+        else if (spec == 'x') emit_hex(va_arg(args, uint32_t), attr);
+        else if (spec == 'c') emit((char)va_arg(args, int), attr);
+        else if (spec == '%') emit('%', attr);
+        else { emit('%', attr); emit(spec, attr); }
     }
 }
 
-// print a signed int in base 10. builds digits backwards into buf, prints reversed.
-static void print_int(int value) {
-    if (value < 0) {
-        terminal_putchar('-', terminal_color);
-        value = -value;
-    }
-    if (value == 0) {
-        terminal_putchar('0', terminal_color);
-        return;
-    }
-    char buf[12];
-    int i = 0;
-    while (value > 0) {
-        buf[i++] = '0' + (value % 10);
-        value /= 10;
-    }
-    while (i > 0) {
-        terminal_putchar(buf[--i], terminal_color);
-    }
-}
-
-// same idea but for hex, with a 0x prefix
-static void print_hex(uint32_t value) {
-    char hex_chars[] = "0123456789ABCDEF";
-    terminal_write("0x");
-    if (value == 0) {
-        terminal_putchar('0', terminal_color);
-        return;
-    }
-    char buf[8];
-    int i = 0;
-    while (value > 0) {
-        buf[i++] = hex_chars[value & 0xF];
-        value >>= 4;
-    }
-    while (i > 0) {
-        terminal_putchar(buf[--i], terminal_color);
-    }
-}
-
-// the actual printf engine. understands %s, %d, %x, %c and literal %%.
-static void vprintf_color(const char *format, va_list args, uint8_t color) {
-    for (int i = 0; format[i] != '\0'; i++) {
-        if (format[i] == '%' && format[i + 1] != '\0') {
-            i++;
-            switch (format[i]) {
-                case 's': terminal_write(va_arg(args, const char *)); break;
-                case 'd': print_int(va_arg(args, int)); break;
-                case 'x': print_hex(va_arg(args, uint32_t)); break;
-                case 'c': terminal_putchar((char)va_arg(args, int), color); break;
-                case '%': terminal_putchar('%', color); break;
-            }
-        } else {
-            terminal_putchar(format[i], color);
-        }
-    }
-}
-
-// the printf everyone actually calls. just unpacks varargs and hands off.
-int printf(const char *format, ...) {
+int printf(const char *fmt, ...) {
     va_list args;
-    va_start(args, format);
-    vprintf_color(format, args, terminal_color);
+    va_start(args, fmt);
+    format_into(fmt, args, default_attr);
     va_end(args);
     return 0;
 }
