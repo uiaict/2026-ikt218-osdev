@@ -27,13 +27,17 @@ enum {
     PIC2_COMMAND = 0xA0,
     PIC2_DATA = 0xA1,
     PIC_EOI = 0x20,
+    KEYBOARD_BUFFER_SIZE = 256,
 };
 
 static struct idt_entry idt_entries[IDT_ENTRY_COUNT];
 static struct idt_pointer idt_ptr;
 static interrupt_handler_t interrupt_handlers[IDT_ENTRY_COUNT];
-static char keyboard_buffer[256];
-static uint32_t keyboard_buffer_length;
+static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
+static uint32_t keyboard_buffer_read;
+static uint32_t keyboard_buffer_write;
+static uint32_t keyboard_buffer_count;
+static uint8_t keyboard_echo_enabled = 1;
 
 extern void idt_flush(uint32_t idt_ptr_address);
 extern void isr0(void);
@@ -133,11 +137,53 @@ static void keyboard_handler(struct interrupt_registers* registers)
         return;
     }
 
-    if (keyboard_buffer_length < sizeof(keyboard_buffer)) {
-        keyboard_buffer[keyboard_buffer_length++] = ascii;
+    keyboard_buffer[keyboard_buffer_write] = ascii;
+    keyboard_buffer_write = (keyboard_buffer_write + 1) % KEYBOARD_BUFFER_SIZE;
+
+    if (keyboard_buffer_count < KEYBOARD_BUFFER_SIZE) {
+        keyboard_buffer_count++;
+    } else {
+        keyboard_buffer_read = (keyboard_buffer_read + 1) % KEYBOARD_BUFFER_SIZE;
     }
 
-    printf("%c", ascii);
+    if (keyboard_echo_enabled != 0) {
+        printf("%c", ascii);
+    }
+}
+
+void keyboard_set_echo(uint8_t enabled)
+{
+    keyboard_echo_enabled = enabled;
+}
+
+uint8_t keyboard_has_key(void)
+{
+    return keyboard_buffer_count > 0;
+}
+
+char keyboard_read_char(void)
+{
+    uint32_t flags;
+    char character;
+
+    __asm__ volatile("pushf; pop %0; cli" : "=r"(flags) :: "memory");
+
+    if (keyboard_buffer_count == 0) {
+        if ((flags & 0x200) != 0) {
+            __asm__ volatile("sti");
+        }
+        return 0;
+    }
+
+    character = keyboard_buffer[keyboard_buffer_read];
+    keyboard_buffer_read = (keyboard_buffer_read + 1) % KEYBOARD_BUFFER_SIZE;
+    keyboard_buffer_count--;
+
+    if ((flags & 0x200) != 0) {
+        __asm__ volatile("sti");
+    }
+
+    return character;
 }
 
 void interrupt_register_handler(uint8_t interrupt_number, interrupt_handler_t handler)
@@ -154,6 +200,11 @@ void interrupts_initialize(void)
         idt_set_entry((uint8_t)i, 0, KERNEL_CODE_SELECTOR, 0);
         interrupt_handlers[i] = NULL;
     }
+
+    keyboard_buffer_read = 0;
+    keyboard_buffer_write = 0;
+    keyboard_buffer_count = 0;
+    keyboard_echo_enabled = 1;
 
     idt_set_entry(0, (uint32_t)isr0, KERNEL_CODE_SELECTOR, IDT_INTERRUPT_GATE);
     idt_set_entry(1, (uint32_t)isr1, KERNEL_CODE_SELECTOR, IDT_INTERRUPT_GATE);

@@ -27,3 +27,6 @@ typedef void (*interrupt_handler_t)(struct interrupt_registers* registers);
 void interrupts_initialize(void);
 void interrupt_register_handler(uint8_t interrupt_number, interrupt_handler_t handler);
 void interrupt_handler(struct interrupt_registers* registers);
+void keyboard_set_echo(uint8_t enabled);
+uint8_t keyboard_has_key(void);
+char keyboard_read_char(void);

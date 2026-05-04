@@ -1,10 +1,10 @@
+#include <bomberman.h>
 #include <gdt.h>
 #include <interrupts.h>
 #include <libc/stdint.h>
 #include <libc/stdio.h>
 #include <memory.h>
 #include <pit.h>
-#include <song.h>
 #include <terminal.h>
 
 extern uint32_t end;
@@ -37,5 +37,5 @@ int main(uint32_t multiboot_magic, uint32_t multiboot_info_addr)
     init_pit();
     __asm__ volatile("sti");
 
-    play_music();
+    run_bomberman();
 }
