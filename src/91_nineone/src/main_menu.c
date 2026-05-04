@@ -135,9 +135,9 @@ void handle_main_menu_keyboard(uint8 scancode) {
             draw_buttons();
             break;
             
-            case 0x1C: // Enter
-                pending_action = selected_item;
-                break;
+        case 0x1C: // Enter
+            pending_action = selected_item;
+            break;
 
         default:
             break;

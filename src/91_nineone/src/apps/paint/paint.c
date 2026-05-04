@@ -83,7 +83,7 @@ void handle_paint_menu_keyboard(char c) {
         case 's':
             selected_item = (selected_item + 1) % NUM_OPTIONS;
             break;
-        case '\r': // Enter
+        case '\n': // Enter
             paint_menu[selected_item].action();
             return;
     }
@@ -136,7 +136,7 @@ void handle_color_picker_menu_keyboard(char c) {
         case 'd':
             move_color_picker_cross(color_x + 1, color_y);
             break;
-        case '\r': // Enter
+        case '\n': // Enter
             mode = MODE_PAINT;
             brush = BRUSH_PAINT;
             current_color = 4 * color_y + color_x;
