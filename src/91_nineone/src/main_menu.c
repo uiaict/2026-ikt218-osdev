@@ -57,12 +57,6 @@ void test_action() {
     printf("int sleep: done");
 }
 
-void method_that_starts_typegame() {
-    //terminal_write("<to be added>", COLOR(BLUE, WHITE), 45, 16);
-    current_menu = TYPEGAME_MENU;
-    typegame_start();
-}
-
 void play_music(void) {
     terminal_write("enjoy the music!", COLOR(BLUE, WHITE), 45, 16);
     Song songs[] = {
@@ -81,7 +75,7 @@ void play_music(void) {
 struct button start_menu[] = {
     {"Print info", test_action},
     {"Paint program", enter_paint_program},
-    {"Play game", method_that_starts_typegame},
+    {"Play game", typegame_start},
     {"Play music", play_music}
 };
 

@@ -6,6 +6,7 @@
 #include "libc/stdint.h"
 #include "keyboard.h"
 #include "main_menu.h"
+#include "menu.h"
 #include "../src/pit.h"
 
 
@@ -50,6 +51,7 @@ void handle_typegame_keyboard(uint8 scancode)
 
 void typegame_start() 
 {
+    current_menu = TYPEGAME_MENU;
     current_index = 0;
     mistakes = 0;
     isRunning = true;
