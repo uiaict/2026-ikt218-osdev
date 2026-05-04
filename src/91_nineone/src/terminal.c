@@ -67,7 +67,7 @@ void terminal_clear(uint8 color)
 
     for(int y = 1; y < VGA_HEIGHT-1; y++) 
     {
-        for(int x = 1; x < VGA_WIDTH; x++) {
+        for(int x = 1; x < VGA_WIDTH-1; x++) {
             vga_buffer[y * VGA_WIDTH + x] = empty;
         }
     }
