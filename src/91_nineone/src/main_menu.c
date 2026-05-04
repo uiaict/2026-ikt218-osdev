@@ -12,6 +12,9 @@
 #include "apps/typegame/typegame.h"
 
 static int selected_item = 0;
+static volatile int pending_action = -1;
+static volatile int action_running = 0;
+static bool enter_down = false;
 #define NUM_OPTIONS 4
 
 void play_music(void);
@@ -61,14 +64,20 @@ void test_action() {
     printf("int sleep: testing");
     sleep_interrupt(250);
     printf("int sleep: done");
+
+    printf("Returning to main menu...");
+    sleep_interrupt(3000);
+    enter_main_menu();
 }
 
 void play_music(void) {
+    pending_action = -1;
+
     terminal_clear(COLOR(WHITE, BLACK));
     draw_window("Music Player");
 
 
-    printf("Song started...");
+    printf("Song of Storms started...");
 
     Song song = {
         music_1,
@@ -90,6 +99,17 @@ struct button start_menu[] = {
     {"Play game", typegame_start},
     {"Play music", play_music}
 };
+
+void main_menu_update(void) {
+    if (pending_action < 0) {
+        return;
+    }
+
+    int action = pending_action;
+    pending_action = -1;
+
+    start_menu[action].action();
+}
 
 static void draw_buttons() {
 
@@ -114,9 +134,9 @@ void handle_main_menu_keyboard(uint8 scancode) {
             selected_item = (selected_item + 1) % NUM_OPTIONS;
             draw_buttons();
             break;
-
+            
         case 0x1C: // Enter
-            start_menu[selected_item].action();
+            pending_action = selected_item;
             break;
 
         default:
@@ -125,8 +145,13 @@ void handle_main_menu_keyboard(uint8 scancode) {
 }
 
 void enter_main_menu() {
+    pending_action = -1;
+    enter_down = false;
+
+
     terminal_clear(0);
     draw_window("Main Menu");
     draw_buttons();
+
     current_menu = MAIN_MENU;
 }

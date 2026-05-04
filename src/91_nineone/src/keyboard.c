@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "terminal.h"
+#include "libc/stdbool.h"
 
 static char keyboard_buffer[KEYBOARD_BUFFER_SIZE];
 static uint32 keyboard_buffer_index = 0;
@@ -85,33 +86,42 @@ static void keyboard_callback(registers_t* regs) {
 
     uint8 scancode = keyboard_read_scancode();
 
+    bool is_release = (scancode & 0x80) != 0;
+    char c = 0;
+
     /*
-     * Ignore key release events.
-     * PS/2 release scancodes usually have bit 7 set.
+     * Only translate key press events to ASCII.
+     * Release events are still sent to apps, but not stored as text.
      */
-    if (scancode & 0x80) {
-        return;
-    }
-
-    char c = keyboard_scancode_to_ascii(scancode);
-
-    if (c == 0) {
-        return;
-    }
-
-    if (c == '\b') {
-        keyboard_remove_last_char();
-    } else {
-        keyboard_store_char(c);
+    if (!is_release) {
+        c = keyboard_scancode_to_ascii(scancode);
     }
 
     /*
-     * If an app/menu/game has registered a keyboard callback,
-     * send the key there. Otherwise, print normally to screen.
+     * Store typed characters in the keyboard buffer.
+     * This satisfies the keyboard logger requirement.
+     */
+    if (!is_release && c != 0) {
+        if (c == '\b') {
+            keyboard_remove_last_char();
+        } else {
+            keyboard_store_char(c);
+        }
+    }
+
+    /*
+     * Send ALL scancodes to the current app/menu handler, including release events.
+     * Paint needs release events so movement does not get stuck.
      */
     if (current_handler != 0) {
         current_handler(c, scancode);
-    } else {
+        return;
+    }
+
+    /*
+     * If no app/menu handler exists, print normal typed characters.
+     */
+    if (!is_release && c != 0) {
         keyboard_print_char(c);
     }
 }

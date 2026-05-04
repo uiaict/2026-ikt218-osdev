@@ -22,7 +22,6 @@
 
 static void typegame_draw();
 static void typegame_end();
-static void typegame_keyboard_handler(char c, int8 scancode);
 
 static const char* text = "this sentence walks sideways into a quiet refrigerator. the clouds are thinking about spoons again. a bicycle whispers loudly under the carpet. nothing agrees with the color of yesterday and it hums anyway. the floor forgets to be flat while a pocket of oranges sings silently. everything continues but not in the direction it started.";
 static int current_index = 0;
@@ -37,12 +36,16 @@ static uint32 last_second_tracker = 0;
 
 void handle_typegame_keyboard(uint8 scancode)
 {
-    char c = keyboard_scancode_to_ascii(scancode);
+    if (scancode & 0x80) {
+        return;
+    }
 
     if (scancode == 0x01) {
         typegame_end();
         return;
     }
+
+    char c = keyboard_scancode_to_ascii(scancode);
 
     if (c != 0) {
         typegame_handle_key(c);
@@ -64,7 +67,6 @@ void typegame_start()
     // Draw
     typegame_draw();
 
-    keyboard_set_event_handler(typegame_keyboard_handler);
 
     // Start timer
     start_ticks = get_current_tick();
@@ -103,14 +105,6 @@ void typegame_update()
     
 }
 
-static void typegame_keyboard_handler(char character, int8 scancode) 
-{
-    (void)scancode;
-
-    if(isRunning == false) return;
-
-    typegame_handle_key(character);
-}
 
 void typegame_handle_key(char c)
 {

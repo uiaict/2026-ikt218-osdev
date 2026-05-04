@@ -51,15 +51,25 @@ static void play_sound(uint32_t frequency) {
 }
 
 extern "C" void play_song_impl(Song* song) {
+    if (song == 0 || song->notes == 0 || song->note_count == 0) {
+        return;
+    }
+
+    stop_sound();
+    enable_speaker();
+
     for (size_t i = 0; i < song->note_count; i++) {
         Note* note = &song->notes[i];
 
         play_sound(note->frequency);
         sleep_interrupt(note->duration);
-        stop_sound(); //prevent smearing of notes
-        sleep_interrupt(10); 
-    }
 
+        stop_sound(); // Prevent smearing of notes.
+        sleep_interrupt(10);
+    }
+  
     stop_sound();
     disable_speaker();
+
+    
 }

@@ -4,7 +4,6 @@
 #include "terminal.h"
 #include "libc/string.h"
 #include "libc/stdbool.h"
-#include "arch/i386/isr.h"
 #include "colors.h"
 #include "keyboard.h"
 #include "apps/typegame/typegame.h"
@@ -33,28 +32,29 @@ void print_button(struct button* btn, bool is_selected, int x, int y) {
     terminal_putchar(217, color_border, x + 1 + len, y + 2);
 }
 
-void keyboard_handler(registers_t* regs) {
+static void menu_keyboard_event(char character, uint8 scancode) {
+    (void)character;
 
-    uint8 scancode = inb(0x60);
-
-    // Vi bruker scancodes direkte for å være helt sikre (W=0x11, S=0x1F, Enter=0x1C)
-    switch(current_menu) {
+    switch (current_menu) {
         case MAIN_MENU:
             handle_main_menu_keyboard(scancode);
             break;
+
         case PAINT_MENU:
             handle_paint_keyboard(scancode);
             break;
+
         case TYPEGAME_MENU:
             handle_typegame_keyboard(scancode);
             break;
+
+        default:
+            break;
     }
 }
-
 void init_menu() {
     enter_main_menu();
-    // Register keyboard handler for IRQ1 (keyboard interrupt)
-    register_interrupt_handler(33, keyboard_handler);
+    keyboard_set_event_handler(menu_keyboard_event);
 }
 
 void draw_window(const char* title) {

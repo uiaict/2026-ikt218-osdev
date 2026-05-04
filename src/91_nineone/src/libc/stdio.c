@@ -14,6 +14,7 @@ static int print_int(int n, uint8 color, int* x, int* y);
 
 static int currentRowNumber = 1;
  
+// Print unsigned integer
 void print_uint(uint32 n, uint8 color, int x, int y) {
     char buffer[11];
     int i = 0;
@@ -40,6 +41,7 @@ void print_uint(uint32 n, uint8 color, int x, int y) {
     print(out, color, x, y);
 }
 
+// internal helper to print hexadecimal
 static int print_hex(uint32 n, uint8 color, int* x, int* y)
 {
     char buffer[9];
@@ -51,6 +53,7 @@ static int print_hex(uint32 n, uint8 color, int* x, int* y)
         return 1;
     }
 
+    // Convert to hex. In reverse order due to %.
     while (n > 0) {
         uint32 digit = n % 16;
 
@@ -62,6 +65,7 @@ static int print_hex(uint32 n, uint8 color, int* x, int* y)
         n /= 16;
     }
 
+    // Print with correct order
     while (i > 0) {
         stdio_putchar(buffer[--i], color, x, y);
         count++;
@@ -70,7 +74,7 @@ static int print_hex(uint32 n, uint8 color, int* x, int* y)
     return count;
 }
 
- // heart-aching
+ // custom printf, forces automatic endl. @param%u @param %d, @param %x
 int printf(const char* __restrict__ format, ...) 
 {
     uint8 color = COLOR(WHITE, BLACK); //Default color
@@ -85,7 +89,7 @@ int printf(const char* __restrict__ format, ...)
     return length; 
 }
 
-
+// printf with specified color attribute
 int printf_color(uint8 color, const char* __restrict__ format, ...)
 {   
     va_list args;
@@ -98,7 +102,7 @@ int printf_color(uint8 color, const char* __restrict__ format, ...)
     return length; 
 }
     
-
+// print for usigned integer. returns length.
 int print_uint2(uint32 n, uint8 color, int* x, int* y) 
 {
     char buffer[11];
@@ -110,11 +114,13 @@ int print_uint2(uint32 n, uint8 color, int* x, int* y)
         return 1;
     }
 
+    // Number to decimal digit
     while (n > 0) {
         buffer[i++] = '0' + (n % 10);
         n /= 10;
     }
 
+    // Print with correct order
     while (i > 0) {
         stdio_putchar(buffer[--i], color, x, y);
         count++;
@@ -123,6 +129,7 @@ int print_uint2(uint32 n, uint8 color, int* x, int* y)
     return count;
 }
 
+// print for signed integer. returns length.
 static int print_int(int n, uint8 color, int* x, int* y)
 {
     int count = 0;
@@ -138,23 +145,26 @@ static int print_int(int n, uint8 color, int* x, int* y)
     return count;
 }
 
+// Internal helper for putchar.
 static void stdio_putchar(char c, uint8 color, int* x, int* y) 
 {
     terminal_putchar(c, color, *x, *y);
 
+    // directly change x for vprintf
     (*x)++;
 
+    // wrap when out of bounds
     if(*x >= 79) 
     {
         *x= 1;
-        (*y)++;
+        (*y)++; //directly change y for vprintf
     }
 }
 
 static int vprintf_color(uint8 color, const char* format, va_list args) 
 {
     int length = 0;
-    int currentX = 1;
+    int currentX = 1; // for wrapping and placement
 
     while(*format)
     {
@@ -187,10 +197,12 @@ static int vprintf_color(uint8 color, const char* format, va_list args)
         format++;
     }
 
+    // next row, newline each time printf is called
     currentRowNumber++;
 
     return length;
 }
+
 
 void resetRowNumber() 
 {

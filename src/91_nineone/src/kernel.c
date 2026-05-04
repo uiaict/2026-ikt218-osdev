@@ -9,6 +9,8 @@
 #include "arch/i386/isr.h"
 #include "pit.h"
 #include "keyboard.h"
+#include "main_menu.h"
+#include "apps/typegame/typegame.h"
 
 extern uint32_t end;
 
@@ -38,15 +40,12 @@ int main(void) {
             case PAINT_MENU:
                 tick_brush();
                 break;
+            case MAIN_MENU:
+                main_menu_update();
+                break;
             default:
                 break;
         }
-        if(current_menu == TYPEGAME_MENU) {
-            typegame_update();
-        }
-
-        __asm__ volatile("hlt");
-    }
 
     return 0;
 }
