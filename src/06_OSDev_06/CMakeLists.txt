@@ -146,6 +146,7 @@ add_custom_target(
 	 	-efi-boot-part --efi-boot-image --protective-msdos-label
 	 	${ISO_DIR} -o ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
 	COMMAND ${LIMINE_DIR}/limine bios-install ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
+	COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso ${CMAKE_CURRENT_BINARY_DIR}/kernel.img
 	#COMMAND sudo rm -rf ${ISO_DIR}
 	DEPENDS create-fat32-disk uiaos-kernel
 	VERBATIM
