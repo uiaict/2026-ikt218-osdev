@@ -61,6 +61,7 @@ set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/lin
 # Add executable target for the kernel
 add_executable(uiaos-kernel 
 	src/multiboot2.asm
+    src/brahms_op38_opening.c
     src/gdt.c
     src/interrupts.c
     src/kernel.c
@@ -68,8 +69,10 @@ add_executable(uiaos-kernel
     src/libc/string.c
     src/memory.c
     src/new.cpp
+    src/pc_speaker.c
     src/pit.c
     src/ports.c
+    src/song_player.c
     src/terminal.c
     src/arch/i386/gdt_flush.asm
     src/arch/i386/interrupt_stubs.asm

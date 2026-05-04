@@ -1,10 +1,13 @@
 .vscode
+build/77_lindestad/
 src/build_*/*
 venv
 !build_*/kernel.bin
 !build_*/kernel.img
 *.lock
 *.egg-info*
+__pycache__/
+*.wav
 .cmake
 CMakeCache*
 CMakeFiles

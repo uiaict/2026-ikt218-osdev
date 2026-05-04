@@ -4,6 +4,7 @@
 #include <libc/stdio.h>
 #include <memory.h>
 #include <pit.h>
+#include <song.h>
 #include <terminal.h>
 
 extern uint32_t end;
@@ -36,14 +37,5 @@ int main(uint32_t multiboot_magic, uint32_t multiboot_info_addr)
     init_pit();
     __asm__ volatile("sti");
 
-    uint32_t counter = 0;
-    for (;;) {
-        printf("[%u]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
-        sleep_busy(1000);
-        printf("[%u]: Slept using busy-waiting.\n", counter++);
-
-        printf("[%u]: Sleeping with interrupts (LOW CPU).\n", counter);
-        sleep_interrupt(1000);
-        printf("[%u]: Slept using interrupts.\n", counter++);
-    }
+    play_music();
 }
