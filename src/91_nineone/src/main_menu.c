@@ -6,6 +6,9 @@
 #include "libc/stdbool.h"
 #include "colors.h"
 #include "Music_Player/song.h"
+#include "kernel/memory.h"
+#include "pit.h"
+#include "libc/stdio.h"
 
 static int selected_item = 0;
 #define NUM_OPTIONS 4
@@ -14,8 +17,43 @@ void play_music(void);
 void play_song_impl(Song* song);
 
 void test_action() {
-    terminal_write("this will show info, like memory and interupt stuff", COLOR(BLUE, WHITE), 45, 15);
-    terminal_write("(the stuff that originally got printed when the system started)", COLOR(BLUE, WHITE), 45, 16);
+    terminal_clear(COLOR(WHITE, BLACK));
+    draw_window("System tests");
+
+    printf_color(COLOR(YELLOW, BLUE), "FreDDaviDOS system test");
+
+    printf("IDT: loaded");
+
+    uint32_t t1 = get_current_tick();
+    sleep_interrupt(100);
+    uint32_t t2 = get_current_tick();
+
+    if (t2 > t1) {
+        printf("PIT IRQ0: ok");
+    } else {
+        printf("PIT IRQ0: failed");
+    }
+
+    void* a = malloc(12345);
+    void* b = malloc(54321);
+    void* c = malloc(13331);
+
+    if (a && b && c && a != b && b != c && a != c) {
+        printf("malloc: ok");
+    } else {
+        printf("malloc: failed");
+    }
+
+    printf("a=0x%x b=0x%x", (uint32_t)a, (uint32_t)b);
+    printf("c=0x%x", (uint32_t)c);
+
+    printf("busy sleep: testing");
+    sleep_busy(250);
+    printf("busy sleep: done");
+
+    printf("int sleep: testing");
+    sleep_interrupt(250);
+    printf("int sleep: done");
 }
 
 void method_that_starts_typegame() {
@@ -60,15 +98,21 @@ void handle_main_menu_keyboard(uint8 scancode) {
     switch (scancode) {
         case 0x11: // W
             selected_item = (selected_item - 1 + NUM_OPTIONS) % NUM_OPTIONS;
+            draw_buttons();
             break;
+
         case 0x1F: // S
             selected_item = (selected_item + 1) % NUM_OPTIONS;
+            draw_buttons();
             break;
+
         case 0x1C: // Enter
             start_menu[selected_item].action();
-            return;
+            break;
+
+        default:
+            break;
     }
-    draw_buttons();
 }
 
 void enter_main_menu() {

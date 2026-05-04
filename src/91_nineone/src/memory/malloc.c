@@ -121,7 +121,7 @@ void* malloc(size_t size)
     while((uint32)mem < last_alloc)
     {
         alloc_t *a = (alloc_t *)mem;
-        printf("mem=0x%x a={.status=%d, .size=%d}\n", mem, a->status, a->size);
+        // -printf("mem=0x%x a={.status=%d, .size=%d}\n", mem, a->status, a->size);
 
         if(!a->size)
             goto nalloc;
@@ -160,7 +160,7 @@ void* malloc(size_t size)
     last_alloc += size;
     last_alloc += sizeof(alloc_t);
     last_alloc += 4;
-    printf("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32)alloc + sizeof(alloc_t), last_alloc);
+    // -printf("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32)alloc + sizeof(alloc_t), last_alloc);
     memory_used += size + 4 + sizeof(alloc_t);
     memset((char *)((uint32)alloc + sizeof(alloc_t)), 0, size);
     return (char *)((uint32)alloc + sizeof(alloc_t));
