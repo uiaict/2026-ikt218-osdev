@@ -11,6 +11,7 @@
 #include "keyboard.h"
 #include "main_menu.h"
 #include "apps/typegame/typegame.h"
+#include "../include/apps/paint/paint.h"
 
 extern uint32_t end;
 

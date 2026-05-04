@@ -36,10 +36,12 @@ static uint32 last_second_tracker = 0;
 
 void handle_typegame_keyboard(uint8 scancode)
 {
+    // dont handle key release event
     if (scancode & 0x80) {
         return;
     }
 
+    // esc to exit application
     if (scancode == 0x01) {
         typegame_end();
         return;
@@ -47,11 +49,13 @@ void handle_typegame_keyboard(uint8 scancode)
 
     char c = keyboard_scancode_to_ascii(scancode);
 
+    // handle char from given scancode
     if (c != 0) {
         typegame_handle_key(c);
     }
 }
 
+// Starts the typegame app
 void typegame_start() 
 {
     current_menu = TYPEGAME_MENU;
@@ -68,7 +72,7 @@ void typegame_start()
     typegame_draw();
 
 
-    // Start timer
+    // Start tick for timer
     start_ticks = get_current_tick();
 }
 
@@ -79,8 +83,10 @@ void typegame_update()
         return;
     }
 
+    // handler timer through PIT
     uint32 elapsed_ticks = get_current_tick() - start_ticks;
-    elapsed_ticks *= 2;
+    elapsed_ticks *= 3; // PIT ticks are a little off. Calibrate.
+    elapsed_ticks = elapsed_ticks / 2;
     uint32 elapsed_seconds = elapsed_ticks / PIT_TARGET_FREQUENCY;
 
     if (elapsed_seconds != last_second_tracker) {
@@ -89,7 +95,7 @@ void typegame_update()
         // update timer display
         print_uint(elapsed_seconds, COLOR(LIGHT_RED, BLACK), TIME_TEXT_POSITION_X, 3);
         
-        // update WPM (kind of fake WPM)
+        // update WPM (5 char = word)
         if (elapsed_seconds > 0) {
             int correct = current_index - mistakes;
             int wpm = (correct * 60) / (5 * elapsed_seconds);
@@ -99,6 +105,7 @@ void typegame_update()
         
     }
 
+    // end after x seconds
     if (elapsed_seconds >= 20) {
         isRunning = false;
     }
@@ -113,12 +120,15 @@ void typegame_handle_key(char c)
         return;
     }
 
+    // get "current character" in text
     char expected = text[current_index];
 
+    // calculate current x and y position of "cursor".
     int width = MAX_X - MIN_X + 1;
     int x = MIN_X + (current_index % width);
     int y = MIN_Y + 1 + (current_index / width);
 
+    // handle backspace
     if(c == '\b') 
     {
         if(current_index > 0) 
@@ -135,10 +145,12 @@ void typegame_handle_key(char c)
     }
     
     if(c == expected) {
+        // mark green
         terminal_putchar(expected, COLOR(WHITE, GREEN), x, y);
     }
     else 
     {
+        // mark red and handle mistakes if char != expected
         terminal_putchar(expected, COLOR(WHITE, RED), x, y);
         mistakes++;
         print_uint(mistakes, COLOR(RED, BLACK), MISTAKES_TEXT_POSITION_X, 3);
@@ -152,12 +164,14 @@ void typegame_handle_key(char c)
 
 }
 
+// handle logic for ending typegame app
 static void typegame_end() 
 {
     isRunning = false;
     enter_main_menu();
 }
 
+// handle drawing logic (UI)
 static void typegame_draw() 
 {    
     
