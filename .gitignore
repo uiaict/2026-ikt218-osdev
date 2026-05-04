@@ -1,30 +1,20 @@
-# VS Code
 .vscode/
-
-# Build folders (top-level)
-build/
-
-# Just in case (old builds inside src)
-src/group32/build/
-
-# CMake
-CMakeFiles/
-CMakeCache.txt
-*.cmake
-build.ninja
-.ninja*
-
-# Generated OS files
-*.iso
-*.bin
-disk.iso
-
-# Python / misc
 venv/
 *.lock
 *.egg-info*
 .env
-
-# Temp files
 *.tmp
 *.swp
+
+# Ignore old/template folders
+src/group_name/
+
+# Ignore source-tree builds
+src/group32/build/
+
+# Ignore most build files
+build/*
+!build/group32/
+build/group32/*
+!build/group32/kernel.bin
+!build/group32/kernel.iso
