@@ -36,6 +36,13 @@ void printf_color(const char* str, uint8_t color) {
         terminal_putchar(str[i], color);
 }
 
+void terminal_clear(void) {
+    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+        terminal_buffer[i] = (terminal_color << 8) | ' ';
+    terminal_row = 0;
+    terminal_col = 0;
+}
+
 // Skriver ett tegn til skjermen
 void terminal_putchar(char c, uint8_t color) {
     if (c == '\n') {

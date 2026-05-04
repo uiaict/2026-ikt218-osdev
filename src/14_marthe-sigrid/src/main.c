@@ -20,6 +20,7 @@ SongPlayer* create_song_player() {
 
 void play_music() {
     Song songs[] = {
+        {music_2, sizeof(music_2) / sizeof(Note)},
         {starwars_theme, sizeof(starwars_theme) / sizeof(Note)},
     };
     uint32_t n_songs = sizeof(songs) / sizeof(Song);

@@ -38,6 +38,7 @@ void main(uint32_t magic, uint32_t mb_info_addr)
     void* memory3 = malloc(13331);
         
     while (1) {
+        terminal_clear();
         show_menu();
 
         uint8_t sc = 0;

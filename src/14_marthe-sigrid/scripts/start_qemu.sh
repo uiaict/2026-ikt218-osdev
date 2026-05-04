@@ -4,7 +4,9 @@ DISK_PATH=$2
 
 # Start QEMU in the background
 echo "Starting QEMU (DISPLAY=$DISPLAY)"
-qemu-system-i386 -S -gdb tcp::1234 -cdrom /workspaces/2026-ikt218-osdev/build/14_marthe-sigrid/kernel.iso -m 64 -serial pty -machine pcspk-audiodev=snd -audiodev pa,id=snd > /tmp/qemu.log 2>&1 &
+export WAYLAND_DISPLAY=/mnt/wslg/runtime-dir/wayland-0
+export GDK_BACKEND=wayland
+qemu-system-i386 -S -gdb tcp::1234 -cdrom /workspaces/2026-ikt218-osdev/build/14_marthe-sigrid/kernel.iso -m 64 -serial pty -machine pcspk-audiodev=snd -audiodev sdl,id=snd -display gtk > /tmp/qemu.log 2>&1 &
 QEMU_PID=$!
 
 # Give QEMU a moment to either start or crash

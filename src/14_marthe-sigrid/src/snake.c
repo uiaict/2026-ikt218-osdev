@@ -5,10 +5,10 @@
  * All I/O replaced with bare-metal VGA, PCSPK, and keyboard IRQ.
  */
 
-#include "/include/snake.h"
-#include "/include/libc/stdint.h"
-#include "/include/kernel/pit.h"
-#include "/include/io.h"
+#include "../include/snake.h"
+#include "../include/libc/stdint.h"
+#include "../include/kernel/pit.h"
+#include "../include/io.h"
 
 // VGA
 #define VGA_WIDTH  80
