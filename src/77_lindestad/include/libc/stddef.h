@@ -2,4 +2,4 @@
 
 #define NULL ((void*)0)
 
-typedef long unsigned int size_t;
+typedef unsigned int size_t;

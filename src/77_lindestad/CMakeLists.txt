@@ -36,6 +36,8 @@ set(OS_KERNEL_IMAGE "kernel.iso")
 ########################################
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD_LIBRARIES "")
+set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
 
 ########################################
 # Assembly Configuration
@@ -64,6 +66,9 @@ add_executable(uiaos-kernel
     src/kernel.c
     src/libc/stdio.c
     src/libc/string.c
+    src/memory.c
+    src/new.cpp
+    src/pit.c
     src/ports.c
     src/terminal.c
     src/arch/i386/gdt_flush.asm
@@ -77,7 +82,7 @@ target_include_directories(uiaos-kernel PUBLIC include)
 # Specify compile options for C and C++
 target_compile_options(uiaos-kernel PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdinc -nostdlib -ffreestanding -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pic -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -ffreestanding -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pic -fno-pie -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdinc -nostdlib -ffreestanding -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fno-pic -fno-pie -fno-exceptions -fno-rtti -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
 )
 
@@ -100,6 +105,7 @@ target_link_options(uiaos-kernel PUBLIC
 # Set properties for the kernel target
 set_target_properties(uiaos-kernel PROPERTIES
     OUTPUT_NAME "${OS_KERNEL_BINARY}"
+    LINKER_LANGUAGE C
     #LINK_FLAGS "${OS_KERNEL_LINK_FLAGS}"
 )
 
