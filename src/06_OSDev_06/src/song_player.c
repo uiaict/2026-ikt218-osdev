@@ -3,6 +3,11 @@
 #include <io.h>
 #include <memory.h>
 #include <libc/stdio.h>
+#include <keyboard.h>
+
+#define SC_ESC 0x01
+
+static volatile int stop_music = 0;
 
 /*
  * PC Speaker (PCSPK) driver
@@ -101,14 +106,18 @@ void play_song_impl(Song *song)
     for (uint32_t i = 0; i < song->length; i++) {
         Note *note = &song->notes[i];
 
+        if (stop_music) break;
         if (note->frequency == 0) {
-            stop_sound();          /* rest: silence for duration */
+            stop_sound();
         } else {
             play_sound(note->frequency);
         }
 
         sleep_interrupt(note->duration);
         stop_sound();
+
+        if (keyboard_consume_scancode() == SC_ESC)
+            stop_music = 1;
     }
 
     disable_speaker();
@@ -143,20 +152,32 @@ SongPlayer *create_song_player(void)
 void play_music(void)
 {
     Song songs[] = {
-        { music_1,              sizeof(music_1)              / sizeof(Note) },
-        { starwars_theme,       sizeof(starwars_theme)       / sizeof(Note) },
+        { music_1,                sizeof(music_1)                / sizeof(Note) },
+        { starwars_theme,         sizeof(starwars_theme)         / sizeof(Note) },
         { battlefield_1942_theme, sizeof(battlefield_1942_theme) / sizeof(Note) },
-        { music_4,              sizeof(music_4)              / sizeof(Note) },
+        { music_4,                sizeof(music_4)                / sizeof(Note) },
+    };
+    const char *names[] = {
+        "Super Mario Theme",
+        "Star Wars Theme",
+        "Battlefield 1942 Theme",
+        "Frere Jacques",
     };
     uint32_t n_songs = sizeof(songs) / sizeof(Song);
 
     SongPlayer *player = create_song_player();
 
-    while (1) {
-        for (uint32_t i = 0; i < n_songs; i++) {
-            printf("Playing song %d...\n", i + 1);
+    stop_music = 0;
+    keyboard_set_game_mode(1);
+    keyboard_consume_scancode();
+
+    while (!stop_music) {
+        for (uint32_t i = 0; i < n_songs && !stop_music; i++) {
+            printf("Now playing: %s  (ESC = Menu)\n", names[i]);
             player->play_song(&songs[i]);
-            printf("Finished song %d.\n\n", i + 1);
         }
     }
+
+    stop_sound();
+    keyboard_set_game_mode(0);
 }

@@ -10,6 +10,8 @@
 #include <pit.h>
 #include <snake.h>
 
+void play_music(void);
+
 /*
  * 'end' is defined by the linker script (src/arch/i386/linker.ld).
  * Its address is the first byte of free memory after the kernel binary
@@ -81,39 +83,21 @@ void main(uint32_t magic, uint32_t mbi)
     /* --- Enable hardware interrupts --- */
     __asm__ volatile ("sti");
 
-    /* --- Test malloc / free --- */
-    terminal_writecolor("--- malloc / free test ---\n", VGA_COLOR_LIGHT_BROWN, VGA_COLOR_BLACK);
-
-    void *mem1 = malloc(12345);
-    void *mem2 = malloc(54321);
-    void *mem3 = malloc(13331);
-
-    printf("malloc(12345) -> 0x%x\n", (uint32_t)mem1);
-    printf("malloc(54321) -> 0x%x\n", (uint32_t)mem2);
-    printf("malloc(13331) -> 0x%x\n", (uint32_t)mem3);
-
-    free(mem1);
-    printf("free(0x%x) OK\n", (uint32_t)mem1);
-
-    void *mem4 = malloc(100);
-    printf("malloc(100)   -> 0x%x  (reused freed block)\n\n", (uint32_t)mem4);
-
     /* --- Main menu --- */
-    sleep_interrupt(1000);
-
-    /* Scancode for '1' key (Set 1) */
     #define SC_KEY_1  0x02
+    #define SC_KEY_2  0x03
 
     while (1) {
         terminal_init();
         terminal_writecolor("=== UiA OS - Assignment 6 ===\n\n", VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
         terminal_writecolor("  Main Menu\n", VGA_COLOR_WHITE, VGA_COLOR_BLACK);
         terminal_writecolor("  ----------\n", VGA_COLOR_DARK_GREY, VGA_COLOR_BLACK);
-        terminal_writecolor("  [1]  Play Snake\n", VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
-        terminal_writecolor("\n  Press 1 to select.\n", VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+        terminal_writecolor("  [1]  Snake\n", VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
+        terminal_writecolor("  [2]  Music Player\n", VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
+        terminal_writecolor("\n  Press a key to select.\n", VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 
         keyboard_set_game_mode(1);
-        keyboard_consume_scancode();   /* drain any leftover keypress */
+        keyboard_consume_scancode();
 
         uint8_t sc = 0;
         while (sc == 0) {
@@ -122,9 +106,7 @@ void main(uint32_t magic, uint32_t mbi)
         }
         keyboard_set_game_mode(0);
 
-        if (sc == SC_KEY_1) {
-            run_snake();
-        }
-        /* Any other key just redraws the menu */
+        if (sc == SC_KEY_1) run_snake();
+        else if (sc == SC_KEY_2) play_music();
     }
 }
