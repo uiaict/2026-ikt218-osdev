@@ -21,10 +21,12 @@
 #define COLOR_PICKER_START_X 66
 #define COLOR_PICKER_START_Y 6
 
-#define POS_MUL 4000 // Each cell in the paint area is 50x50 pixels
-#define VEL_LIM 50
+#define POS_MUL 200 // Each cell in the paint area is 50x50 pixels
+#define VEL_LIM 20
 
-static bool keys[128] = {false};
+static bool keys[128] = {false}; // Index is scancode, value is whether it's currently pressed.
+// This makes it possible to check multiple keys at once (for smoother movement of the brush when holding down multiple keys)
+// and to check if a key is being held down in the tick function for the brush.
 
 static int selected_item = 0;
 static int mode = MODE_MENU;

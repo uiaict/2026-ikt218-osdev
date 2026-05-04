@@ -32,7 +32,7 @@ int main(void) {
     init_menu();
 
     while (1) {
-
+        sleep_interrupt(4); // Sleep to reduce CPU usage, will be woken up by interrupts
         switch (current_menu){
             case TYPEGAME_MENU:
                 typegame_update();
@@ -46,6 +46,6 @@ int main(void) {
             default:
                 break;
         }
-
+    }
     return 0;
 }
