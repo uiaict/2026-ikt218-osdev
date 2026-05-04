@@ -3,7 +3,7 @@
 
 #include "libc/stdint.h"
 
-// This matches the stack layout from your assembly stub
+// made to match setup from assembly stub
 typedef struct {
     uint32_t ds;                                     // Data segment
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha

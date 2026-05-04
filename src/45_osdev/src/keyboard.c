@@ -4,6 +4,11 @@
 #include <../include/libc/stdint.h>
 #include <../include/libc/stdio.h>
 
+// This file handles keyborad input and functionality
+// includes a working keyboard handler, 
+// and a simple scancode to ascii lookup table
+
+
 #define KBD_DATA_PORT 0x60
 
 static inline uint8_t inb(uint16_t port) {
@@ -34,15 +39,7 @@ static volatile int kbuf_tail = 0;
 void keyboard_handler(int irq) {
     uint8_t scancode = inb(KBD_DATA_PORT);
     if (scancode == 0x0E) { 
-        // If backspace, then make code remove last char from buffer.
-        if (kbuf_head != kbuf_tail) {
-            // move head back
-            kbuf_head = (kbuf_head - 1) & (KBUF_SIZE - 1);
-            // remove from screen
-            vga_backspace();
-        } else {
-            // nothing to delete
-        }
+        vga_backspace();
         pic_send_eoi(1);
         return;
     }
@@ -65,7 +62,7 @@ char keyboard_getchar(void) {
     volatile int *tail = &kbuf_tail;
     // Wait until there is a character in the buffer
     while (*tail == *head) {
-        //asm volatile("hlt");  // sleep until next interrupt
+        
     }
     char c = (char)kbuf[kbuf_tail];
     kbuf_tail = (kbuf_tail + 1) & (KBUF_SIZE - 1);

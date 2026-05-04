@@ -38,34 +38,43 @@ void print_menu(void) {
 }
 
 // Option 1: Info & Tests
-void run_info_and_tests(void) {
+ void run_info_and_tests(void) {
+    // Page 1: Memory layout
     vga_clear();
     printf("==========================================\n");
-    printf("           Info & Tests                   \n");
-    printf("==========================================\n");
-    printf("\n");
+    printf("         Info & Tests - Memory            \n");
+    printf("==========================================\n\n");
 
-    // Memory info
     printf("--- Memory Layout ---\n");
     print_memory_layout();
     printf("\n");
 
-    // Malloc test
     printf("--- Malloc Test ---\n");
-    void* some_memory = malloc(12345);
-    void* memory2     = malloc(54321);
-    void* memory3     = malloc(13331);
+    static void* some_memory = 0;
+    static void* memory2     = 0;
+    static void* memory3     = 0;
+    if (some_memory == 0) {
+        some_memory = malloc(12345);
+        memory2     = malloc(54321);
+        memory3     = malloc(13331);
+    }
     printf("malloc(12345) = 0x%x\n", (unsigned int)some_memory);
     printf("malloc(54321) = 0x%x\n", (unsigned int)memory2);
-    printf("malloc(13331) = 0x%x\n", (unsigned int)memory3);
-    printf("\n");
+    printf("malloc(13331) = 0x%x\n", (unsigned int)memory3); 
 
-    // Sleep / interrupt test
-    printf("--- Sleep & Interrupt Test ---\n");
-    printf("Press 0 to return to menu.\n\n");
+    printf("\nPress any key for sleep test...\n");
+    keyboard_getchar();
 
+    // Page 2: Sleep test
     int counter = 0;
     while (1) {
+        vga_clear();
+        printf("==========================================\n");
+        printf("         Info & Tests - Sleep             \n");
+        printf("==========================================\n\n");
+        printf("--- Sleep & Interrupt Test ---\n");
+        printf("Press 0 to return to menu.\n\n");
+
         printf("[%d]: Sleeping with busy-waiting (HIGH CPU).\n", counter);
         sleep_busy(1000);
         printf("[%d]: Slept using busy-waiting.\n", counter++);
@@ -74,14 +83,10 @@ void run_info_and_tests(void) {
         sleep_interrupt(1000);
         printf("[%d]: Slept using interrupts.\n", counter++);
 
-        // Non-blocking check: only read if something is in the buffer
         char c = keyboard_getchar();
-        if (c == '0') {
-            printf("\nReturning to menu...\n");
-            return;
-        }
+        if (c == '0') return;
     }
-}
+} 
 
 // Option 2 - plays a Song 
 void run_song(void) {
@@ -105,50 +110,27 @@ void run_song(void) {
 }
 
 // Option 3: Terminal
-void run_terminal(void) {
+ void run_terminal(void) {
     vga_clear();
     printf("==========================================\n");
-    printf("               Terminal                   \n");
+    printf("           Write some text                \n");
     printf("==========================================\n");
-    printf("Type anything and press Enter.\n");
-    printf("Type 0 and press Enter to return to menu.\n\n");
-
+    printf("Type anything. Press 0 to return.\n");
+    printf("Not a real terminal, only for testing keyboard\n\n");
+    
+    // return to menu 
     while (1) {
-        printf("> ");
-
-        // Collect a line - keyboard_handler already prints each char to screen
-        // so we just read from buffer without echoing again
-        char line[256];
-        int i = 0;
-
-        while (1) {
-            char c = keyboard_getchar();
-
-            if (c == '\n' || c == '\r') {
-                // newline handled by keyboard_handler
-                line[i] = '\0';
-                break;
-
-            } else {
-                //  just store charchter
-                if (i < 255) line[i++] = c;
-            }
-        }
-
-        // Check if user typed "0" to exit
-        if (i == 1 && line[0] == '0') {
-            printf("Returning to menu...\n");
-            return;
-        }
+        char c = keyboard_getchar();
+        if (c == '0') return;
     }
-}
+} 
 
 //  Main Menu Loop 
 void run_menu(void) {
     while (1) {
         print_menu();
         char choice = keyboard_getchar();
-
+        
         switch (choice) {
             case '1':
                 run_info_and_tests();
@@ -169,7 +151,7 @@ void run_menu(void) {
     }
 }
 
-// Kernel Main 
+// Kernel Main function
 void kernel_main(void) {
 
     // Initialize memory first

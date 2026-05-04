@@ -5,6 +5,9 @@
 #include "../include/keyboard.h"
 #include "../include/pit.h" 
 
+// This file handles irq implementation
+
+// Functions from other modules that we need here
 extern void set_idt_entry_public(int n, uint32_t handler);
 extern void keyboard_handler(int irq);
 extern void pit_irq_handler(void);
@@ -12,14 +15,18 @@ extern void pit_irq_handler(void);
 extern uint8_t inb_port(uint16_t port);
 extern void outb_port(uint16_t port, uint8_t val);
 
+// The 8259 PIC is remapped to start at IRQ_BASE (32) so hardware IRQs don't
+// collide with CPU exception vectors 0-31 which are reserved by the CPU
 #define IRQ_BASE 32
 
+// Assembly stubs defined in irq.asm - one per hardware IRQ line (0-15)
 extern void irq0(); extern void irq1(); extern void irq2(); extern void irq3();
 extern void irq4(); extern void irq5(); extern void irq6(); extern void irq7();
 extern void irq8(); extern void irq9(); extern void irq10(); extern void irq11();
 extern void irq12(); extern void irq13(); extern void irq14(); extern void irq15();
 
 void irq_install() {
+    // Remap the PIC 
     pic_remap(IRQ_BASE, IRQ_BASE + 8);
 
     set_idt_entry_public(IRQ_BASE + 0, (uint32_t)irq0);
@@ -39,7 +46,7 @@ void irq_install() {
     set_idt_entry_public(IRQ_BASE +14, (uint32_t)irq14);
     set_idt_entry_public(IRQ_BASE +15, (uint32_t)irq15);
 
-    // Need to add comments here
+    // for inb and outb
     extern uint8_t inb_port(uint16_t port);
     extern void outb_port(uint16_t port, uint8_t val);
   

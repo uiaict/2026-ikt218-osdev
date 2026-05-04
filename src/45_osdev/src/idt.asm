@@ -1,12 +1,17 @@
 bits 32
+
+; Export ISR stubs so idt.c can register them in the IDT
 global isr0
 global isr1
 global isr2
 global lidt
+
+; Import the shared C handler that all ISRs funnel into
 extern isr_common_c
 
 SECTION .text
 
+; ISR0 - Division by zero exception
 isr0:
     cli
     push dword 0        ; error code placeholder
@@ -16,6 +21,7 @@ isr0:
     sti
     iretd
 
+; ISR1 - Debug exception
 isr1:
     cli
     push dword 0
@@ -25,6 +31,7 @@ isr1:
     sti
     iretd
 
+; ISR2 - Non-maskable interrupt (NMI)
 isr2:
     cli
     push dword 0
@@ -34,10 +41,9 @@ isr2:
     sti
     iretd
 
-; lidt wrapper: expects pointer to idt_ptr as argument (C pushes it on stack)
+; lidt wrapper
 lidt:
-    ; [esp+4] is return address, [esp+0] is old esp? In cdecl, argument at [esp+4]
-    ; but in NASM we access [esp+4] for first arg after return address.
+    ; [esp+4] is return address
     mov eax, [esp + 4]
     lidt [eax]
     ret

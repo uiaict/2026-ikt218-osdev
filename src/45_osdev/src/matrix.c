@@ -3,6 +3,9 @@
 #include "../include/memory.h"
 #include "../include/pit.h"
 
+// This is a simple matrix rain application
+// It will produce random letters that appear to be falling down in the window
+// made accessible as an option in the main menu function from kernel.c
 
 // Simple Random Number Generator 
 static unsigned int rand_seed = 12345;
@@ -46,6 +49,7 @@ static char get_matrix_char(void) {
     return chars[rand() % len];
 }
 
+// function for running the mattrix rain simulation
 void run_matrix_rain(void) {
     // Clear screen and set up for animation
     vga_clear();
@@ -60,6 +64,9 @@ void run_matrix_rain(void) {
         printf("Memory allocation failed!\n");
         return;
     }
+    // Clear again after malloc in case it printed anything
+    vga_clear();
+    vga_set_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK); 
     
     // Initialize drops
     for (int i = 0; i < MAX_DROPS; i++) {
@@ -126,7 +133,7 @@ void run_matrix_rain(void) {
                         vga_set_color(VGA_COLOR_GREEN, VGA_COLOR_BLACK);
                     }
                     
-                    // Draw random English character
+                    // Draw a random english character
                     vga_set_cursor(drop->x, draw_y);
                     vga_putchar(get_matrix_char());
                 }

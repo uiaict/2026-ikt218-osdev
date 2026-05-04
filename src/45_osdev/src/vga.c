@@ -7,6 +7,7 @@ static vga_state_t vga_state = {
     .cursor_y = 0,
 };
 
+// sets background color to black and text to green
 void vga_init(void) {
     vga_state.foreground = VGA_COLOR_LIGHT_GREEN;
     vga_state.background = VGA_COLOR_BLACK;
@@ -15,6 +16,7 @@ void vga_init(void) {
     vga_clear();
 }
 
+// sets color
 void vga_set_color(vga_color_t foreground, vga_color_t background) {
     vga_state.foreground = foreground;
     vga_state.background = background;
@@ -28,7 +30,7 @@ static uint16_t vga_make_vram_entry(unsigned char uc, uint8_t color) {
     return ((uint16_t)uc) | (((uint16_t)color) << 8);
 }
 
- 
+// putchar function with line wrapping and scrolling
 void vga_putchar(char c) {
     uint8_t color = vga_make_color(vga_state.foreground, vga_state.background);
     uint16_t index = vga_state.cursor_y * VGA_WIDTH + vga_state.cursor_x;
@@ -63,7 +65,7 @@ void vga_puts(const char *str) {
         vga_putchar(*str++);
     }
 }
-/* write a single character at current cursor (used from IRQ handler) */
+// write a single character at current cursor (used from IRQ handler)
 void vga_putc(char c) {
     uint8_t color = vga_make_color(vga_state.foreground, vga_state.background);
     uint16_t *vram = (uint16_t *)VGA_MEMORY;
@@ -86,33 +88,33 @@ void vga_putc(char c) {
         vga_state.cursor_y++;
     }
     if (vga_state.cursor_y >= VGA_HEIGHT) {
-        vga_state.cursor_y = 0; /* simple behavior consistent with your code */
+        vga_state.cursor_y = 0;
     }
 }
 
-/* remove previous character, update cursor and VRAM */
+// Backspace functionality - remove previous character, update cursor and VRAM
 void vga_backspace(void) {
     uint8_t color = vga_make_color(vga_state.foreground, vga_state.background);
     uint16_t *vram = (uint16_t *)VGA_MEMORY;
 
-    /* if at start of screen, nothing to do */
+    // if at start of screen, nothing to do
     if (vga_state.cursor_x == 0 && vga_state.cursor_y == 0) return;
 
-    /* move cursor left, wrap to previous line if needed */
+    // move cursor left, wrap to previous line if needed
     if (vga_state.cursor_x > 0) {
         vga_state.cursor_x--;
     } else {
-        /* at column 0 but not top line -> move to last column of previous line */
+        // at column 0 but not top line -> move to last column of previous line
         vga_state.cursor_y--;
         vga_state.cursor_x = VGA_WIDTH - 1;
     }
 
-    /* clear the character at the new cursor position */
+    // clear the character at the new cursor position
     uint16_t index = vga_state.cursor_y * VGA_WIDTH + vga_state.cursor_x;
     vram[index] = vga_make_vram_entry(' ', color);
 }
 
-
+// Clear the screen
 void vga_clear(void) {
     uint8_t color = vga_make_color(vga_state.foreground, vga_state.background);
     uint16_t *vram = (uint16_t *)VGA_MEMORY;
