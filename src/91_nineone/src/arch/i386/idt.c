@@ -61,10 +61,7 @@ static void pic_remap(void) {
     outb(0x21, 0x01);
     outb(0xA1, 0x01);
 
-    /*
-     * Unmask all IRQs for now.
-     * Later you may want to mask unused IRQs.
-     */
+    // Unmask all IRQs for now.
     outb(0x21, 0x00);
     outb(0xA1, 0x00);
 }
@@ -85,21 +82,15 @@ void idt_init(void) {
 
     idt_memset(&idt, 0, sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS);
 
-    /*
-     * Your current CPU exception ISRs.
-     */
+    // Current CPU exception ISRs.
     for (uint8 vector = 0; vector < 4; vector++) {
         idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
     }
 
-    /*
-     * Remap the PIC before installing IRQ gates.
-     */
+    // Remap the PIC before installing IRQ gates.
     pic_remap();
 
-    /*
-     * IRQ0-IRQ15 are mapped to IDT entries 32-47.
-     */
+    // IRQ0-IRQ15 are mapped to IDT entries 32-47.
     idt_set_descriptor(32, irq0, 0x8E);
     idt_set_descriptor(33, irq1, 0x8E);
     idt_set_descriptor(34, irq2, 0x8E);

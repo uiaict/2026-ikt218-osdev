@@ -32,6 +32,7 @@ void print_button(struct button* btn, bool is_selected, int x, int y) {
     terminal_putchar(217, color_border, x + 1 + len, y + 2);
 }
 
+// Handles keyboard event depending on given current_menu 
 static void menu_keyboard_event(char character, uint8 scancode) {
     (void)character;
 

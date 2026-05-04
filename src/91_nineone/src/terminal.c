@@ -13,10 +13,10 @@ void terminal_setchar(uint8 c, int x, int y) {
     const int index = y * 80 + x;
     uint16* vga_buffer = (uint16*)0xB8000;
     
-    // Hent nåværende verdi (tegn + farge)
+    // Read the current screen cell.
     uint16 current = vga_buffer[index];
     
-    // Behold fargen (øverste 8 bits), sett inn nytt tegn (nederste 8 bits)
+    // Keep the color and replace only the character.
     vga_buffer[index] = (current & 0xFF00) | (uint16)c;
 }
 
@@ -24,10 +24,10 @@ void terminal_setcharfg(uint8 c, uint8 color_fg, int x, int y) {
     const int index = y * 80 + x;
     uint16* vga_buffer = (uint16*)0xB8000;
     
-    // Hent nåværende verdi (tegn + farge)
+    // Read the current screen cell.
     uint16 current = vga_buffer[index];
     
-    // Behold fargen (øverste 8 bits), sett inn nytt tegn (nederste 8 bits)
+    // Keep the background color and update the character and foreground color.
     vga_buffer[index] = (current & 0xF000) | (uint16)c | ((uint16)color_fg << 8);
 }
 

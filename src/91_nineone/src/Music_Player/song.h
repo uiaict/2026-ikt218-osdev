@@ -3,18 +3,22 @@
 #include "libc/stdint.h"
 #include "libc/stddef.h"
 
+
+// One note in the song. frequency of 0 is slient
 typedef struct {
     uint32_t frequency;
     uint32_t duration;
 } Note;
 
+// A song is stored as a list of notes plus the number of notes to play.
 typedef struct Song {
     Note* notes;
     size_t note_count;
 } Song;
 
+
+// Notes for attempt at "Song of Storms" (Love Zelda). Each entry is {frequency in Hz, duration in ms}.
 static Note music_1[] = {
-    // Song of Storms
 
     {294, 180},  // D4
     {349, 180},  // F4
