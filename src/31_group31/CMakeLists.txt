@@ -1,5 +1,5 @@
 ########################################
-# The University of Agder Operating System: UiAOS
+# KebabOS: Group 31's University of Agder teaching OS
 # Languages: C, C++, and NASM Assembly
 # Tip: Use Ctrl+Shift+P in Visual Studio Code to get started with CMake.
 ########################################
@@ -12,7 +12,7 @@ set(CMAKE_CXX_COMPILER_WORKS 1)
 cmake_minimum_required(VERSION 3.22.1)
 
 # Project name and languages used
-project(UiAOS LANGUAGES C CXX ASM_NASM)
+project(KebabOS LANGUAGES C CXX ASM_NASM)
 
 # Create a lock file to prevent parallel runs of CMake
 file(LOCK ${CMAKE_SOURCE_DIR} DIRECTORY GUARD FILE)
@@ -23,11 +23,11 @@ file(LOCK ${CMAKE_SOURCE_DIR} DIRECTORY GUARD FILE)
 include(FetchContent)
 
 ########################################
-# UiAOS: Variables
+# KebabOS: Variables
 ########################################
 set(OS_ARCH_TARGET "i386")  # x86_64 
-set(OS_NAME "UiA Operating System")
-set(OS_KERNEL_NAME "uiaos")
+set(OS_NAME "KebabOS")
+set(OS_KERNEL_NAME "kebabos")
 set(OS_KERNEL_BINARY "kernel.bin")
 set(OS_KERNEL_IMAGE "kernel.iso")
 
@@ -57,7 +57,7 @@ set(CMAKE_ASM_NASM_COMPILE_OBJECT
 set(OS_KERNEL_LINKER "${CMAKE_CURRENT_SOURCE_DIR}/src/arch/${OS_ARCH_TARGET}/linker.ld")
 
 # Add executable target for the kernel
-add_executable(uiaos-kernel 
+add_executable(kebabos-kernel
     src/multiboot2.asm
     src/kernel.c
     src/gdt.asm
@@ -71,16 +71,20 @@ add_executable(uiaos-kernel
     src/paging.c
     src/memutils.c
     src/song.c
+    src/demo.c
+    src/programs.c
     src/shell.c
     src/matrix.c
+    src/dodger.c
+    src/vfs.c
 )
 
 # Include directories for the kernel target
-target_include_directories(uiaos-kernel PUBLIC include)
+target_include_directories(kebabos-kernel PUBLIC include)
 
 
 # Specify compile options for C and C++
-target_compile_options(uiaos-kernel PRIVATE
+target_compile_options(kebabos-kernel PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g>
     $<$<COMPILE_LANGUAGE:CXX>:-Wall -Wextra -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g>
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-m32 -march=i386 -Wno-unused-variable -Wno-unused-parameter>
@@ -88,13 +92,13 @@ target_compile_options(uiaos-kernel PRIVATE
 
 
 # Specify link options for C and C++
-target_link_options(uiaos-kernel PUBLIC
+target_link_options(kebabos-kernel PUBLIC
     $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-ffreestanding -nostdlib -fno-builtin -static -pie -O0 -T${OS_KERNEL_LINKER} -g>
 )
 
 
 target_link_options(
-	uiaos-kernel
+	kebabos-kernel
 	PUBLIC "-ffreestanding"
 	PUBLIC "-nostdlib"
 	PUBLIC "-static"
@@ -104,7 +108,7 @@ target_link_options(
 
 
 # Set properties for the kernel target
-set_target_properties(uiaos-kernel PROPERTIES
+set_target_properties(kebabos-kernel PROPERTIES
     OUTPUT_NAME "${OS_KERNEL_BINARY}"
     #LINK_FLAGS "${OS_KERNEL_LINK_FLAGS}"
 )
@@ -129,10 +133,10 @@ set(ISO_DIR ${CMAKE_CURRENT_BINARY_DIR}/iso)
 set(LIMINE_CONFIG_DIR ${CMAKE_SOURCE_DIR})
 set(LIMINE_DIR /usr/local/limine)
 add_custom_target(
-	uiaos-create-image ALL
+	kebabos-create-image ALL
 	COMMAND rm -rf ${ISO_DIR}
 	COMMAND mkdir -p ${ISO_DIR}
-	COMMAND cp -v $<TARGET_FILE:uiaos-kernel> 
+	COMMAND cp -v $<TARGET_FILE:kebabos-kernel>
 	 	${LIMINE_CONFIG_DIR}/limine.cfg ${LIMINE_DIR}/limine-bios.sys ${LIMINE_DIR}/limine-bios-cd.bin
 		${LIMINE_DIR}/limine-uefi-cd.bin ${ISO_DIR}/
 	COMMAND mkdir -p ${ISO_DIR}/EFI/BOOT
@@ -145,6 +149,6 @@ add_custom_target(
 	 	${ISO_DIR} -o ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
 	COMMAND ${LIMINE_DIR}/limine bios-install ${CMAKE_CURRENT_BINARY_DIR}/kernel.iso
 	#COMMAND sudo rm -rf ${ISO_DIR}
-	DEPENDS create-fat32-disk uiaos-kernel
+	DEPENDS create-fat32-disk kebabos-kernel
 	VERBATIM
 )

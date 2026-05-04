@@ -1,8 +1,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include <stdint.h>
-#include <stddef.h>
+#include "stdint.h"
 
 typedef struct {
     uint8_t status;

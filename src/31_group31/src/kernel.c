@@ -1,7 +1,5 @@
-typedef unsigned int   uint32_t;
-typedef unsigned short uint16_t;
-typedef unsigned char  uint8_t;
-#include <stdarg.h>
+#include "stdint.h"
+#include "libc/stdarg.h"
 #include "isr.h"
 #include "keyboard.h"
 #include "memory.h"
@@ -163,28 +161,17 @@ void main(void) {
     // Initialize paging for memory management.
     init_paging();
 
-    // Print memory information.
-    print_memory_layout();
-
     // Initialize PIT
     init_pit();
-
-    printf("Hello World! Memory & PIT initialized.\n");
-
-    void* some_memory = malloc(12345); 
-    void* memory2 = malloc(54321); 
-    void* memory3 = malloc(13331);
 
     // CRITICAL: Enable external hardware interrupts.
     // 'sti' stands for Set Interrupt Flag. It tells the CPU to start listening.
     __asm__ volatile("sti");
 
-    // Yeni Altyapimiz: Komut Satiri (Terminal)
     shell_init();
 
     while (1) {
         shell_update();
-        // Islemler artik Interrupt (Klavye) uzerinden donecegi icin CPU'yu uyutuyoruz.
         __asm__ volatile("hlt");
     }
 }

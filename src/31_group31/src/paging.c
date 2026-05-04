@@ -1,7 +1,5 @@
 #include "memory.h"
 
-extern void printf(const char* format, ...);
-
 static uint32_t* page_directory = 0;   
 static uint32_t page_dir_loc = 0;      
 static uint32_t* last_page = 0;        
@@ -17,7 +15,6 @@ void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys) {
 }
 
 void init_paging() {
-    printf("Setting up paging\n");
     page_directory = (uint32_t*)0x400000;      
     page_dir_loc = (uint32_t)page_directory;  
     last_page = (uint32_t *)0x404000;         
@@ -31,6 +28,4 @@ void init_paging() {
     __asm__ volatile("mov %cr0, %eax");
     __asm__ volatile("orl $0x80000000, %eax");
     __asm__ volatile("mov %eax, %cr0");
-    
-    printf("Paging was successfully enabled!\n");
 }

@@ -2,6 +2,13 @@
 
 extern void printf(const char* format, ...);
 
+#define MEMORY_DEBUG 0
+#if MEMORY_DEBUG
+#define MEMORY_LOG(...) printf(__VA_ARGS__)
+#else
+#define MEMORY_LOG(...)
+#endif
+
 static void panic(const char* msg) {
     printf("PANIC: %s\n", msg);
     __asm__ volatile("cli; hlt");
@@ -26,7 +33,7 @@ void init_kernel_memory(uint32_t* kernel_end)
     heap_end = pheap_begin;
     memset((char *)heap_begin, 0, heap_end - heap_begin);
     pheap_desc = (uint8_t *)malloc(MAX_PAGE_ALIGNED_ALLOCS);
-    printf("Kernel heap starts at 0x%x\n", last_alloc);
+    MEMORY_LOG("Kernel heap starts at 0x%x\n", last_alloc);
 }
 
 void print_memory_layout()
@@ -63,7 +70,7 @@ char* pmalloc(size_t size)
     {
         if(pheap_desc[i]) continue;
         pheap_desc[i] = 1;
-        printf("PAllocated from 0x%x to 0x%x\n", pheap_begin + i*4096, pheap_begin + (i+1)*4096);
+        MEMORY_LOG("PAllocated from 0x%x to 0x%x\n", pheap_begin + i*4096, pheap_begin + (i+1)*4096);
         return (char *)(pheap_begin + i*4096);
     }
     printf("pmalloc: FATAL: failure!\n");
@@ -78,7 +85,7 @@ void* malloc(size_t size)
     while((uint32_t)mem < last_alloc)
     {
         alloc_t *a = (alloc_t *)mem;
-        printf("mem=0x%x a={.status=%d, .size=%d}\n", (uint32_t)mem, a->status, a->size);
+        MEMORY_LOG("mem=0x%x a={.status=%d, .size=%d}\n", (uint32_t)mem, a->status, a->size);
 
         if(!a->size)
             goto nalloc;
@@ -91,7 +98,7 @@ void* malloc(size_t size)
         if(a->size >= size)
         {
             a->status = 1;
-            printf("RE:Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)mem + sizeof(alloc_t), (uint32_t)mem + sizeof(alloc_t) + size);
+            MEMORY_LOG("RE:Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)mem + sizeof(alloc_t), (uint32_t)mem + sizeof(alloc_t) + size);
             memset(mem + sizeof(alloc_t), 0, size);
             memory_used += size + sizeof(alloc_t);
             return (char *)(mem + sizeof(alloc_t));
@@ -113,7 +120,7 @@ nalloc:;
     last_alloc += size;
     last_alloc += sizeof(alloc_t);
     last_alloc += 4;
-    printf("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)alloc + sizeof(alloc_t), last_alloc);
+    MEMORY_LOG("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)alloc + sizeof(alloc_t), last_alloc);
     memory_used += size + 4 + sizeof(alloc_t);
     memset((char *)((uint32_t)alloc + sizeof(alloc_t)), 0, size);
     return (char *)((uint32_t)alloc + sizeof(alloc_t));

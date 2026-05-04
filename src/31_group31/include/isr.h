@@ -1,7 +1,7 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include <stdint.h>
+#include "stdint.h"
 
 // ISR prototypes (defined in Assembly)
 extern void isr0();

@@ -1,12 +1,10 @@
 #include "keyboard.h"
 #include "ports.h"
 #include "isr.h"
+#include "shell.h"
 
 // We need our custom printf to display the characters
 extern void printf(const char* format, ...);
-
-// Shell'in klavye dinleyicisi
-extern void shell_handle_keypress(char c);
 
 // Task 4: Lookup table to translate keyboard scancodes into ASCII characters.
 // This is a basic US QWERTY layout table.
@@ -22,16 +20,19 @@ static void keyboard_callback(registers_t *regs) {
     // The PIC sends the keyboard scancode to port 0x60.
     // We use our port_byte_in function to read it.
     uint8_t scancode = port_byte_in(0x60);
+
+    if (shell_handle_scancode(scancode)) {
+        return;
+    }
     
-    // Ozel Tuslari (Oklar ve Tab) standart harf filtresine girmeden yakaliyoruz
-    if (scancode == 0x48) { // Up Arrow (Yukari Ok)
-        shell_handle_keypress(17); // Ozel sinyal: 17
+    if (scancode == 0x48) {
+        shell_handle_keypress(17);
         return;
-    } else if (scancode == 0x50) { // Down Arrow (Asagi Ok)
-        shell_handle_keypress(18); // Ozel sinyal: 18
+    } else if (scancode == 0x50) {
+        shell_handle_keypress(18);
         return;
-    } else if (scancode == 0x0F) { // Tab Tusu
-        shell_handle_keypress('\t'); // Ozel sinyal: Tab
+    } else if (scancode == 0x0F) {
+        shell_handle_keypress('\t');
         return;
     }
 
@@ -45,7 +46,6 @@ static void keyboard_callback(registers_t *regs) {
     // Translate the scancode to an ASCII character
     char letter = sc_ascii[scancode];
     
-    // Basilan tusu ekrana degil, artik kendi yazdigimiz Shell'e yolluyoruz
     shell_handle_keypress(letter);
 }
 

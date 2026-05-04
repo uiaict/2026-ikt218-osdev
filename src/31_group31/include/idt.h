@@ -1,7 +1,7 @@
 #ifndef IDT_H
 #define IDT_H
 
-#include <stdint.h>
+#include "stdint.h"
 
 // KERNEL_CS is our Code Segment offset in GDT (0x08)
 #define KERNEL_CS 0x08
