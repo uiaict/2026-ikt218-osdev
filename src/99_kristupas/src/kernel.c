@@ -124,7 +124,7 @@ void kernel_main() {
     //}
     // Startup screen - imporvisation
     printf("----------------------------------------\n");
-    printf("  CryptOS - XOR Encryption Terminal\n");
+    printf("  XOR Encryption Terminal\n");
     printf("----------------------------------------\n");
     printf("\n");
     printf("XOR encryption works by combining each\n");
