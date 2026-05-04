@@ -40,6 +40,18 @@ The bootable ISO is written to:
 build/77_lindestad/kernel.iso
 ```
 
+The final submitted build artifacts are:
+
+```text
+build/77_lindestad/kernel.bin
+build/77_lindestad/kernel.iso
+build/77_lindestad/disk.iso
+```
+
+`kernel.iso` is the bootable image used by QEMU. `disk.iso` is also included
+because the course web/deploy helper expects each group build directory to
+contain both `kernel.iso` and `disk.iso`.
+
 ## Run in QEMU
 
 Run the ISO with:
