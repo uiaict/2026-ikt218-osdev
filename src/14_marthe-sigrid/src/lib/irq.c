@@ -56,18 +56,33 @@ void irq_handler(uint8_t irq) {
         keyboard_handler();
 }
 void irq_init(void) {
-    // Remap PIC
-    outb(0x20, 0x11);
-    outb(0xA0, 0x11);
-    outb(0x21, 0x20);
-    outb(0xA1, 0x28);
-    outb(0x21, 0x04);
-    outb(0xA1, 0x02);
+    // Remap the 8259 PICs.
+    // By default the master PIC fires interrupts 0x08-0x0F, which collide
+    // with CPU exceptions. We remap master to 0x20-0x27 and slave to 0x28-0x2F
+    // so IRQ0..IRQ15 land on IDT entries 32..47.
+
+    // ICW1: start init sequence (0x11 = init + expect ICW4)
+    outb(0x20, 0x11);  // master PIC command port
+    outb(0xA0, 0x11);  // slave PIC command port
+
+    // ICW2: vector offset for each PIC
+    outb(0x21, 0x20);  // master PIC IRQs start at IDT entry 32
+    outb(0xA1, 0x28);  // slave PIC IRQs start at IDT entry 40
+
+    // ICW3: tell the PICs how they are wired together
+    outb(0x21, 0x04);  // master: slave is on IRQ2
+    outb(0xA1, 0x02);  // slave: cascade identity = 2
+
+    // ICW4: 8086 mode
     outb(0x21, 0x01);
     outb(0xA1, 0x01);
+
+    // OCW1: clear all interrupt masks (enable all IRQ lines)
     outb(0x21, 0x00);
     outb(0xA1, 0x00);
 
+    // Install our 16 IRQ stubs (defined in isr.asm) into the IDT slots
+    // we just remapped the PICs to.
     for (uint8_t i = 0; i < 16; i++) {
         idt_set_entry(32 + i, (uint32_t)irq_stub_table[i], 0x08, 0x8E);
     }
