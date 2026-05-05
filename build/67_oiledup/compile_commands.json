@@ -1,0 +1,117 @@
+[
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/bin/nasm -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -f elf32 -o CMakeFiles/uiaos-kernel.dir/src/multiboot2.asm.o /workspaces/2026-ikt218-osdev/src/67_oiledup/src/multiboot2.asm",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/multiboot2.asm"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/bin/nasm -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -f elf32 -o CMakeFiles/uiaos-kernel.dir/src/gdt/start.asm.o /workspaces/2026-ikt218-osdev/src/67_oiledup/src/gdt/start.asm",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/gdt/start.asm"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/gdt/gdt.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/gdt/gdt.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/gdt/gdt.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/string/string.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/string/string.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/string/string.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/stdio/stdio.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/stdio/stdio.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/stdio/stdio.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/idt/idt_handler.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt_handler.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt_handler.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/bin/nasm -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -f elf32 -o CMakeFiles/uiaos-kernel.dir/src/idt/idt_load.asm.o /workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt_load.asm",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt_load.asm"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/idt/idt.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/idt.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/bin/nasm -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -f elf32 -o CMakeFiles/uiaos-kernel.dir/src/idt/isr_wrapper.asm.o /workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/isr_wrapper.asm",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/idt/isr_wrapper.asm"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/keyboard/keyboard.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/keyboard/keyboard.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/keyboard/keyboard.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/malloc.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/malloc.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/malloc.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/memory.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/memory.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/memory.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/memory/memutils.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/memutils.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/memutils.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/libc/system.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/libc/system.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/libc/system.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/pit/pit.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/pit/pit.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/pit/pit.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/kernel.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/kernel.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/kernel.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-g++ -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g -Wno-unused-variable -Wno-unused-parameter -std=gnu++20 -o CMakeFiles/uiaos-kernel.dir/src/kernel.cpp.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/kernel.cpp",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/kernel.cpp"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-g++ -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g -Wno-unused-variable -Wno-unused-parameter -std=gnu++20 -o CMakeFiles/uiaos-kernel.dir/src/video/video.cpp.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/video/video.cpp",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/video/video.cpp"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-g++ -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -g -Wno-unused-variable -Wno-unused-parameter -std=gnu++20 -o CMakeFiles/uiaos-kernel.dir/src/memory/new.cpp.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/new.cpp",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/memory/new.cpp"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/terminal.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/terminal.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/terminal.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/speaker/speaker.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/speaker/speaker.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/speaker/speaker.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/song/song.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/song/song.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/song/song.c"
+},
+{
+  "directory": "/workspaces/2026-ikt218-osdev/build/67_oiledup",
+  "command": "/usr/local/bin/i686-elf-gcc -I/workspaces/2026-ikt218-osdev/src/67_oiledup/include -I/workspaces/2026-ikt218-osdev/build/67_oiledup -g -Wall -Wextra -nostdinc -nostdlib -fno-builtin -fno-stack-protector -fno-stack-check -fno-lto -fPIE -m32 -march=i386 -mno-mmx -mno-sse -mno-sse2 -mno-red-zone -Wno-main -g -Wno-unused-variable -Wno-unused-parameter -std=gnu99 -o CMakeFiles/uiaos-kernel.dir/src/song/music.c.o -c /workspaces/2026-ikt218-osdev/src/67_oiledup/src/song/music.c",
+  "file": "/workspaces/2026-ikt218-osdev/src/67_oiledup/src/song/music.c"
+}
+]
