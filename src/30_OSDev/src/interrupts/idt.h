@@ -1,0 +1,22 @@
+#ifndef IDT_H
+#define IDT_H
+
+#include <stdint.h>
+
+// Define the IDT structure that describes one row in the IDT table.
+struct idt_entry {
+    uint16_t base_low;
+    uint16_t selector;
+    uint8_t  always0;
+    uint8_t  flags;
+    uint16_t base_high;
+} __attribute__((packed));
+
+struct idt_ptr {
+    uint16_t limit;  // Size of the IDT table
+    uint32_t base;   // Address of the start of the IDT table
+} __attribute__((packed));
+
+void idt_init();
+
+#endif
